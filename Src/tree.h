@@ -14,9 +14,10 @@
 class Tree
 {
     private :
-
+        /*!
+         * \brief _root racine de l'arbre
+         */
         Node _root;
-
     public :
         /*!
          * \brief Tree::Tree Constructeur
