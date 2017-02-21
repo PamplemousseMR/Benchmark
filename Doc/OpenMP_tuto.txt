@@ -1,0 +1,79 @@
+Tutoriel d'utilisation
+----------------------
+
+	presentation : http://www.openmp.org/wp-content/uploads/omp-hands-on-SC08.pdf
+	OpenMP fonctionne pour C et C++
+	lors de l'instalation d'openMP, un programme : mpirun, vous permet de lancer l'executable en ligne de commande,
+	l'option -np n permet de simuler plusieurs proccesuer (n = 0,1,2,3,...)
+
+Installation d'OpenMP
+---------------------
+
+Windows :
+
+	Activer openMP pour QT
+
+		Si le compilateur est pour windows (MVCS) modifier le fichier .pro et ajoute
+
+		QMAKE_CXXFLAGS+= -openmp
+		QMAKE_LFLAGS +=  -openmp
+
+		ou ajoute
+
+		QMAKE_CXXFLAGS+= -fopenmp
+		QMAKE_LFLAGS +=  -fopenmp
+		
+		pour le compilateur linux gcc/g++ et miongw de windows
+
+	Activer openMP pour Visual
+
+		projet -> propriétés du projet -> C/C++ -> language ->open MP support : mettre à oui
+
+Linux :
+
+	Ligne de commandes
+
+		Etre sur que libgomp est installer (ou lib-gomp / lib-gomp-dev)
+		ajouter la commande -fopenmp à la création de l'executable depuis les .o
+		ajouter -c -fopenmp à la génération des .o 
+
+	Pour Qt
+
+		ajouter les elements suivant au .pro
+
+		QMAKE_CXX = mpicxx (pur c++ ou mpicc pour du C)
+	    QMAKE_CXX_RELEASE = $$QMAKE_CXX
+	    QMAKE_CXX_DEBUG = $$QMAKE_CXX
+	    QMAKE_LINK = $$QMAKE_CXX
+
+	    QMAKE_CFLAGS += $$system(mpicc --showme:compile)
+	    QMAKE_LFLAGS += $$system(mpicxx --showme:link)
+	    QMAKE_CXXFLAGS_DEBUG += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+	    QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+   
+
+Atention
+--------
+
+	En C les variables utiliser dans les thread doivent être private.
+
+
+Programme de test
+-----------------
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<omp.h>
+
+int main()
+{
+    printf("Coeur %d , thread : %d , thread max : %d\n", omp_get_num_procs(), omp_get_num_threads(), omp_get_max_threads());
+
+    #pragma omp parallel for num_threads(2)
+    for (int n = 0; n<8; n++)
+    {
+        printf("Element %d traite par le thread %d. nombre de thread en cour %d:\n", n, omp_get_thread_num(), omp_get_num_threads());
+    }
+    while (1);
+    return EXIT_SUCCESS;
+}

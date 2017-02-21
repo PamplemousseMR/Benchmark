@@ -1,0 +1,121 @@
+Tutoriel d'utilisation
+----------------------
+
+	tuto : http://mpitutorial.com/
+	doc : https://www.open-mpi.org/doc/v1.8/
+	mpi.h contient la version C.
+	la version c++ fonctionne sous windows et est contenue dans mpi.h
+
+Installation de OpenMPI
+-----------------------
+
+Linux :
+
+	Version ligne de commande :
+
+		-de preferance  par le gestionnaire en installant le paquet pour mpicc/picxx
+
+				ou
+
+		-Telechager la derniere version de la bibliotheque sur : https://www.open-mpi.org/software/ompi/v2.0/
+		-ouvrir un terminal et activer le mode : su
+		-exraire les fichier a l'aide de : tar -xzf Téléchargements/openmpi-2.0.1.tar.gz (le fichier s'apelle comme ca dans mon cas)
+		-une fois extrait ce placer dans le dossier openmpi-2.0.1 (dans mon cas) avec : cd openmpi-2.0.1
+		-y cree un fichier build a l'aide de : mkdir build
+		-se placée dedans a l'aide de : cd build
+		-executer la commande : ../configure --prexif=/usr/local
+		-executer la comande : make -j3
+		-executer : make install
+
+	Pour QT :
+
+		-realisez tout dabor le poind precedant.
+		-ajouter toute les directives suivantes au .pro
+
+			QMAKE_CXX = mpicxx
+		    QMAKE_CXX_RELEASE = $$QMAKE_CXX
+		    QMAKE_CXX_DEBUG = $$QMAKE_CXX
+		    QMAKE_LINK = $$QMAKE_CXX
+
+		    QMAKE_CFLAGS += $$system(mpicc --showme:compile)
+		    QMAKE_LFLAGS += $$system(mpicxx --showme:link)
+		    QMAKE_CXXFLAGS_DEBUG += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+		    QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+   
+Windows :
+
+	Version ligne de commande :
+
+		-Telecharger la derniere version windows de openMPI sur le site (OpenMPI_v1.6-1_win64.exe) : https://www.open-mpi.org/software/ompi/v1.6/
+		-ajouter "C:\Program Files\OpenMPI_v1.6\bin" dans vos variable d'environement PATH, il contient tout les compilateur pour OpenMPI
+		-ajouter "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\amd64" pour la version 64 de openMPI 
+			ou "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin" pour la version 32, dans vos variable d'environement PATH, 
+			il doit contenir cl.exe et vcvars64 ou vcvars32 suivant votre version.
+
+		maintenent le compilateur est installe.
+		avant de compiller un programme, vous devez executer vcvars64 (ou vcvars32), il affecte tout les variable d'environement de visual car OpenMP en a besoin.
+		pour tester le programme de test enregister le dans un fichier "main.c" et taper dans un terminal : mpicc/mpic++ main.c
+		le compilateur devras etre mpicc pour gcc et mpiCC pour g++ car c'est lui qui fait fonctionner OpenMPI.
+
+	Version librairie :
+
+		pour la version librairie sur visual, il faut installer MPICH2.
+		prendre la derniere version du .msi disponible sur ce lien : http://www.mpich.org/downloads/versions/
+		une fois installer, trouver le repertoire contenant les includes et les .lib installe sur votre ordinateur.
+		il suffit de rajouter les includes et les .lib a votre projet visual.
+		dans ce cas precit, les compilateurs ne vous concerne pas.
+
+
+Les compilateurs
+----------------
+
+	vous devrez utiliser le compilateur OpenMPI pour votre programme, il suffit de le remplacer suivant le compilateur original et l'os utiliser,
+	il ressemble principalement a cela :
+
+	C : mpicc
+	C++ : mpic++
+
+Programme de test en C
+----------------------
+
+si le programme fonctionne correctement, le printf devrais s'afficher autant de fois que vous avez de processeur physique (pas les coeur) generalement 1.
+
+#include <stdio.h>
+#include <mpi.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) 
+{
+	int numprocs, rank, namelen;
+	char processor_name[MPI_MAX_PROCESSOR_NAME];
+
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Get_processor_name(processor_name, &namelen);
+
+	{
+		printf("Hello from process %d out of %d on %s\n", rank, numprocs, processor_name);
+	}
+
+	MPI_Finalize();
+
+}
+
+Programme de test en C++
+------------------------
+
+#include <mpi.h>
+#include <iostream>
+
+int main(int argc, char *argv[]) 
+{
+    int rank, size;
+ 
+    MPI::Init();
+    rank = MPI::COMM_WORLD.Get_rank();
+    size = MPI::COMM_WORLD.Get_size();
+    std::cout << "Hello, world!  I am " << rank << " of " << size << std::endl;
+    MPI::Finalize();
+
+}
