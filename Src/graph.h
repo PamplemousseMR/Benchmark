@@ -30,8 +30,9 @@ class Graph
     public :
         /*!
          * \brief Graph constructeur
+         * \param int : le nombre de sommets
          */
-        Graph();
+        Graph(int);
         /*!
          * \brief Graph constructeur par copie
          */

@@ -2,14 +2,18 @@
 
 using namespace std;
 
-Graph::Graph()
-    : _nNode(0),
+Graph::Graph(int nNode)
+    : _nNode(nNode),
       _adj(),
       _trees()
 {
     #ifdef DEBUG
     cout << "[Graph][Graph] ..." << endl;
     #endif
+
+    for (int i = 0; i < nNode; i++)
+        _adj.push_back(vector<int>());
+
     #ifdef DEBUG
     cout << "[Graph][Graph] Done" << endl;
     #endif
