@@ -2,7 +2,7 @@
 #define GRAPH_H
 /*!
  * \file graph.h
- * \brief contient la classe representant le lecteur
+ * \brief contient la classe representant un graphe
  * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
  */
 #include <vector>
