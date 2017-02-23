@@ -12,9 +12,7 @@ Matrix::Matrix(int height, int width) : _height(height), _width(width)
     {
         _matrix[i] = new int[_width];
         for(int j=0; j<_width; j++)
-        {
             _matrix[i][j] = 0;
-        }
     }
     #ifdef DEBUG
     cout << "[Matrix][Matrix] Done" << endl;
@@ -32,9 +30,7 @@ Matrix::Matrix(const Matrix& matrix) : _height(matrix._height), _width(matrix._w
     {
         _matrix[i] = new int[_width];
         for(int j=0; j<_width; j++)
-        {
             _matrix[i][j] = matrix._matrix[_height][_width];
-        }
     }
 
     #ifdef DEBUG
@@ -59,18 +55,51 @@ Matrix::~Matrix()
     #endif
 }
 
+Matrix& Matrix::operator=(const Matrix& m)
+{
+    #ifdef DEBUG
+    cout << "[Matrix][operator=] ..." << endl;
+    #endif
+    #ifdef DEBUG
+    cout << "[Matrix][operator=] Done" << endl;
+    #endif
+    return *this;
+}
+
 ostream& operator<<(ostream& flux, const Matrix& m)
 {
-    int i=0;
-    for(int i=0; i<m._height; i++) {
-        for(int j=0; j<m._width; j++) {
+    int k=0;
+    for(int i=0; i<m._height; i++)
+    {
+        for(int j=0; j<m._width; j++)
+        {
             flux << m._matrix[i][j];
             if(j < m._width-1)
                 flux << ", ";
         }
-        if(i < m._height-1)
+        if(k < m._height-1)
             flux << "\n";
-        i++;
+        k++;
     }
     return flux;
+}
+
+int* Matrix::operator[](int index)
+{
+    if(index < 0)
+        return _matrix[0];
+    else if(index >= _height)
+        return _matrix[_height-1];
+    else
+        return _matrix[index];
+}
+
+const int* Matrix::operator[](int index) const
+{
+    if(index < 0)
+        return _matrix[0];
+    else if(index >= _height)
+        return _matrix[_height-1];
+    else
+        return _matrix[index];
 }

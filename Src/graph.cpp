@@ -10,10 +10,8 @@ Graph::Graph(int nNode)
     #ifdef DEBUG
     cout << "[Graph][Graph] ..." << endl;
     #endif
-
     for (int i = 0; i < nNode; i++)
         _adj.push_back(vector<int>());
-
     #ifdef DEBUG
     cout << "[Graph][Graph] Done" << endl;
     #endif

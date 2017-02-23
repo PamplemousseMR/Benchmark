@@ -18,9 +18,12 @@ class Matrix
          */
         int _height;
         /*!
-         * \brief _height largeur de la matrice
+         * \brief _width largeur de la matrice
          */
         int _width;
+        /*!
+         * \brief _matrix les donnees de la matrice
+         */
         int ** _matrix;
     public :
         /*!
@@ -37,6 +40,9 @@ class Matrix
          * \brief ~Matrix destructeur
          */
         ~Matrix();
+        Matrix& operator=(const Matrix&);
+        int* operator[](int);
+        const int* operator[](int) const;
         /*!
          * \brief operator << permet l'affichage d'une matrice
          * \return le stream passe en parametre modifie

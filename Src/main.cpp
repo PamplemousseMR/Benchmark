@@ -6,9 +6,12 @@ using namespace std;
 int main()
 {
     cout << "---------------" << endl;
-    cout << "--test matrix--" << endl;
+    cout << "  test matrix  " << endl;
     cout << "---------------" << endl;
     Matrix m(5,2);
+    cout << m << endl;
+    cout << "set [3][1] to 2" << endl;
+    m[3][1] = 2;
     cout << m << endl;
 }
 
