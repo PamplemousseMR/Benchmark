@@ -13,11 +13,11 @@ En sachant qu'on va utiliser Doxygen et dans les .h pour doxygen, et dans les .c
 * affichage à but informatif : cout ; affichage des erreurs : cerr
 * Affichage standard des erreurs (en débug) : "[Nom de la classe] [Nom de la méthode] Descriptif de l'erreur"
 * Afficher un message (en débug) lors de la création et de la destruction d'un objet/ d'une structure avec un cout
-* factorisé les fonction
-* attribus d'instance avec un _ au debut, les static avec un s_ et les static const en majuscule
+* factoriser les fonctions
+* attributs d'instance avec un _ au debut, les static avec un s_ et les static const en majuscule
 * le code en anglais et les commentaires en francais
 * methode : references constante !!
-* noter les horraires de travaille 
+* noter les horaires de travail 
 * toute les execptions doivent etre attraper puis renvoyer avec le message proprie
 
 OpenMP traitement parallele sur CPU
