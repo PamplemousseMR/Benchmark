@@ -1,9 +1,15 @@
-#include "graph.h"
-#include "matrix.h"
+#include <iostream>
+#include "../Src/matrix.h"
 
-int main(int argc, char *argv[])
+using namespace std;
+
+int main()
 {
-    Graph n(2);
+    cout << "---------------" << endl;
+    cout << "--test matrix--" << endl;
+    cout << "---------------" << endl;
+    Matrix m(5,2);
+    cout << m << endl;
 }
 
 /*#include <stdio.h>
