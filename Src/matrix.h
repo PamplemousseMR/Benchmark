@@ -40,8 +40,20 @@ class Matrix
          * \brief ~Matrix destructeur
          */
         ~Matrix();
+        /*!
+         * \brief operator = Surcharge de l'opérateur =
+         * \return matrix
+         */
         Matrix& operator=(const Matrix&);
+        /*!
+         * \brief operator [] Surcharge de l'opérateur []
+         * \return tableau d'entier correspondant à la ligne spécifié en paramètres
+         */
         int* operator[](int);
+        /*!
+         * \brief operator [] Surcharge de l'opérateur []
+         * \return tableau d'entier correspondant à la ligne spécifié en paramètres
+         */
         const int* operator[](int) const;
         /*!
          * \brief operator << permet l'affichage d'une matrice
