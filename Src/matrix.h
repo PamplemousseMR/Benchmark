@@ -31,7 +31,7 @@ class Matrix
          * \param height Hauteur de la matrice
          * \param width Largeur de la matrice
          */
-        Matrix(int, int);
+        Matrix(int, int, int=0);
         /*!
          * \brief Matrix constructeur par copie
          */

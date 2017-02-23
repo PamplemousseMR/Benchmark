@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Matrix::Matrix(int height, int width) : _height(height), _width(width)
+Matrix::Matrix(int height, int width, int value) : _height(height), _width(width)
 {
     #ifdef DEBUG
     cout << "[Matrix][Matrix] ..." << endl;
@@ -12,7 +12,7 @@ Matrix::Matrix(int height, int width) : _height(height), _width(width)
     {
         _matrix[i] = new int[_width];
         for(int j=0; j<_width; j++)
-            _matrix[i][j] = 0;
+            _matrix[i][j] = value;
     }
     #ifdef DEBUG
     cout << "[Matrix][Matrix] Done" << endl;
@@ -64,9 +64,9 @@ Matrix& Matrix::operator=(const Matrix& m)
     _height = m._height;
     _width = m._width;
     for(int i=0; i<_height; i++) {
-        for(int j=0; j<_width; j++) {
+        for(int j=0; j<_width; j++)
             _matrix[i][j] = m._matrix[i][j];
-        }
+
     }
 
     #ifdef DEBUG
