@@ -148,7 +148,8 @@ Debug:DEFINES += DEBUG
 SOURCES += Src/main.cpp \
     Src/node.cpp \
     Src/tree.cpp \
-    Src/graph.cpp
+    Src/graph.cpp \
+    Src/matrix.cpp
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -156,4 +157,5 @@ message("-------QMAKE END--------")
 HEADERS += \
     Src/node.h \
     Src/tree.h \
-    Src/graph.h
+    Src/graph.h \
+    Src/matrix.h
