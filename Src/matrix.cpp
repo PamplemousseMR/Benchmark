@@ -63,7 +63,7 @@ ostream& operator<<(ostream& flux, const Matrix& m)
 {
     for(int i=0; i<m._height; i++) {
         for(int j=0; j<m._width; j++) {
-            flux << m[i][j];
+            flux << m._matrix[i][j];
         }
         flux << "\n";
     }
