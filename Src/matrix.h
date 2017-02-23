@@ -12,11 +12,23 @@
  */
 class Matrix
 {
+    private :
+        /*!
+         * \brief _height hauteur de la matrice
+         */
+        int _height;
+        /*!
+         * \brief _height largeur de la matrice
+         */
+        int _width;
+        int ** _matrix;
     public :
         /*!
-         * \brief Matrix constructeur
+         * \brief Matrix Constructeur par défaut
+         * \param height Hauteur de la matrice
+         * \param width Largeur de la matrice
          */
-        Matrix();
+        Matrix(int, int);
         /*!
          * \brief Matrix constructeur par copie
          */
