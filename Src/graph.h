@@ -41,6 +41,11 @@ class Graph
          * \brief ~Graph destructeur
          */
         ~Graph();
+        /*!
+         * \brief operator << permet l'affichage d'un graphe
+         * \return le stream passe en parametre modifie
+         */
+        friend std::ostream& operator<<(std::ostream&, const Graph&);
 };
 
 #endif // GRAPH_H

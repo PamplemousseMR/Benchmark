@@ -38,3 +38,18 @@ Graph::~Graph()
     cout << "[Graph][~Graph] Done" << endl;
     #endif
 }
+
+ostream& operator<<(ostream& flux, const Graph& g)
+{
+    int i=0;
+    for(vector<int> vec : g._adj)
+    {
+       flux << i << " -> ";
+       for(int val : vec)
+           flux << val << ", ";
+       if(i < g._adj.size()-1)
+           flux << endl;
+       i++;
+    }
+    return flux;
+}
