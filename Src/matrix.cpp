@@ -33,7 +33,7 @@ Matrix::Matrix(const Matrix& matrix) : _height(matrix._height), _width(matrix._w
         _matrix[i] = new int[_width];
         for(int j=0; j<_width; j++)
         {
-            _matrix[i][j] = matrix[_height][_width];
+            _matrix[i][j] = matrix._matrix[_height][_width];
         }
     }
 
@@ -61,5 +61,11 @@ Matrix::~Matrix()
 
 ostream& operator<<(ostream& flux, const Matrix& m)
 {
+    for(int i=0; i<m._height; i++) {
+        for(int j=0; j<m._width; j++) {
+            flux << m[i][j];
+        }
+        flux << "\n";
+    }
     return flux;
 }
