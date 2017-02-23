@@ -60,6 +60,15 @@ Matrix& Matrix::operator=(const Matrix& m)
     #ifdef DEBUG
     cout << "[Matrix][operator=] ..." << endl;
     #endif
+
+    _height = m._height;
+    _width = m._width;
+    for(int i=0; i<_height; i++) {
+        for(int j=0; j<_width; j++) {
+            _matrix[i][j] = m._matrix[i][j];
+        }
+    }
+
     #ifdef DEBUG
     cout << "[Matrix][operator=] Done" << endl;
     #endif
