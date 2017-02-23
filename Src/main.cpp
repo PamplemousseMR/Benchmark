@@ -3,7 +3,6 @@
 int main(int argc, char *argv[])
 {
     Graph n(2);
-    cout << n << endl;
 }
 
 /*#include <stdio.h>
