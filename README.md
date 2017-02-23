@@ -17,7 +17,7 @@ En sachant qu'on va utiliser Doxygen et dans les .h pour doxygen, et dans les .c
 * attributs d'instance avec un _ au debut, les static avec un s_ et les static const en majuscule
 * le code en anglais et les commentaires en francais
 * methode : references constante !!
-* noter les horraires de travaille 
+* noter les horaires de travail 
 * toute les execptions doivent etre attraper puis renvoyer avec le message proprie
 
 OpenMP traitement parallele sur CPU
