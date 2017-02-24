@@ -1,3 +1,4 @@
+#include <math.h>
 #include "graph.h"
 
 using namespace std;
@@ -38,7 +39,7 @@ Graph::~Graph()
 
 ostream& operator<<(ostream& flux, const Graph& g)
 {
-    int i=0;
+	int unsigned i=0;
     for(vector<int> vec : g._adj)
     {
        flux << i << " -> ";
@@ -64,10 +65,10 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
     double a_norm = a/ab;
     for(unsigned ib=0 ; ib<scale ; ib++)
     {
-        Matrix<double> ii_bit(random,1,m);
+		Matrix<double> ii_bit(stdrand,1,m);
         ii_bit.superior(ab);
 
-        Matrix<double> ij_bit(random,1,m);
+		Matrix<double> ij_bit(stdrand,1,m);
         ij_bit.superior(c_norm*ii_bit + a_norm * !ii_bit);
 
         Matrix<unsigned> temp(standard,2,m);

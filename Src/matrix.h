@@ -18,7 +18,7 @@
 enum matrix_type
 {
     standard,
-    random,
+	stdrand,
     randperm
 };
 /*!
@@ -80,7 +80,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix& superior(const Matrix<E>&) throw(...);
+		Matrix& superior(const Matrix<E>&) throw(std::exception);
         /*!
          * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur +
          * \param const Matrix<E>& la matrice a additionner
@@ -88,7 +88,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix& add(const Matrix<E>&) throw(...);
+		Matrix& add(const Matrix<E>&) throw(std::exception);
         /*!
          * \brief superior multiplie la matrice par la valeur
          * \param double la valeur a multiplier
@@ -129,7 +129,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix operator+(const Matrix<E>&) const throw(...);
+		Matrix operator+(const Matrix<E>&) const throw(std::exception);
         /*!
          * \brief operator+ surcharge de l'operateur+
          * \param double la valeur a additionner
@@ -208,9 +208,9 @@ Matrix<T>::Matrix(matrix_type type,int height, int width, T value)
     {
         for(int i=0; i<width; i++)
             vec[i] = i;
-        unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
-        auto engine = default_random_engine(seed);
-        shuffle(begin(vec), end(vec), engine);
+		unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
+		auto engine = default_random_engine(seed);
+		shuffle(begin(vec), end(vec), engine);
     }
     _matrix = new T*[_height];
     for(int i=0; i<_height; i++)
@@ -223,7 +223,7 @@ Matrix<T>::Matrix(matrix_type type,int height, int width, T value)
                 case standard:
                     _matrix[i][j] = value;
                 break;
-                case random:
+				case stdrand:
                     _matrix[i][j] = (T)((double)rand() / (RAND_MAX));
                 break;
                 case randperm:
@@ -357,7 +357,7 @@ Matrix<T> Matrix<T>::operator*(double val) const
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
+Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(exception)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -369,7 +369,7 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(...)
+Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(exception)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -400,7 +400,7 @@ Matrix<T>& Matrix<T>::soustract(double val)
 
 template<typename T>
 template<typename E>
-Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(...)
+Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(exception)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");

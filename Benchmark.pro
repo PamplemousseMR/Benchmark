@@ -13,22 +13,24 @@ TEMPLATE = app
 CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = NVIDIA
+PLATFORM = AMD
 #----------------------------------
 
 #---------OpenMPI Settings---------
 message("-----Loading OpenMPI-----")
 unix:{
     message("        Unix")
-    QMAKE_CXX = mpicxx
+    QMAKE_CXX = mpic++
     QMAKE_CXX_RELEASE = $$QMAKE_CXX
     QMAKE_CXX_DEBUG = $$QMAKE_CXX
     QMAKE_LINK = $$QMAKE_CXX
 
-    QMAKE_CFLAGS += $$system(mpicc --showme:compile)
-    QMAKE_LFLAGS += $$system(mpicxx --showme:link)
-    QMAKE_CXXFLAGS_DEBUG += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
-    QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+    #QMAKE_CFLAGS += $$system(mpicc --showme:compile)
+    #QMAKE_LFLAGS += $$system(mpic++ --showme:link)
+    QMAKE_CXXFLAGS += -std=c++11
+
+    #QMAKE_CXXFLAGS_DEBUG += $$system(mpic++ --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
+    #QMAKE_CXXFLAGS_RELEASE += $$system(mpic++ --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
     message("        Done")
 }
 win32:{
@@ -142,6 +144,7 @@ win32:{
 
 #--------------Define--------------
 Debug:DEFINES += DEBUG
+DEFINES += PROG
 #----------------------------------
 
 #---------------Src----------------
