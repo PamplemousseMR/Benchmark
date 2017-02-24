@@ -70,19 +70,33 @@ class Matrix
          */
         int getWidht() const;
         /*!
-         * \brief superior modifie la matrice en fonction d'une valeur
+         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur >
          * \param double la valeur a verifier
          * \return la matrice courente modifie
          */
         Matrix& superior(double);
         /*!
-         * \brief superior modifie la matrice en fonction d'une autre matrice
-         * \param double la valeur a verifier
-         * \return la courente matrice modifie
+         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur >
+         * \param const Matrix<E>& la matrice a comparer
+         * \return la matrice modifie
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
         Matrix& superior(const Matrix<E>&) throw(...);
+        /*!
+         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur +
+         * \param const Matrix<E>& la matrice a additionner
+         * \return la matrice modifie
+         * \throws length_error si la taille des matrices est differente
+         */
+        template<typename E>
+        Matrix& add(const Matrix<E>&) throw(...);
+        /*!
+         * \brief superior multiplie la matrice par la valeur
+         * \param double la valeur a multiplier
+         * \return la matrice modifie
+         */
+        Matrix& mutiply(double);
         /*!
          * \brief operator = Surcharge de l'opérateur =
          * \return matrix
@@ -103,7 +117,7 @@ class Matrix
          * \param double la valeur a multiplier
          * \return la matrice multiplier
          */
-        Matrix<T> operator*(double) const;
+        Matrix operator*(double) const;
         /*!
          * \brief operator+ surcharge de l'operateur+
          * \param const Matrix<E>& la matrice a additionner
@@ -111,13 +125,18 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix<T> operator+(const Matrix<E>&) const throw(...);
+        Matrix operator+(const Matrix<E>&) const throw(...);
         /*!
          * \brief operator+ surcharge de l'operateur+
          * \param double la valeur a additionner
          * \return la matrice additionner
          */
-        Matrix<T> operator+(double) const;
+        Matrix operator+(double) const;
+        /*!
+         * \brief operator ! la matrice oposer (operateur! sur le T)
+         * \return la matrice opose
+         */
+        Matrix operator!() const;
         /*!
          * \brief operator << permet l'affichage d'une matrice
          * \param std::ostream& le flux
@@ -177,7 +196,7 @@ template<typename T>
 Matrix<T>::Matrix(int height, int width, T value)
     : _height(height), _width(width)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] ..." << endl;
     #endif
     _matrix = new T*[_height];
@@ -187,7 +206,7 @@ Matrix<T>::Matrix(int height, int width, T value)
         for(int j=0; j<_width; j++)
             _matrix[i][j] = value;
     }
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] Done" << endl;
     #endif
 }
@@ -196,7 +215,7 @@ template<typename T>
 Matrix<T>::Matrix(int height, int width)
     : _height(height), _width(width)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int)] ..." << endl;
     #endif
     _matrix = new T*[_height];
@@ -206,7 +225,7 @@ Matrix<T>::Matrix(int height, int width)
         for(int j=0; j<_width; j++)
             _matrix[i][j] = ((double)rand() / (RAND_MAX));
     }
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int)] Done" << endl;
     #endif
 }
@@ -215,7 +234,7 @@ template<typename T>
 Matrix<T>::Matrix(int width)
     : _height(1), _width(width)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int)] ..." << endl;
     #endif
     vector<int> vec(width);
@@ -231,7 +250,7 @@ Matrix<T>::Matrix(int width)
         for(int j=0; j<_width; j++)
             _matrix[i][j] = vec[j];
     }
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int)] Done" << endl;
     #endif
 }
@@ -240,7 +259,7 @@ template<typename T>
 Matrix<T>::Matrix(const Matrix<T>& matrix)
     : _height(matrix._height), _width(matrix._width)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(const Matrix&)] ..." << endl;
     #endif
 
@@ -252,7 +271,7 @@ Matrix<T>::Matrix(const Matrix<T>& matrix)
             _matrix[i][j] = matrix._matrix[i][j];
     }
 
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(const Matrix&)] Done" << endl;
     #endif
 }
@@ -260,7 +279,7 @@ Matrix<T>::Matrix(const Matrix<T>& matrix)
 template<typename T>
 Matrix<T>::~Matrix()
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][~Matrix] ..." << endl;
     #endif
 
@@ -270,7 +289,7 @@ Matrix<T>::~Matrix()
     }
     delete[] _matrix;
 
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][~Matrix] Done" << endl;
     #endif
 }
@@ -290,7 +309,7 @@ int Matrix<T>::getWidht() const
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][operator=] ..." << endl;
     #endif
 
@@ -302,7 +321,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 
     }
 
-    #ifdef DEBUG
+    #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][operator=] Done" << endl;
     #endif
     return *this;
@@ -362,6 +381,27 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
 
 template<typename T>
 template<typename E>
+Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(...)
+{
+    if(_height!=m.getHeight() || _width!=m.getWidht())
+        throw length_error("matrix length are not equals");
+    for(int i=0; i<_height; i++)
+        for(int j=0; j<_width; j++)
+            _matrix[i][j] = _matrix[i][j] + m[i][j] ;
+    return *this;
+}
+
+template<typename T>
+Matrix<T>& Matrix<T>::mutiply(double val)
+{
+    for(int i=0; i<_height; i++)
+        for(int j=0; j<_width; j++)
+            _matrix[i][j] = (T)(_matrix[i][j] * val);
+    return *this;
+}
+
+template<typename T>
+template<typename E>
 Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(...)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
@@ -380,6 +420,16 @@ Matrix<T> Matrix<T>::operator+(double val) const
     for(int i=0; i<_height; i++)
         for(int j=0; j<_width; j++)
             m[i][j] = _matrix[i][j] + val;
+    return m;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator!() const
+{
+    Matrix<T> m(_height,_width);
+    for(int i=0; i<_height; i++)
+        for(int j=0; j<_width; j++)
+            m[i][j] = !_matrix[i][j];
     return m;
 }
 #endif // MATRIX_H

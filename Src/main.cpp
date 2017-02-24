@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include "../Src/matrix.h"
+#include "graph.h"
 
 using namespace std;
 
@@ -12,6 +12,8 @@ int main()
     cout << "---------------" << endl;
     cout << "   programme   " << endl;
     cout << "---------------" << endl;
+    Graph g;
+    g.generateKroneckerEdges(2,4);
 }
 
 /*#include <stdio.h>
