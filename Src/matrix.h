@@ -13,6 +13,15 @@
 #include <random> //default_random_engine
 #include <chrono> // chrono::system_clock
 /*!
+ * \enum matrix_type le type de construction de la matrice
+ */
+enum matrix_type
+{
+    standard,
+    random,
+    randperm
+};
+/*!
  * \class Matrix<T>
  * \brief classe representant une matrice
  */
@@ -34,23 +43,12 @@ class Matrix
         T** _matrix;
     public :
         /*!
-         * \brief Matrix Constructeur par valeur
+         * \brief Matrix Constructeur
          * \param int Hauteur de la matrice
          * \param int Largeur de la matrice
          * \param T Valeur de remplissage
          */
-        Matrix(int, int, T);
-        /*!
-         * \brief Matrix Constructeur aleatoir [0:1]
-         * \param int Hauteur de la matrice
-         * \param int Largeur de la matrice
-         */
-        Matrix(int, int);
-        /*!
-         * \brief Matrix Constructeur qui remplit avec autant de valeur que de place disponible mais a des emplacements aleatoir
-         * \param int Largeur de la matrice
-         */
-        Matrix(int);
+        Matrix(matrix_type,int, int, T=0);
         /*!
          * \brief Matrix constructeur par copie
          */
@@ -168,7 +166,7 @@ class Matrix
          */
         friend Matrix<T> operator*(double val, const Matrix<T>& mat)
         {
-            Matrix<T> m(mat.getHeight(),mat.getWidht());
+            Matrix<T> m(standard,mat.getHeight(),mat.getWidht());
             for(int i=0; i<mat.getHeight(); i++)
                 for(int j=0; j<mat.getWidht(); j++)
                     m[i][j] = mat[i][j] * val;
@@ -193,65 +191,43 @@ class Matrix
 using namespace std;
 
 template<typename T>
-Matrix<T>::Matrix(int height, int width, T value)
+Matrix<T>::Matrix(matrix_type type,int height, int width, T value)
     : _height(height), _width(width)
 {
     #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] ..." << endl;
     #endif
+    vector<int> vec(width);
+    if(type == randperm)
+    {
+        for(int i=0; i<width; i++)
+            vec[i] = i;
+        unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
+        auto engine = default_random_engine(seed);
+        shuffle(begin(vec), end(vec), engine);
+    }
     _matrix = new T*[_height];
     for(int i=0; i<_height; i++)
     {
         _matrix[i] = new T[_width];
         for(int j=0; j<_width; j++)
-            _matrix[i][j] = value;
+        {
+            switch(type)
+            {
+                case standard:
+                    _matrix[i][j] = value;
+                break;
+                case random:
+                    _matrix[i][j] = (T)((double)rand() / (RAND_MAX));
+                break;
+                case randperm:
+                    _matrix[i][j] = vec[j];
+                break;
+            }
+        }
     }
     #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] Done" << endl;
-    #endif
-}
-
-template<typename T>
-Matrix<T>::Matrix(int height, int width)
-    : _height(height), _width(width)
-{
-    #ifdef DEBUG_0
-    cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int)] ..." << endl;
-    #endif
-    _matrix = new T*[_height];
-    for(int i=0; i<_height; i++)
-    {
-        _matrix[i] = new T[_width];
-        for(int j=0; j<_width; j++)
-            _matrix[i][j] = ((double)rand() / (RAND_MAX));
-    }
-    #ifdef DEBUG_0
-    cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int)] Done" << endl;
-    #endif
-}
-
-template<typename T>
-Matrix<T>::Matrix(int width)
-    : _height(1), _width(width)
-{
-    #ifdef DEBUG_0
-    cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int)] ..." << endl;
-    #endif
-    vector<int> vec(width);
-    for(int i=0; i<width; i++)
-        vec[i] = i;
-    unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
-    auto engine = default_random_engine(seed);
-    shuffle(begin(vec), end(vec), engine);
-    _matrix = new T*[_height];
-    for(int i=0; i<_height; i++)
-    {
-        _matrix[i] = new T[_width];
-        for(int j=0; j<_width; j++)
-            _matrix[i][j] = vec[j];
-    }
-    #ifdef DEBUG_0
-    cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int)] Done" << endl;
     #endif
 }
 
@@ -313,14 +289,20 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     cout << "[Matrix<" << typeid(T).name() << ">][operator=] ..." << endl;
     #endif
 
-    _height = m._height;
-    _width = m._width;
-    for(int i=0; i<_height; i++) {
+    for(int i=0; i<_height; i++)
+        delete[] _matrix[i];
+    delete[] _matrix;
+
+    _height = m.getHeight();
+    _width = m.getWidht();
+
+    _matrix = new T*[_height];
+    for(int i=0; i<_height; i++)
+    {
+        _matrix[i] = new T[_width];
         for(int j=0; j<_width; j++)
-            _matrix[i][j] = m._matrix[i][j];
-
+            _matrix[i][j] = m[i][j];
     }
-
     #ifdef DEBUG_0
     cout << "[Matrix<" << typeid(T).name() << ">][operator=] Done" << endl;
     #endif
@@ -406,7 +388,7 @@ Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(...)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
-    Matrix<T> mat(_height,_width);
+    Matrix<T> mat(standard,_height,_width);
     for(int i=0; i<_height; i++)
         for(int j=0; j<_width; j++)
             mat[i][j] = _matrix[i][j] + m[i][j];
@@ -426,7 +408,7 @@ Matrix<T> Matrix<T>::operator+(double val) const
 template<typename T>
 Matrix<T> Matrix<T>::operator!() const
 {
-    Matrix<T> m(_height,_width);
+    Matrix<T> m(standard, _height,_width);
     for(int i=0; i<_height; i++)
         for(int j=0; j<_width; j++)
             m[i][j] = !_matrix[i][j];
