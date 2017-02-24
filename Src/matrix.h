@@ -5,6 +5,13 @@
  * \brief contient la classe representant une matrice
  * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
  */
+#ifdef __linux__
+#define thr throw(std::exception)
+#elif _WIN32
+#define thr throw(...)
+#else
+
+#endif
 #include <iostream> //cout
 #include <stdlib.h> //rand
 #include <stdexcept> //length_error
@@ -80,7 +87,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix& superior(const Matrix<E>&) throw();
+        Matrix& superior(const Matrix<E>&) thr;
         /*!
          * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur +
          * \param const Matrix<E>& la matrice a additionner
@@ -88,7 +95,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix& add(const Matrix<E>&) throw();
+        Matrix& add(const Matrix<E>&) thr;
         /*!
          * \brief superior multiplie la matrice par la valeur
          * \param double la valeur a multiplier
@@ -129,7 +136,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-        Matrix operator+(const Matrix<E>&) const throw();
+        Matrix operator+(const Matrix<E>&) const thr;
         /*!
          * \brief operator+ surcharge de l'operateur+
          * \param double la valeur a additionner
@@ -357,7 +364,7 @@ Matrix<T> Matrix<T>::operator*(double val) const
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
+Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) thr
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -369,7 +376,7 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(...)
+Matrix<T>& Matrix<T>::add(const Matrix<E>& m) thr
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -400,7 +407,7 @@ Matrix<T>& Matrix<T>::soustract(double val)
 
 template<typename T>
 template<typename E>
-Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(...)
+Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const thr
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
