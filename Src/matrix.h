@@ -80,7 +80,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-		Matrix& superior(const Matrix<E>&) throw(std::exception);
+        Matrix& superior(const Matrix<E>&) throw();
         /*!
          * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur +
          * \param const Matrix<E>& la matrice a additionner
@@ -88,7 +88,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-		Matrix& add(const Matrix<E>&) throw(std::exception);
+        Matrix& add(const Matrix<E>&) throw();
         /*!
          * \brief superior multiplie la matrice par la valeur
          * \param double la valeur a multiplier
@@ -129,7 +129,7 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-		Matrix operator+(const Matrix<E>&) const throw(std::exception);
+        Matrix operator+(const Matrix<E>&) const throw();
         /*!
          * \brief operator+ surcharge de l'operateur+
          * \param double la valeur a additionner
@@ -357,7 +357,7 @@ Matrix<T> Matrix<T>::operator*(double val) const
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(exception)
+Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(...)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -369,7 +369,7 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(exception)
 
 template<typename T>
 template<typename E>
-Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(exception)
+Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(...)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
@@ -400,7 +400,7 @@ Matrix<T>& Matrix<T>::soustract(double val)
 
 template<typename T>
 template<typename E>
-Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(exception)
+Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(...)
 {
     if(_height!=m.getHeight() || _width!=m.getWidht())
         throw length_error("matrix length are not equals");
