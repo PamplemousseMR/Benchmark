@@ -10,16 +10,8 @@ using namespace std;
 int main()
 {
     cout << "---------------" << endl;
-    cout << "  test matrix  " << endl;
+    cout << "   programme   " << endl;
     cout << "---------------" << endl;
-    srand ((unsigned int)time(NULL));
-    Matrix<double> m(5);
-    Matrix<double> m2(5);
-    cout << m << endl;
-    cout<<endl;
-    cout << m2 << endl;
-    cout<<endl;
-    cout << (2*m) << endl;
 }
 
 /*#include <stdio.h>
