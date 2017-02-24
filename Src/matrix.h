@@ -221,7 +221,7 @@ Matrix<T>::Matrix(int width)
     vector<int> vec(width);
     for(int i=0; i<width; i++)
         vec[i] = i;
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
     auto engine = default_random_engine(seed);
     shuffle(begin(vec), end(vec), engine);
     _matrix = new T*[_height];
