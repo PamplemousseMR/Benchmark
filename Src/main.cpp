@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include "../Src/matrix.h"
 
 using namespace std;
@@ -8,11 +10,14 @@ int main()
     cout << "---------------" << endl;
     cout << "  test matrix  " << endl;
     cout << "---------------" << endl;
-    Matrix m(5,2);
+    srand ((unsigned int)time(NULL));
+    Matrix<double> m(5);
+    Matrix<double> m2(5);
     cout << m << endl;
-    cout << "set [3][1] to 2" << endl;
-    m[3][1] = 2;
-    cout << m << endl;
+    cout<<endl;
+    cout << m2 << endl;
+    cout<<endl;
+    cout << (2*m) << endl;
 }
 
 /*#include <stdio.h>
