@@ -96,6 +96,12 @@ class Matrix
          */
         Matrix& mutiply(double);
         /*!
+         * \brief soustract enleve la valeur a chaque element de la matrice
+         * \param double la valeur a soustraire
+         * \return la matrice modifie
+         */
+        Matrix& soustract(double);
+        /*!
          * \brief operator = Surcharge de l'opérateur =
          * \return matrix
          */
@@ -381,6 +387,16 @@ Matrix<T>& Matrix<T>::mutiply(double val)
             _matrix[i][j] = (T)(_matrix[i][j] * val);
     return *this;
 }
+
+template<typename T>
+Matrix<T>& Matrix<T>::soustract(double val)
+{
+    for(int i=0; i<_height; i++)
+        for(int j=0; j<_width; j++)
+            _matrix[i][j] = (T)(_matrix[i][j] - val);
+    return *this;
+}
+
 
 template<typename T>
 template<typename E>
