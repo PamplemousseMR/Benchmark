@@ -88,11 +88,11 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-#ifdef DEBUG_EXCEPTION
+        #ifdef DEBUG_EXCEPTION
         Matrix& superior(const Matrix<E>&) throw(thr);
-#else
+        #else
         Matrix& superior(const Matrix<E>&);
-#endif
+        #endif
         /*!
          * \fn Matrix& add(const Matrix<E>&) throw(thr)
          * \brief Modifie la matrice en fonction d'une autre matrice avec l'operateur +
@@ -101,11 +101,11 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-#ifdef DEBUG_EXCEPTION
+        #ifdef DEBUG_EXCEPTION
         Matrix& add(const Matrix<E>&) throw(thr);
-#else
+        #else
         Matrix& add(const Matrix<E>&);
-#endif
+        #endif
         /*!
          * \fn Matrix& mutiply(double)
          * \brief Multiplie la matrice par la valeur
@@ -139,22 +139,22 @@ class Matrix
          * \param int : L'index de la valeur a recuperer
          * \return T* : tableau d'entier correspondant à la ligne spécifié en paramètres
          */
-#ifdef DEBUG_EXCEPTION
+        #ifdef DEBUG_EXCEPTION
         T* operator[](int) throw(thr);
-#else
+        #else
         T* operator[](int);
-#endif
+        #endif
         /*!
          * \fn const T* operator[](int) const throw(thr)
          * \brief Surcharge de l'opérateur []
          * \param int : L'index de la valeur a recuperer
          * \return T* : tableau d'entier correspondant à la ligne spécifié en paramètres
          */
-#ifdef DEBUG_EXCEPTION
+        #ifdef DEBUG_EXCEPTION
         const T* operator[](int) const throw(thr);
-#else
+        #else
         const T* operator[](int) const;
-#endif
+        #endif
         /*!
          * \fn Matrix operator*(double) const
          * \brief Surcharge de l'operateur*
@@ -170,11 +170,11 @@ class Matrix
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
-#ifdef DEBUG_EXCEPTION
+        #ifdef DEBUG_EXCEPTION
         Matrix operator+(const Matrix<E>&) const throw(thr);
-#else
+        #else
         Matrix operator+(const Matrix<E>&) const;
-#endif
+        #endif
         /*!
          * \fn Matrix operator+(double) const
          * \brief Surcharge de l'operateur+
@@ -198,9 +198,9 @@ class Matrix
         friend std::ostream& operator<<(std::ostream& flux, const Matrix<T>& m)
         {
             int k=0;
-            for(int i=0; i<m._height; i++)
+            for(int i=0; i<m._height; ++i)
             {
-                for(int j=0; j<m._width; j++)
+                for(int j=0; j<m._width; ++j)
                 {
                     flux << m._matrix[i][j];
                     if(j < m._width-1)
@@ -221,9 +221,9 @@ class Matrix
          */
         friend Matrix<T> operator*(double val, const Matrix<T>& mat)
         {
-            Matrix<T> m(standard,mat.getHeight(),mat.getWidht());
-            for(int i=0; i<mat.getHeight(); i++)
-                for(int j=0; j<mat.getWidht(); j++)
+            Matrix<T> m(standard,mat._height,mat._width);
+            for(int i=0; i<mat._height; ++i)
+                for(int j=0; j<mat._width; ++j)
                     m[i][j] = mat[i][j] * val;
             return m;
         }
@@ -236,9 +236,9 @@ class Matrix
          */
         friend Matrix<T> operator+(double val, const Matrix<T>& mat)
         {
-            Matrix<T> m(mat.getHeight(),mat.getWidht());
-            for(int i=0; i<mat.getHeight(); i++)
-                for(int j=0; j<mat.getWidht(); j++)
+            Matrix<T> m(mat._height,mat._width);
+            for(int i=0; i<mat._height; ++i)
+                for(int j=0; j<mat._width; ++j)
                     m[i][j] = mat[i][j] + val;
             return m;
         }
@@ -253,24 +253,25 @@ Matrix<T>::Matrix(matrix_type type,int height, int width, T value)
     #ifdef DEBUG_OUTPUT
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] ..." << endl;
     #endif
+
     vector<int> vec(width);
     if(type == randperm)
     {
-        for(int i=0; i<width; i++)
+        for(int i=0; i<width; ++i)
             vec[i] = i;
-#ifdef RANDOM
+        #ifdef RANDOM
         unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
         auto engine = default_random_engine(seed);
-#else
+        #else
         auto engine = default_random_engine();
-#endif
+        #endif
 		shuffle(begin(vec), end(vec), engine);
     }
     _matrix = new T*[_height];
-    for(int i=0; i<_height; i++)
+    for(int i=0; i<_height; ++i)
     {
         _matrix[i] = new T[_width];
-        for(int j=0; j<_width; j++)
+        for(int j=0; j<_width; ++j)
         {
             switch(type)
             {
@@ -286,6 +287,7 @@ Matrix<T>::Matrix(matrix_type type,int height, int width, T value)
             }
         }
     }
+
     #ifdef DEBUG_OUTPUT
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(int,int,T)] Done" << endl;
     #endif
@@ -300,10 +302,10 @@ Matrix<T>::Matrix(const Matrix<T>& matrix)
     #endif
 
     _matrix = new T*[_height];
-    for(int i=0; i<_height; i++)
+    for(int i=0; i<_height; ++i)
     {
         _matrix[i] = new T[_width];
-        for(int j=0; j<_width; j++)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = matrix._matrix[i][j];
     }
 
@@ -319,7 +321,7 @@ Matrix<T>::~Matrix()
     cout << "[Matrix<" << typeid(T).name() << ">][~Matrix] ..." << endl;
     #endif
 
-    for(int i=0; i<_height; i++)
+    for(int i=0; i<_height; ++i)
         delete[] _matrix[i];
     delete[] _matrix;
 
@@ -347,18 +349,18 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     cout << "[Matrix<" << typeid(T).name() << ">][operator=] ..." << endl;
     #endif
 
-    for(int i=0; i<_height; i++)
+    for(int i=0; i<_height; ++i)
         delete[] _matrix[i];
     delete[] _matrix;
 
-    _height = m.getHeight();
-    _width = m.getWidht();
+    _height = m._height;
+    _width = m._width;
 
     _matrix = new T*[_height];
-    for(int i=0; i<_height; i++)
+    for(int i=0; i<_height; ++i)
     {
         _matrix[i] = new T[_width];
-        for(int j=0; j<_width; j++)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = m[i][j];
     }
     #ifdef DEBUG_OUTPUT
@@ -375,11 +377,16 @@ T* Matrix<T>::operator[](int index) throw(thr)
 T* Matrix<T>::operator[](int index)
 #endif
 {
-#ifdef DEBUG_EXCEPTION
+    #ifdef DEBUG_EXCEPTION
     if(index < 0 || index >= _height)
-        throw length_error("index out of bound");
-#endif
-        return _matrix[index];
+    {
+        string ex = "[Matrix<";
+        ex += typeid(T).name();
+        ex += ">][operator[]]index out of bound";
+        throw length_error(ex.c_str());
+    }
+    #endif
+    return _matrix[index];
 }
 
 template<typename T>
@@ -389,18 +396,23 @@ const T* Matrix<T>::operator[](int index) const throw(thr)
 const T* Matrix<T>::operator[](int index) const
 #endif
 {
-#ifdef DEBUG_EXCEPTION
+    #ifdef DEBUG_EXCEPTION
     if(index < 0 || index >= _height)
-        throw length_error("index out of bound");
-#endif
-        return _matrix[index];
+    {
+        string ex = "[Matrix<";
+        ex += typeid(T).name();
+        ex += ">][operator[]] index out of bound";
+        throw length_error(ex.c_str());
+    }
+    #endif
+    return _matrix[index];
 }
 
 template<typename T>
 Matrix<T>& Matrix<T>::superior(double val)
 {
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = _matrix[i][j]>val;
     return *this;
 }
@@ -409,8 +421,8 @@ template<typename T>
 Matrix<T> Matrix<T>::operator*(double val) const
 {
     Matrix<T> m(_height,_width);
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             m[i][j] = _matrix[i][j] * val;
     return m;
 }
@@ -423,12 +435,17 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(thr)
 Matrix<T>& Matrix<T>::superior(const Matrix<E>& m)
 #endif
 {
-#ifdef DEBUG_EXCEPTION
-    if(_height!=m.getHeight() || _width!=m.getWidht())
-        throw length_error("matrix length are not equals");
-#endif
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    #ifdef DEBUG_EXCEPTION
+    if(_height!=m._height || _width!=m._width)
+    {
+        string ex = "[Matrix<";
+        ex += typeid(T).name();
+        ex += ">][superior] index out of bound";
+        throw length_error(ex.c_str());
+    }
+    #endif
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = _matrix[i][j]>m[i][j] ;
     return *this;
 }
@@ -441,12 +458,17 @@ Matrix<T>& Matrix<T>::add(const Matrix<E>& m) throw(thr)
 Matrix<T>& Matrix<T>::add(const Matrix<E>& m)
 #endif
 {
-#ifdef DEBUG_EXCEPTION
+    #ifdef DEBUG_EXCEPTION
     if(_height!=m.getHeight() || _width!=m.getWidht())
-        throw length_error("matrix length are not equals");
-#endif
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    {
+        string ex = "[Matrix<";
+        ex += typeid(T).name();
+        ex += ">][add] index out of bound";
+        throw length_error(ex.c_str());
+    }
+    #endif
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = _matrix[i][j] + m[i][j] ;
     return *this;
 }
@@ -454,8 +476,8 @@ Matrix<T>& Matrix<T>::add(const Matrix<E>& m)
 template<typename T>
 Matrix<T>& Matrix<T>::mutiply(double val)
 {
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = (T)(_matrix[i][j] * val);
     return *this;
 }
@@ -463,8 +485,8 @@ Matrix<T>& Matrix<T>::mutiply(double val)
 template<typename T>
 Matrix<T>& Matrix<T>::soustract(double val)
 {
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = (T)(_matrix[i][j] - val);
     return *this;
 }
@@ -472,8 +494,8 @@ Matrix<T>& Matrix<T>::soustract(double val)
 template<typename T>
 Matrix<T>& Matrix<T>::no()
 {
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             _matrix[i][j] = !_matrix[i][j];
     return *this;
 }
@@ -486,13 +508,18 @@ Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(thr)
 Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const
 #endif
 {
-#ifdef DEBUG_EXCEPTION
-    if(_height!=m.getHeight() || _width!=m.getWidht())
-        throw length_error("matrix length are not equals");
-#endif
+    #ifdef DEBUG_EXCEPTION
+    if(_height!=m._height || _width!=m._width)
+    {
+        string ex = "[Matrix<";
+        ex += typeid(T).name();
+        ex += ">][operator+] index out of bound";
+        throw length_error(ex.c_str());
+    }
+    #endif
     Matrix<T> mat(standard,_height,_width);
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             mat[i][j] = _matrix[i][j] + m[i][j];
     return mat;
 }
@@ -501,8 +528,8 @@ template<typename T>
 Matrix<T> Matrix<T>::operator+(double val) const
 {
     Matrix<T> m(_height,_width);
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             m[i][j] = _matrix[i][j] + val;
     return m;
 }
@@ -511,8 +538,8 @@ template<typename T>
 Matrix<T> Matrix<T>::operator!() const
 {
     Matrix<T> m(standard, _height,_width);
-    for(int i=0; i<_height; i++)
-        for(int j=0; j<_width; j++)
+    for(int i=0; i<_height; ++i)
+        for(int j=0; j<_width; ++j)
             m[i][j] = !_matrix[i][j];
     return m;
 }

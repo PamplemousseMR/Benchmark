@@ -12,6 +12,7 @@
  */
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 #include "commun.h"
 #include "tree.h"
 #include "matrix.h"
@@ -51,7 +52,11 @@ class Graph
          * \param int : log2 des arêtes
          * \param int : ratio des arêtes du graphe
          */
+        #ifdef DEBUG_EXCEPTION
+        void generateKroneckerEdges(unsigned, unsigned) throw (thr);
+        #else
         void generateKroneckerEdges(unsigned, unsigned);
+        #endif
         /*!
          * \fn friend std::ostream& operator<<(std::ostream&, const Graph&)
          * \brief Permet l'affichage d'un graphe
