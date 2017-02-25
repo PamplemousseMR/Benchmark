@@ -125,7 +125,7 @@ class Matrix
          * \brief Calcule la matrice oposer (operateur! sur le T)
          * \return Matrix<T> : La matrice modifie
          */
-        Matrix& not();
+        Matrix& no();
         /*!
          * \fn Matrix& operator=(const Matrix&)
          * \brief Surcharge de l'opérateur =
@@ -470,8 +470,11 @@ Matrix<T>& Matrix<T>::soustract(double val)
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::not()
+Matrix<T>& Matrix<T>::no()
 {
+    for(int i=0; i<_height; i++)
+        for(int j=0; j<_width; j++)
+            _matrix[i][j] = !_matrix[i][j];
     return *this;
 }
 

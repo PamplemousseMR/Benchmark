@@ -74,6 +74,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
             temp[0][i] = (unsigned)ii_bit[0][i];
             temp[1][i] = (unsigned)ij_bit[0][i];
         }
+
         ij.add(temp.mutiply(pow(2,ib)));
     }
     cout << endl;
