@@ -121,6 +121,12 @@ class Matrix
          */
         Matrix& soustract(double);
         /*!
+         * \fn Matrix& not()
+         * \brief Calcule la matrice oposer (operateur! sur le T)
+         * \return Matrix<T> : La matrice modifie
+         */
+        Matrix& not();
+        /*!
          * \fn Matrix& operator=(const Matrix&)
          * \brief Surcharge de l'opérateur =
          * \param Matrix<T> la matrice a copier
@@ -463,6 +469,11 @@ Matrix<T>& Matrix<T>::soustract(double val)
     return *this;
 }
 
+template<typename T>
+Matrix<T>& Matrix<T>::not()
+{
+    return *this;
+}
 
 template<typename T>
 template<typename E>
