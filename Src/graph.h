@@ -3,7 +3,12 @@
 /*!
  * \file graph.h
  * \brief contient la classe representant un graphe
- * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
  */
 #include <vector>
 #include <iostream>
@@ -17,45 +22,41 @@
 class Graph
 {
     private :
-        /*!
-         * \brief _nNode nombre de sommet du graphe
-         */
-        int _nNode;
-        /*!
-         * \brief _nEdge nobre d'arrete
-         */
-        int _nEdge;
-        /*!
-         * \brief _adj liste d'adjacence
-         */
-        std::vector<std::vector<int> > _adj;
-        /*!
-         * \brief _trees arbres relatifs au graphe
-         */
-        std::vector<Tree> _trees;
+
+        int _nNode;/*!< Nombre de sommet */
+        int _nEdge;/*!< Nombre d'arrete */
+        std::vector<std::vector<int> > _adj;/*!< Liste d'adjacence */
+        std::vector<Tree> _trees;/*!< Arbres relatifs au graphe */
+
     public :
         /*!
-         * \brief Graph constructeur
-         * \param int : log2 du nombre de sommet
-         * \param int : ratio d'arrete du graphe
+         * fn Graph()
+         * \brief constructeur par default
          */
         Graph();
         /*!
-         * \brief Graph constructeur par copie
+         * \fn Graph(const Graph&)
+         * \brief constructeur par copie
+         * \param Graph : le graphe a copier
          */
         Graph(const Graph&);
         /*!
-         * \brief ~Graph destructeur
+         * \fn ~Graph()
+         * \brief destructeur
          */
         ~Graph();
         /*!
-         * \brief generateKroneckerEdges genere les arretes avec la methode de kronecker
+         * \fn void generateKroneckerEdges(unsigned, unsigned)
+         * \brief genere les arretes avec la methode de kronecker
          * \param int : log2 des arretes
          * \param int : ratio des arretes du graphe
          */
         void generateKroneckerEdges(unsigned, unsigned);
         /*!
-         * \brief operator << permet l'affichage d'un graphe
+         * \fn friend std::ostream& operator<<(std::ostream&, const Graph&)
+         * \brief permet l'affichage d'un graphe
+         * \param ostream : le flux
+         * \param Graph : le graphe
          * \return le stream passe en parametre modifie
          */
         friend std::ostream& operator<<(std::ostream&, const Graph&);

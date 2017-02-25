@@ -3,8 +3,12 @@
 /*!
  * \file tree.h
  * \brief contient la classe representant un arbre
- * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
- */
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi */
 #include <iostream>
 #include "node.h"
 /*!
