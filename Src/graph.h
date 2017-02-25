@@ -31,33 +31,33 @@ class Graph
     public :
         /*!
          * \fn Graph()
-         * \brief constructeur par default
+         * \brief Constructeur par defaut
          */
         Graph();
         /*!
          * \fn Graph(const Graph&)
-         * \brief constructeur par copie
-         * \param Graph : le graphe a copier
+         * \brief Constructeur par copie
+         * \param Graph : le graphe à copier
          */
         Graph(const Graph&);
         /*!
          * \fn ~Graph()
-         * \brief destructeur
+         * \brief Destructeur
          */
         ~Graph();
         /*!
          * \fn void generateKroneckerEdges(unsigned, unsigned)
-         * \brief genere les arretes avec la methode de kronecker
-         * \param int : log2 des arretes
-         * \param int : ratio des arretes du graphe
+         * \brief Génère les arêtes avec la méthode de kronecker
+         * \param int : log2 des arêtes
+         * \param int : ratio des arêtes du graphe
          */
         void generateKroneckerEdges(unsigned, unsigned);
         /*!
          * \fn friend std::ostream& operator<<(std::ostream&, const Graph&)
-         * \brief permet l'affichage d'un graphe
+         * \brief Permet l'affichage d'un graphe
          * \param ostream : le flux
          * \param Graph : le graphe
-         * \return le stream passe en parametre modifie
+         * \return le stream passé en parametre modifié
          */
         friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

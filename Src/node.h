@@ -3,10 +3,7 @@
 /*!
  * \file node.h
 <<<<<<< HEAD
- * \brief contient la classe representant un noeud d'un arbre
-=======
- * \brief Contient la classe representant un noeud d'un arbre
->>>>>>> 49fe165f64657d99e10a7a5114244c6938b34353
+ * \brief Contient la classe représentant un noeud d'un arbre
  * \author Appert Kevin
  * \author Bocahu Florent
  * \author Hun Tony
@@ -18,7 +15,7 @@
 #include <iostream>
 /*!
  * \class Node
- * \brief classe representant un noeud d'un arbre
+ * \brief classe représentant un noeud d'un arbre
  */
 class Node;
 class Node
