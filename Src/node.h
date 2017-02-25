@@ -2,9 +2,13 @@
 #define NODE_H
 /*!
  * \file node.h
- * \brief contient la classe representant un noeud d'un arbre
- * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
- */
+ * \brief Contient la classe representant un noeud d'un arbre
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi */
 #include <vector>
 #include <iostream>
 /*!
@@ -15,21 +19,22 @@ class Node;
 class Node
 {
     private :
-        /*!
-         * \brief _childs les enfants du noeud
-         */
-        std::vector<Node*> _childs;
+        std::vector<Node*> _childs;/*!< Enfants du noeud */
     public :
         /*!
-         * \brief Node constructeur
+         * fn Node()
+         * \brief Constructeur par defaut
          */
         Node();
         /*!
-         * \brief Node constructeur par copie
+         * \fn Node(const Node&)
+         * \brief Constructeur par copie
+         * \param Node : le noeud à copier
          */
         Node(const Node&);
         /*!
-         * \brief ~Node destructeur
+         * \fn ~Node()
+         * \brief Destructeur
          */
         ~Node();
 };
