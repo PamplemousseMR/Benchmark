@@ -2,13 +2,14 @@
 #define TREE_H
 /*!
  * \file tree.h
- * \brief contient la classe representant un arbre
+ * \brief Contient la classe representant un arbre
  * \author Appert Kevin
  * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain
- * \author Peccard Remi */
+ * \author Peccard Remi
+ */
 #include <iostream>
 #include "node.h"
 /*!
@@ -18,21 +19,24 @@
 class Tree
 {
     private :
-        /*!
-         * \brief _root racine de l'arbre
-         */
-        Node _root;
+
+        Node _root;/*!< Racine de l'arbre */
+
     public :
         /*!
-         * \brief Tree::Tree Constructeur
+         * \fn Tree()
+         * \brief Constructeur par defaut
          */
         Tree();
         /*!
-         * \brief Tree::Tree Constructeur par copie
+         * \fn Tree(const Tree&)
+         * \brief Constructeur par copie
+         * \param Tree : l'arbre à copier
          */
         Tree(const Tree&);
         /*!
-         * \brief Tree::Tree Destructeur
+         * \fn ~Graph()
+         * \brief Destructeur
          */
         ~Tree();
 };
