@@ -30,7 +30,7 @@ class Graph
 
     public :
         /*!
-         * fn Graph()
+         * \fn Graph()
          * \brief constructeur par default
          */
         Graph();

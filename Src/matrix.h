@@ -3,7 +3,12 @@
 /*!
  * \file Matrix.h
  * \brief contient la classe representant une matrice
- * \author Appert Kevin, Bocahu Florent, Hun Tony, Lataix Maxime, Manciaux Romain, Peccard Remi
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
  */
 #include <iostream> //cout
 #include <stdlib.h> //rand
@@ -14,7 +19,8 @@
 #include <chrono> // chrono::system_clock
 #include "commun.h"
 /*!
- * \enum matrix_type le type de construction de la matrice
+ * \enum matrix_type
+ * \brief le type de construction de la matrice
  */
 enum matrix_type
 {
@@ -30,54 +36,55 @@ template<typename T>
 class Matrix
 {
     private :
-        /*!
-         * \brief _height hauteur de la matrice
-         */
-        int _height;
-        /*!
-         * \brief _width largeur de la matrice
-         */
-        int _width;
-        /*!
-         * \brief _matrix les donnees de la matrice
-         */
-        T** _matrix;
+
+        int _height;/*!< Hauteur de la matrice */
+        int _width;/*!< Largeur de la matrice */
+        T** _matrix;/*!< Les donnees de la matrice */
+
     public :
         /*!
-         * \brief Matrix Constructeur
-         * \param int Hauteur de la matrice
-         * \param int Largeur de la matrice
-         * \param T Valeur de remplissage
+         * \fn Matrix(matrix_type,int, int, T=0)
+         * \brief Constructeur
+         * \param int : Hauteur de la matrice
+         * \param int : Largeur de la matrice
+         * \param T : Valeur de remplissage
          */
         Matrix(matrix_type,int, int, T=0);
         /*!
-         * \brief Matrix constructeur par copie
+         * \fn Matrix(const Matrix&)
+         * \brief Constructeur par copie
+         * \param Matrix<T> La matrice a copier
          */
         Matrix(const Matrix&);
         /*!
-         * \brief ~Matrix destructeur
+         * \fn ~Matrix()
+         * \brief Destructeur
          */
         ~Matrix();
         /*!
-         * \brief getHeight retourn la hauteur de la matrice
-         * \return int la hauteur
+         * \fn int getHeight() const
+         * \brief Retourn la hauteur de la matrice
+         * \return int : La hauteur
          */
         int getHeight() const;
         /*!
-         * \brief getWidht retourn la largeur de la matrice
-         * \return int la largeur
+         * \fn int getWidht() const
+         * \brief Retourn la largeur de la matrice
+         * \return int : La largeur
          */
         int getWidht() const;
         /*!
-         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur >
-         * \param double la valeur a verifier
-         * \return la matrice courente modifie
+         * \fn Matrix& superior(double)
+         * \brief Modifie la matrice en fonction d'une autre matrice avec l'operateur >
+         * \param double : La valeur a verifier
+         * \return Matrix<T> La matrice courente modifie
          */
         Matrix& superior(double);
         /*!
-         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur >
-         * \param const Matrix<E>& la matrice a comparer
-         * \return la matrice modifie
+         * \fn Matrix& superior(const Matrix<E>&) throw(thr)
+         * \brief Modifie la matrice en fonction d'une autre matrice avec l'operateur >
+         * \param Matrix<T> La matrice a comparer
+         * \return Matrix<T> La matrice modifie
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
@@ -87,9 +94,10 @@ class Matrix
         Matrix& superior(const Matrix<E>&);
 #endif
         /*!
-         * \brief superior modifie la matrice en fonction d'une autre matrice avec l'operateur +
-         * \param const Matrix<E>& la matrice a additionner
-         * \return la matrice modifie
+         * \fn Matrix& add(const Matrix<E>&) throw(thr)
+         * \brief Modifie la matrice en fonction d'une autre matrice avec l'operateur +
+         * \param Matrix Ma matrice a additionner
+         * \return Matrix<T> La matrice modifie
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
@@ -99,33 +107,42 @@ class Matrix
         Matrix& add(const Matrix<E>&);
 #endif
         /*!
-         * \brief superior multiplie la matrice par la valeur
-         * \param double la valeur a multiplier
-         * \return la matrice modifie
+         * \fn Matrix& mutiply(double)
+         * \brief Multiplie la matrice par la valeur
+         * \param double : la valeur a multiplier
+         * \return Matrix<T> la matrice modifie
          */
         Matrix& mutiply(double);
         /*!
-         * \brief soustract enleve la valeur a chaque element de la matrice
-         * \param double la valeur a soustraire
-         * \return la matrice modifie
+         * \fn Matrix& soustract(double)
+         * \brief Soustrait la valeur a chaque element de la matrice
+         * \param double : la valeur a soustraire
+         * \return Matrix<T> La matrice modifie
          */
         Matrix& soustract(double);
         /*!
-         * \brief operator = Surcharge de l'opérateur =
-         * \return matrix
+         * \fn Matrix& operator=(const Matrix&)
+         * \brief Surcharge de l'opérateur =
+         * \param Matrix<T> la matrice a copier
+         * \return Matrix<T> la matrice modifier
          */
         Matrix& operator=(const Matrix&);
         /*!
-         * \brief operator [] Surcharge de l'opérateur []
-         * \return tableau d'entier correspondant à la ligne spécifié en paramètres
+         * \fn T* operator[](int) throw(thr)
+         * \brief Surcharge de l'opérateur []
+         * \param int : L'index de la valeur a recuperer
+         * \return T* : tableau d'entier correspondant à la ligne spécifié en paramètres
          */
 #ifdef DEBUG_EXCEPTION
         T* operator[](int) throw(thr);
 #else
         T* operator[](int);
-#endif        /*!
-         * \brief operator [] Surcharge de l'opérateur []
-         * \return tableau d'entier correspondant à la ligne spécifié en paramètres
+#endif
+        /*!
+         * \fn const T* operator[](int) const throw(thr)
+         * \brief Surcharge de l'opérateur []
+         * \param int : L'index de la valeur a recuperer
+         * \return T* : tableau d'entier correspondant à la ligne spécifié en paramètres
          */
 #ifdef DEBUG_EXCEPTION
         const T* operator[](int) const throw(thr);
@@ -133,15 +150,17 @@ class Matrix
         const T* operator[](int) const;
 #endif
         /*!
-         * \brief operator* surcharge de l'operateur*
-         * \param double la valeur a multiplier
-         * \return la matrice multiplier
+         * \fn Matrix operator*(double) const
+         * \brief Surcharge de l'operateur*
+         * \param double : la valeur a multiplier
+         * \return Matrix<T> Une matrice multiplier
          */
         Matrix operator*(double) const;
         /*!
-         * \brief operator+ surcharge de l'operateur+
-         * \param const Matrix<E>& la matrice a additionner
-         * \return la matrice additionner
+         * \fn Matrix operator+(const Matrix<E>&) const throw(thr)
+         * \brief Surcharge de l'operateur+
+         * \param Matrix<T> La matrice a additionner
+         * \return Matrix<T> La matrice additionner
          * \throws length_error si la taille des matrices est differente
          */
         template<typename E>
@@ -151,21 +170,24 @@ class Matrix
         Matrix operator+(const Matrix<E>&) const;
 #endif
         /*!
-         * \brief operator+ surcharge de l'operateur+
-         * \param double la valeur a additionner
-         * \return la matrice additionner
+         * \fn Matrix operator+(double) const
+         * \brief Surcharge de l'operateur+
+         * \param double : La valeur a additionner
+         * \return Matrix<T> La matrice additionner
          */
         Matrix operator+(double) const;
         /*!
-         * \brief operator ! la matrice oposer (operateur! sur le T)
-         * \return la matrice opose
+         * \fn Matrix operator!() const
+         * \brief Calcule la matrice oposer (operateur! sur le T)
+         * \return Matrix<T>  La matrice opose
          */
         Matrix operator!() const;
         /*!
-         * \brief operator << permet l'affichage d'une matrice
-         * \param std::ostream& le flux
-         * \param const Matrix& la matrice a afficher
-         * \return le stream passe en parametre modifie
+         * \fn friend std::ostream& operator<<(std::ostream& flux, const Matrix<T>& m)
+         * \brief Permet l'affichage d'une matrice
+         * \param ostream : Le flux
+         * \param Matrix<T> La matrice a afficher
+         * \return ostream : Le stream passe en parametre modifie
          */
         friend std::ostream& operator<<(std::ostream& flux, const Matrix<T>& m)
         {
@@ -185,9 +207,10 @@ class Matrix
             return flux;
         }
         /*!
-         * \brief operator* permet de multiplier une matrice par une valeur
-         * \param double la valeur
-         * \param const Matrix& la matrice a multiplier
+         * \fn friend Matrix<T> operator*(double val, const Matrix<T>& mat)
+         * \brief Permet de multiplier une matrice par une valeur
+         * \param double : La valeur
+         * \param Matrix<T> La matrice a multiplier
          * \return Matrix<T> la matrice multiplier
          */
         friend Matrix<T> operator*(double val, const Matrix<T>& mat)
@@ -199,10 +222,11 @@ class Matrix
             return m;
         }
         /*!
-         * \brief operator* permet d'additionner une matrice par une valeur
-         * \param double la valeur
-         * \param const Matrix& la matrice a additionner
-         * \return Matrix<T> la matrice additionner
+         * \fn friend Matrix<T> operator+(double val, const Matrix<T>& mat)
+         * \brief Permet d'additionner une matrice par une valeur
+         * \param double : La valeur
+         * \param Matrix : La matrice a additionner
+         * \return Matrix<T> : La matrice additionner
          */
         friend Matrix<T> operator+(double val, const Matrix<T>& mat)
         {
