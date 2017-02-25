@@ -143,7 +143,12 @@ win32:{
 #----------------------------------
 
 #--------------Define--------------
-Debug:DEFINES += DEBUG
+#DEBUG_EXCEPTION for activate exceptions
+#DEBUG_OUTPUT for activate constructor/destructor message
+#RANDOM for activate random seed
+
+#PROG for main programme
+Debug:DEFINES += DEBUG_EXCEPTION
 DEFINES += PROG
 #----------------------------------
 
@@ -161,4 +166,5 @@ HEADERS += \
     Src/node.h \
     Src/tree.h \
     Src/graph.h \
-    Src/matrix.h
+    Src/matrix.h \
+    Src/commun.h

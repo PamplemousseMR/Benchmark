@@ -9,30 +9,30 @@ Graph::Graph()
       _adj(),
       _trees()
 {
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][Graph] ..." << endl;
     #endif
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][Graph] Done" << endl;
     #endif
 }
 
 Graph::Graph(const Graph&)
 {
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][Graph(const Graph&)] ..." << endl;
     #endif
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][Graph(const Graph&)] Done" << endl;
     #endif
 }
 
 Graph::~Graph()
 {
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][~Graph] ..." << endl;
     #endif
-    #ifdef DEBUG_0
+    #ifdef DEBUG_OUTPUT
     cout << "[Graph][~Graph] Done" << endl;
     #endif
 }
@@ -56,19 +56,16 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
 {
     unsigned n = (unsigned)pow(2,scale);
     unsigned m = n*edgeFactor;
-    double a = 0.57;
-    double b = 0.19;
-    double c = 0.19;
     Matrix<unsigned> ij(standard,2,m,1);
-    double ab = a+b;
-    double c_norm = c/(1-(ab));
-    double a_norm = a/ab;
+    double ab = A_PROB + B_PROB;
+    double c_norm = C_PROB / (1-(ab));
+    double a_norm = A_PROB / ab;
     for(unsigned ib=0 ; ib<scale ; ib++)
     {
 		Matrix<double> ii_bit(stdrand,1,m);
         ii_bit.superior(ab);
 
-		Matrix<double> ij_bit(stdrand,1,m);
+        Matrix<double> ij_bit(stdrand,1,m);
         ij_bit.superior(c_norm*ii_bit + a_norm * !ii_bit);
 
         Matrix<unsigned> temp(standard,2,m);

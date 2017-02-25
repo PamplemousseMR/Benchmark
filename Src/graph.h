@@ -7,6 +7,7 @@
  */
 #include <vector>
 #include <iostream>
+#include "commun.h"
 #include "tree.h"
 #include "matrix.h"
 /*!

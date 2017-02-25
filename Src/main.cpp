@@ -13,7 +13,7 @@ int main()
     cout << "   programme   " << endl;
     cout << "---------------" << endl;
     Graph g;
-    g.generateKroneckerEdges(2,4);
+    g.generateKroneckerEdges(4,2);
 }
 
 /*#include <stdio.h>
