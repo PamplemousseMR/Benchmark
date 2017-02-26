@@ -104,7 +104,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
     {
         string ex("[Graph][generateKroneckerEdges] ");
         ex +=  string(e.what());
-        throw exception(ex.c_str());
+        throw length_error(ex.c_str());
     }
     #endif
 }

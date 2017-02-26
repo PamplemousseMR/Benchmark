@@ -18,6 +18,8 @@
  */
 #ifdef __linux__
 #define thr std::exception
+#elif __MINGW32__
+#define thr std::exception
 #elif _WIN32
 #define thr ...
 #endif
