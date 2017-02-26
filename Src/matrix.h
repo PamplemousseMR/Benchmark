@@ -17,6 +17,7 @@
 #include <algorithm> //random_shuffle
 #include <random> //default_random_engine
 #include <chrono> // chrono::system_clock
+#include <typeinfo> //typeid
 #include "commun.h"
 /*!
  * \enum matrix_type
@@ -127,13 +128,6 @@ class Matrix
          */
         Matrix& mutiply(double);
         /*!
-         * \fn Matrix& soustract(double)
-         * \brief Soustrait la valeur a chaque element de la matrice
-         * \param double : la valeur a soustraire
-         * \return Matrix<T> La matrice modifie
-         */
-        Matrix& soustract(double);
-        /*!
          * \fn Matrix& not()
          * \brief Calcule la matrice oposer (operateur! sur le T)
          * \return Matrix<T> : La matrice modifie
@@ -169,39 +163,6 @@ class Matrix
         const T* operator[](int) const;
         #endif
         /*!
-         * \fn Matrix operator*(double) const
-         * \brief Surcharge de l'operateur*
-         * \param double : la valeur a multiplier
-         * \return Matrix<T> Une matrice multiplier
-         */
-        Matrix operator*(double) const;
-        /*!
-         * \fn Matrix operator+(const Matrix<E>&) const throw(thr)
-         * \brief Surcharge de l'operateur+
-         * \param Matrix<T> La matrice a additionner
-         * \return Matrix<T> La matrice additionner
-         * \throws length_error si la taille des matrices est differente
-         */
-        template<typename E>
-        #ifdef DEBUG_EXCEPTION
-        Matrix operator+(const Matrix<E>&) const throw(thr);
-        #else
-        Matrix operator+(const Matrix<E>&) const;
-        #endif
-        /*!
-         * \fn Matrix operator+(double) const
-         * \brief Surcharge de l'operateur+
-         * \param double : La valeur a additionner
-         * \return Matrix<T> La matrice additionner
-         */
-        Matrix operator+(double) const;
-        /*!
-         * \fn Matrix operator!() const
-         * \brief Calcule la matrice oposer (operateur! sur le T)
-         * \return Matrix<T>  La matrice opose
-         */
-        Matrix operator!() const;
-        /*!
          * \fn friend std::ostream& operator<<(std::ostream& flux, const Matrix<T>& m)
          * \brief Permet l'affichage d'une matrice
          * \param ostream : Le flux
@@ -224,36 +185,6 @@ class Matrix
                 k++;
             }
             return flux;
-        }
-        /*!
-         * \fn friend Matrix<T> operator*(double val, const Matrix<T>& mat)
-         * \brief Permet de multiplier une matrice par une valeur
-         * \param double : La valeur
-         * \param Matrix<T> La matrice a multiplier
-         * \return Matrix<T> la matrice multiplier
-         */
-        friend Matrix<T> operator*(double val, const Matrix<T>& mat)
-        {
-            Matrix<T> m(standard,mat._height,mat._width);
-            for(int i=0; i<mat._height; ++i)
-                for(int j=0; j<mat._width; ++j)
-                    m[i][j] = mat[i][j] * val;
-            return m;
-        }
-        /*!
-         * \fn friend Matrix<T> operator+(double val, const Matrix<T>& mat)
-         * \brief Permet d'additionner une matrice par une valeur
-         * \param double : La valeur
-         * \param Matrix : La matrice a additionner
-         * \return Matrix<T> : La matrice additionner
-         */
-        friend Matrix<T> operator+(double val, const Matrix<T>& mat)
-        {
-            Matrix<T> m(mat._height,mat._width);
-            for(int i=0; i<mat._height; ++i)
-                for(int j=0; j<mat._width; ++j)
-                    m[i][j] = mat[i][j] + val;
-            return m;
         }
 };
 
@@ -485,16 +416,6 @@ Matrix<T>& Matrix<T>::superior(double val)
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::operator*(double val) const
-{
-    Matrix<T> m(_height,_width);
-    for(int i=0; i<_height; ++i)
-        for(int j=0; j<_width; ++j)
-            m[i][j] = _matrix[i][j] * val;
-    return m;
-}
-
-template<typename T>
 template<typename E>
 #ifdef DEBUG_EXCEPTION
 Matrix<T>& Matrix<T>::superior(const Matrix<E>& m) throw(thr)
@@ -550,64 +471,11 @@ Matrix<T>& Matrix<T>::mutiply(double val)
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::soustract(double val)
-{
-    for(int i=0; i<_height; ++i)
-        for(int j=0; j<_width; ++j)
-            _matrix[i][j] = (T)(_matrix[i][j] - val);
-    return *this;
-}
-
-template<typename T>
 Matrix<T>& Matrix<T>::no()
 {
     for(int i=0; i<_height; ++i)
         for(int j=0; j<_width; ++j)
             _matrix[i][j] = !_matrix[i][j];
     return *this;
-}
-
-template<typename T>
-template<typename E>
-#ifdef DEBUG_EXCEPTION
-Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const throw(thr)
-#else
-Matrix<T> Matrix<T>::operator+(const Matrix<E>& m) const
-#endif
-{
-    #ifdef DEBUG_EXCEPTION
-    if(_height!=m.getHeight() || _width!=m.getWidth())
-    {
-        string ex = "[Matrix<";
-        ex += typeid(T).name();
-        ex += ">][operator+] index out of bound";
-        throw length_error(ex.c_str());
-    }
-    #endif
-    Matrix<T> mat(standard,_height,_width);
-    for(int i=0; i<_height; ++i)
-        for(int j=0; j<_width; ++j)
-            mat[i][j] = _matrix[i][j] + m[i][j];
-    return mat;
-}
-
-template<typename T>
-Matrix<T> Matrix<T>::operator+(double val) const
-{
-    Matrix<T> m(_height,_width);
-    for(int i=0; i<_height; ++i)
-        for(int j=0; j<_width; ++j)
-            m[i][j] = _matrix[i][j] + val;
-    return m;
-}
-
-template<typename T>
-Matrix<T> Matrix<T>::operator!() const
-{
-    Matrix<T> m(standard, _height,_width);
-    for(int i=0; i<_height; ++i)
-        for(int j=0; j<_width; ++j)
-            m[i][j] = !_matrix[i][j];
-    return m;
 }
 #endif // MATRIX_H
