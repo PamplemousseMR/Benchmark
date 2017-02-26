@@ -24,10 +24,10 @@ class Graph
 {
     private :
 
-        int _nNode;/*!< Nombre de sommet */
-        int _nEdge;/*!< Nombre d'arête */
-        std::vector<std::vector<int> > _adj;/*!< Liste d'adjacence */
-        std::vector<Tree> _trees;/*!< Arbres relatifs au graphe */
+        int _nNode;                             /*!< Nombre de sommet */
+        int _nEdge;                             /*!< Nombre d'arête */
+        std::vector<std::vector<int> > _adj;    /*!< Liste d'adjacence */
+        std::vector<Tree> _trees;               /*!< Arbres relatifs au graphe */
 
     public :
         /*!
@@ -35,12 +35,6 @@ class Graph
          * \brief Constructeur par defaut
          */
         Graph();
-        /*!
-         * \fn Graph(const Graph&)
-         * \brief Constructeur par copie
-         * \param Graph : le graphe à copier
-         */
-        Graph(const Graph&);
         /*!
          * \fn ~Graph()
          * \brief Destructeur

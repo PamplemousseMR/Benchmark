@@ -22,7 +22,7 @@ class Node
 {
     private :
 
-        std::vector<Node*> _childs;/*!< Enfants du noeud */
+        std::vector<Node*> _childs;     /*!< Enfants du noeud */
 
     public :
         /*!
@@ -30,12 +30,6 @@ class Node
          * \brief Constructeur par defaut
          */
         Node();
-        /*!
-         * \fn Node(const Node&)
-         * \brief Constructeur par copie
-         * \param Node : le noeud à copier
-         */
-        Node(const Node&);
         /*!
          * \fn ~Node()
          * \brief Destructeur

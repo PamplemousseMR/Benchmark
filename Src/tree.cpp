@@ -13,16 +13,6 @@ Tree::Tree()
     #endif
 }
 
-Tree::Tree(const Tree&)
-{
-    #ifdef DEBUG_OUTPUT
-    cout << "[Tree][Tree(const Tree&)] ..." << endl;
-    #endif
-    #ifdef DEBUG_OUTPUT
-    cout << "[Tree][Tree(const Tree&)] Done" << endl;
-    #endif
-}
-
 Tree::~Tree()
 {
     #ifdef DEBUG_OUTPUT

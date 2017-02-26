@@ -20,7 +20,7 @@ class Tree
 {
     private :
 
-        Node _root;/*!< Racine de l'arbre */
+        Node _root;     /*!< Racine de l'arbre */
 
     public :
         /*!
@@ -28,12 +28,6 @@ class Tree
          * \brief Constructeur par defaut
          */
         Tree();
-        /*!
-         * \fn Tree(const Tree&)
-         * \brief Constructeur par copie
-         * \param Tree : l'arbre à copier
-         */
-        Tree(const Tree&);
         /*!
          * \fn ~Graph()
          * \brief Destructeur

@@ -13,16 +13,6 @@ Node::Node()
     #endif
 }
 
-Node::Node(const Node&)
-{
-    #ifdef DEBUG_OUTPUT
-    cout << "[Node][Node(const Node&)] ..." << endl;
-    #endif
-    #ifdef DEBUG_OUTPUT
-    cout << "[Node][Node(const Node&)] Done" << endl;
-    #endif
-}
-
 Node::~Node()
 {
     #ifdef DEBUG_OUTPUT
