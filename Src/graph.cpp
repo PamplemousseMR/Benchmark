@@ -60,8 +60,6 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
         unsigned h = -1;
         unsigned w = -1;
 
-        cout << h << endl;
-
         Matrix<unsigned> ij(standard,2,m,1);
         Matrix<unsigned> temp(2,m);
         Matrix<double> ii_bit(1,m);

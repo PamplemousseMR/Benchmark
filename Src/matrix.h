@@ -201,7 +201,7 @@ Matrix<T>::Matrix(unsigned height, unsigned width)
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix()] ..." << endl;
     #endif
 
-    //alocation sans initialisation
+    //allocation sans initialisation
     _matrix = new T*[_height];
     while(height)
         _matrix[--height] = new T[_width];
@@ -220,7 +220,7 @@ Matrix<T>::Matrix(matrix_type type, unsigned height, unsigned width, T value)
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(matrix_type,int,int," << typeid(T).name() << ")] ..." << endl;
     #endif
 
-    //creation d'un vecteur de taille n contenent n valeurs, puis melange
+    //creation d'un vecteur de taille n contenent n valeurs, puis on melange le vecteur
     vector<int> vec;
     if(type == randperm)
     {
@@ -236,7 +236,7 @@ Matrix<T>::Matrix(matrix_type type, unsigned height, unsigned width, T value)
 		shuffle(begin(vec), end(vec), engine);
     }
 
-    //allocation
+    //allocation puis affectation
     _matrix = new T*[_height];
     while(height)
     {
@@ -277,7 +277,7 @@ Matrix<T>::Matrix(const Matrix<T>& matrix)
     int height = _height;
     int width;
 
-    //allocation et affectation
+    //allocation puis affectation
     _matrix = new T*[_height];
     while(height)
     {
@@ -318,7 +318,7 @@ void Matrix<T>::generate(matrix_type type, T value)
     int height = _height;
     int width;
 
-    //creation d'un vecteur de taille n contenent n valeurs, puis melange
+    //creation d'un vecteur de taille n contenent n valeurs, puis on melange le vecteur
     if(type == randperm)
     {
         int i=_width;
@@ -387,7 +387,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
         _width = m.getWidth();
         height = _height;
 
-        //on allou et on affecte
+        //allocation puis affectation
         _matrix = new T*[_height];
         while(height)
         {
@@ -402,7 +402,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     }
     else
     {
-        //on affecte
+        //affectation
         while(height)
         {
             --height;
