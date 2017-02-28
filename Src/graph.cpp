@@ -94,7 +94,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
         while(++h < ij.getHeight())
         {
             w = -1;
-            while(--w < ij.getWidth())
+            while(++w < ij.getWidth())
                 ij[h][w] = p[0][ij[h][w]-1];
         }
 
