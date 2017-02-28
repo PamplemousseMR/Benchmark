@@ -57,7 +57,6 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
     try
     {
     #endif
-
         // dimensions du graphe
         _nNode = 1 << scale;
         _nEdge = _nNode*edgeFactor;
@@ -68,7 +67,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
         double a_norm = A_PROB / ab;
 
         // variables de parcours
-        unsigned h = 0;
+        unsigned h;
         unsigned w = 1;
 
         // création de la matrice d'adjacence
@@ -82,8 +81,8 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
         Matrix<double> ij_bit(1,_nEdge);
 
         // boucle sur la puissance de 2 utilisée lors de la génération
-        unsigned int ib=-1;
-        while(++ib<scale)
+        unsigned int ib;
+        for(ib=0 ; ib<scale ; ++ib)
         {
             cout << ib+1 << "/" << scale << endl;
 
@@ -93,8 +92,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
             Matrix<double> mul(ii_bit);
 
             // remplissage de la matrice d'adjacences
-            h = -1;
-            while(++h < _nEdge)
+            for(h=0 ; h<_nEdge ; ++h)
                 (*_edges)[0][h] = (unsigned)ii_bit[0][h];
 
             // construction de ij_bit : 1 si la valeur générée est supérieure à la valeur
@@ -103,8 +101,7 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
             mul.mutiply(c_norm);
             ij_bit.superior(ii_bit.no().mutiply(a_norm).add(mul));
             // remplissage de la matrice d'adjacences
-            h = -1;
-            while(++h < _nEdge)
+            for(h=0 ; h<_nEdge ; ++h)
                 (*_edges)[1][h] = (unsigned)ij_bit[0][h];
 
             ij.add(_edges->mutiply(w));
@@ -114,18 +111,15 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
 
         // première permutation sur les sommets
         Matrix<int> p(randperm,1,_nNode);
-        h = -1;
-        while(++h < ij.getHeight())
+        for(h=0 ; h<ij.getHeight() ; ++h)
         {
-            w = -1;
-            while(++w < ij.getWidth())
+            for(w=0 ; w<ij.getWidth() ; ++w)
                 ij[h][w] = p[0][ij[h][w]-1];
         }
 
         // seconde permutation sur les arêtes
         p = Matrix<int>(randperm,1,_nEdge);
-        h = -1;
-        while(++h < ij.getWidth())
+        for(h=0 ; h<ij.getWidth() ; ++h)
         {
             (*_edges)[0][h] = ij[0][p[0][h]];
             (*_edges)[1][h] = ij[1][p[0][h]];

@@ -26,7 +26,7 @@
 enum matrix_type
 {
     standard,
-	stdrand,
+    stdrand,
     randperm
 };
 /*!
@@ -203,8 +203,8 @@ Matrix<T>::Matrix(unsigned height, unsigned width)
 
     //allocation sans initialisation
     _matrix = new T*[_height];
-    while(height)
-        _matrix[--height] = new T[_width];
+    for(height=0 ; height<_height ; ++height)
+        _matrix[height] = new T[_width];
 
     #ifdef DEBUG_OUTPUT
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix()] Done" << endl;
@@ -224,34 +224,31 @@ Matrix<T>::Matrix(matrix_type type, unsigned height, unsigned width, T value)
     vector<int> vec;
     if(type == randperm)
     {
-        int i=width;
-        while(i)
-            vec.push_back(--i);
+        for(width=0 ; width<_width ; ++width)
+            vec.push_back(width);
         #ifdef RANDOM
         unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
         auto engine = default_random_engine(seed);
         #else
         auto engine = default_random_engine();
         #endif
-		shuffle(begin(vec), end(vec), engine);
+        shuffle(begin(vec), end(vec), engine);
     }
 
     //allocation puis affectation
     _matrix = new T*[_height];
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        _matrix[--height] = new T[_width];
-        width = _width;
-        while(width)
+        _matrix[height] = new T[_width];
+        for(width=0 ; width<_width ; ++width)
         {
-            --width;
             //affectation
             switch(type)
             {
                 case standard:
                     _matrix[height][width] = value;
                 break;
-				case stdrand:
+                case stdrand:
                     _matrix[height][width] = (T)((double)rand() / (RAND_MAX));
                 break;
                 case randperm:
@@ -274,20 +271,16 @@ Matrix<T>::Matrix(const Matrix<T>& matrix)
     cout << "[Matrix<" << typeid(T).name() << ">][Matrix(const Matrix&)] ..." << endl;
     #endif
 
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //allocation puis affectation
     _matrix = new T*[_height];
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        _matrix[--height] = new T[_width];
-        width = _width;
-        while(width)
-        {
-            --width;
+        _matrix[height] = new T[_width];
+        for(width=0 ; width<_width ; ++width)
             _matrix[height][width] = matrix._matrix[height][width];
-        }
     }
 
     #ifdef DEBUG_OUTPUT
@@ -315,15 +308,14 @@ template<typename T>
 void Matrix<T>::generate(matrix_type type, T value)
 {
     vector<int> vec;
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //creation d'un vecteur de taille n contenent n valeurs, puis on melange le vecteur
     if(type == randperm)
     {
-        int i=_width;
-        while(i)
-            vec.push_back(--i);
+        for(width=0 ; width<_width ; ++width)
+            vec.push_back(width);
         #ifdef RANDOM
         unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
         auto engine = default_random_engine(seed);
@@ -333,14 +325,15 @@ void Matrix<T>::generate(matrix_type type, T value)
         shuffle(begin(vec), end(vec), engine);
     }
 
-    //affectation
-    while(height)
+
+    //allocation puis affectation
+    _matrix = new T*[_height];
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
+        _matrix[height] = new T[_width];
+        for(width=0 ; width<_width ; ++width)
         {
-            --width;
+            //affectation
             switch(type)
             {
                 case standard:
@@ -372,15 +365,15 @@ unsigned Matrix<T>::getWidth() const
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //si la matrice est differante en taille
     if(_height!=m.getHeight() || _width!=m.getWidth())
     {
         //on supprime la memoire
-        while(height)
-            delete[] _matrix[--height];
+        for(height=0 ; height<_height ; ++height)
+            delete[] _matrix[height];
         delete[] _matrix;
 
         _height = m.getHeight();
@@ -389,29 +382,21 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 
         //allocation puis affectation
         _matrix = new T*[_height];
-        while(height)
+        for(height=0 ; height<_height ; ++height)
         {
-            _matrix[--height] = new T[_width];
+            _matrix[height] = new T[_width];
             width = _width;
-            while(width)
-            {
-                --width;
+            for(width=0 ; width<_width ; ++width)
                 _matrix[height][width] = m[height][width];
-            }
         }
     }
     else
     {
         //affectation
-        while(height)
+        for(height=0 ; height<_height ; ++height)
         {
-            --height;
-            width = _width;
-            while(width)
-            {
-                --width;
+            for(width=0 ; width<_width ; ++width)
                 _matrix[height][width] = m[height][width];
-            }
         }
     }
     return *this;
@@ -459,19 +444,14 @@ const T* Matrix<T>::operator[](unsigned index) const
 template<typename T>
 Matrix<T>& Matrix<T>::superior(double val)
 {
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //on parcour et on affecte la nouvelle valeur
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
-        {
-            --width;
+        for(width=0 ; width<_width ; ++width)
             _matrix[height][width] = _matrix[height][width]>val;
-        }
     }
     return *this;
 }
@@ -493,19 +473,14 @@ Matrix<T>& Matrix<T>::superior(const Matrix<E>& m)
         throw length_error(ex.c_str());
     }
     #endif
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //on parcour et on affecte la nouvelle valeur
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
-        {
-            --width;
+        for(width=0 ; width<_width ; ++width)
             _matrix[height][width] = _matrix[height][width]>m[height][width];
-        }
     }
     return *this;
 }
@@ -527,19 +502,14 @@ Matrix<T>& Matrix<T>::add(const Matrix<E>& m)
         throw length_error(ex.c_str());
     }
     #endif
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //on parcour et on affecte la nouvelle valeur
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
-        {
-            --width;
+        for(width=0 ; width<_width ; ++width)
             _matrix[height][width] = _matrix[height][width] + m[height][width];
-        }
     }
     return *this;
 }
@@ -547,19 +517,14 @@ Matrix<T>& Matrix<T>::add(const Matrix<E>& m)
 template<typename T>
 Matrix<T>& Matrix<T>::mutiply(double val)
 {
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //on parcour et on affecte la nouvelle valeur
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
-        {
-            --width;
-            _matrix[height][width] = _matrix[height][width] * val;
-        }
+        for(width=0 ; width<_width ; ++width)
+            _matrix[height][width] = (T)_matrix[height][width]*val;
     }
     return *this;
 }
@@ -567,19 +532,14 @@ Matrix<T>& Matrix<T>::mutiply(double val)
 template<typename T>
 Matrix<T>& Matrix<T>::no()
 {
-    int height = _height;
-    int width;
+    unsigned height;
+    unsigned width;
 
     //on parcour et on affecte la nouvelle valeur
-    while(height)
+    for(height=0 ; height<_height ; ++height)
     {
-        --height;
-        width = _width;
-        while(width)
-        {
-            --width;
+        for(width=0 ; width<_width ; ++width)
             _matrix[height][width] = !_matrix[height][width];
-        }
     }
     return *this;
 }

@@ -12,8 +12,9 @@ int main()
     cout << "---------------" << endl;
     cout << "   programme   " << endl;
     cout << "---------------" << endl;
+    //srand (time(NULL));
     Graph g;
-    g.generateKroneckerEdges(3,2);
+    g.generateKroneckerEdges(2,2);
 }
 
 /*#include <stdio.h>
