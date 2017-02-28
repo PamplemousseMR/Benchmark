@@ -24,9 +24,10 @@ class Graph
 {
     private :
 
-        int _nNode;                             /*!< Nombre de sommet */
-        int _nEdge;                             /*!< Nombre d'arête */
-        std::vector<std::vector<int> > _adj;    /*!< Liste d'adjacence */
+        unsigned _nNode;                             /*!< Nombre de sommet */
+        unsigned _nEdge;                             /*!< Nombre d'arête */
+        Matrix<unsigned>* _edges;               /*!< Liste d'arêtes */
+        std::vector<std::vector<unsigned> > _adj;    /*!< Liste d'adjacence */
         std::vector<Tree> _trees;               /*!< Arbres relatifs au graphe */
 
     public :
