@@ -12,6 +12,7 @@
 TEMPLATE = app
 CONFIG += console c++11
 CONFIG -= app_bundle
+CONFIG -= qt
 PLATFORM = NVIDIA
 #----------------------------------
 
@@ -142,21 +143,29 @@ win32:{
 #----------------------------------
 
 #--------------Define--------------
-#DEBUG_EXCEPTION for activate exceptions
-#DEBUG_OUTPUT for activate constructor/destructor message
-#RANDOM for activate random seed
+#DEBUG_EXCEPTION For activate exceptions
+#DEBUG_OUTPUT For activate constructor/destructor message
+#RANDOM For activate random seed
+#GRAPH_GENERATOR_OMP For activate OpenMP
+#GRAPH_GENERATOR_OMPI For activate Open MPI
+#GENERATOR_USE_PACKED_EDGE_TYPE 64 bits per edge, else 48 bits per edge
+#FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits
 
-#PROG for main programme
 Debug:DEFINES += DEBUG_EXCEPTION
-DEFINES += PROG
+DEFINES +=
 #----------------------------------
 
 #---------------Src----------------
 SOURCES += Src/main.cpp \
-    Src/node.cpp \
     Src/tree.cpp \
     Src/graph.cpp \
-    Src/matrix.cpp
+    Src/node.cpp \
+    Src/edgelist.cpp \
+    Src/list.cpp \
+    Src/generator/make_graph.c \
+    Src/generator/utils.c \
+    Src/generator/splittable_mrg.c \
+    Src/generator/mrg_transitions.c
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -165,5 +174,13 @@ HEADERS += \
     Src/node.h \
     Src/tree.h \
     Src/graph.h \
-    Src/matrix.h \
-    Src/commun.h
+    Src/commun.h \
+    Src/edgelist.h \
+    Src/list.h \
+    Src/generator/graph_generator.h \
+    Src/generator/make_graph.h \
+    Src/generator/splittable_mrg.h \
+    Src/generator/utils.h \
+    Src/generator/mod_arith.h \
+    Src/generator/mod_arith_32bit.h \
+    Src/generator/mod_arith_64bit.h

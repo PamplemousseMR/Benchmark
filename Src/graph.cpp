@@ -57,8 +57,16 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
     try
     {
     #endif
+        EdgeList<int> lol(5,2);
+        cout << lol << endl;
+        EdgeList<int> xd(lol);
+        cout << xd << endl;
+        lol.add(xd);
+        cout<< lol << endl;
+        lol.mutiply(2);
+        cout<< lol << endl;
         // dimensions du graphe
-        _nNode = 1 << scale;
+        /*_nNode = 1 << scale;
         _nEdge = _nNode*edgeFactor;
 
         // valeurs dépendantes des probabilités et utilisées lors de la génération
@@ -126,7 +134,43 @@ void Graph::generateKroneckerEdges(unsigned scale, unsigned edgeFactor)
         }
 
         // affichage de la matrice d'adjacences
-        cout << (*_edges) << endl;
+        cout << (*_edges) << endl;*/
+    #ifdef DEBUG_EXCEPTION
+    }
+    catch(exception e)
+    {
+        string ex("[Graph][generateKroneckerEdges] ");
+        ex +=  string(e.what());
+        throw length_error(ex.c_str());
+    }
+    #endif
+}
+
+#ifdef DEBUG_EXCEPTION
+void Graph::generateGraph() throw (thr)
+#else
+void Graph::generateGraph()
+#endif
+{
+    #ifdef DEBUG_EXCEPTION
+    try
+    {
+    #endif
+//        %% Remove self-edges.
+//          ij(:, ij(1,:) == ij(2,:)) = [];
+//          %% Adjust away from zero labels.
+//          ij = ij + 1;
+//          %% Find the maximum label for sizing.
+//          N = max (max (ij));
+//          %% Create the matrix, ensuring it is square.
+//          G = sparse (ij(1,:), ij(2,:), ones (1, size (ij, 2)), N, N);
+//          %% Symmetrize to model an undirected graph.
+//          G = spones (G + G.');
+        /*unsigned int i;
+        for(i=0 ; i < _edges->getWidth() ; ++i)
+        {
+
+        }*/
     #ifdef DEBUG_EXCEPTION
     }
     catch(exception e)

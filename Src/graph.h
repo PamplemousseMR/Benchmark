@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include "commun.h"
 #include "tree.h"
-#include "matrix.h"
+#include "edgelist.h"
 /*!
  * \class Graph
  * \brief classe representant un graphe
@@ -26,7 +26,7 @@ class Graph
 
         unsigned _nNode;                             /*!< Nombre de sommet */
         unsigned _nEdge;                             /*!< Nombre d'arête */
-        Matrix<unsigned>* _edges;               /*!< Liste d'arêtes */
+        EdgeList<unsigned>* _edges;                 /*!< Liste d'arêtes */
         std::vector<std::vector<unsigned> > _adj;    /*!< Liste d'adjacence */
         std::vector<Tree> _trees;               /*!< Arbres relatifs au graphe */
 
@@ -51,6 +51,15 @@ class Graph
         void generateKroneckerEdges(unsigned, unsigned) throw (thr);
         #else
         void generateKroneckerEdges(unsigned, unsigned);
+        #endif
+        /*!
+         * \fn void generateGraph() throw (thr)
+         * \brief Génère le graphe
+         */
+        #ifdef DEBUG_EXCEPTION
+        void generateGraph() throw (thr);
+        #else
+        void generateGraph();
         #endif
         /*!
          * \fn friend std::ostream& operator<<(std::ostream&, const Graph&)
