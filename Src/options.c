@@ -72,10 +72,14 @@ void get_options (int argc, char **argv)
     int c, err = 0;
     int nset = 0;
     int whichset = 0;
-    char* buf = NULL;
-    size_t sz = 0;
 
-    if (_dupenv_s(&buf,&sz,"VERBOSE"))
+	#ifdef _WIN32
+	char* buf = NULL;
+	size_t sz = 0;
+	if (_dupenv_s(&buf,&sz,"VERBOSE"))
+	#else
+	if (getenv("VERBOSE"))
+	#endif
         VERBOSE = 1;
 
     while ((c = getopt(argc, argv, "v?hRs:e:A:a:B:b:C:c:D:d:Vo:r:")) != -1)
@@ -96,14 +100,22 @@ void get_options (int argc, char **argv)
             use_RMAT = 1;
             break;
         case 'o':
-            dumpname = _strdup (optarg);
+			#ifdef _WIN32
+			dumpname = _strdup(optarg);
+			#else
+			dumpname = strdup(optarg);
+			#endif
             if (!dumpname) {
                 fprintf (stderr, "Cannot copy dump file name.\n");
                 err = 1;
             }
             break;
         case 'r':
-            rootname = _strdup (optarg);
+		#ifdef _WIN32
+		rootname = _strdup(optarg);
+		#else
+		rootname = strdup(optarg);
+		#endif
             if (!rootname) {
                 fprintf (stderr, "Cannot copy BFS root file name.\n");
                 err = 1;

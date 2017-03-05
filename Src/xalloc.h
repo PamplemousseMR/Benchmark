@@ -8,10 +8,12 @@
 #include <signal.h>
 #include <errno.h>
 #include <limits.h>
-#include <windows.h>
 #include <time.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 void* xmalloc(size_t);
 void* xmalloc_large (size_t);

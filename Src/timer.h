@@ -5,8 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#include <windows.h>
 #include <time.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 void tic (void);
 double toc (void);

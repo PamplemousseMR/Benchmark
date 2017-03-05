@@ -6,8 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <windows.h>
 #include <inttypes.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #include "getopt.h"
 

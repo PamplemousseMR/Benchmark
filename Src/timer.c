@@ -2,6 +2,7 @@
 
 static struct timeval tic_ts;
 
+#ifdef _WIN32
 LARGE_INTEGER getFILETIMEoffset()
 {
     SYSTEMTIME s;
@@ -59,6 +60,7 @@ int clock_gettime(int X, struct timeval *tv)
     tv->tv_usec = t.QuadPart % 1000000;
     return (0);
 }
+#endif
 
 void tic (void)
 {

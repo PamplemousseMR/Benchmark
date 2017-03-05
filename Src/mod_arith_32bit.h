@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
+__inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
   uint_fast32_t x;
   assert (a <= 0x7FFFFFFE);
   assert (b <= 0x7FFFFFFE);
@@ -17,7 +17,7 @@ static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
 #endif
 }
 
-static __inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
+__inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
   uint_fast64_t temp;
   uint_fast32_t temp2;
   assert (a <= 0x7FFFFFFE);
@@ -31,7 +31,7 @@ static __inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
 #endif
 }
 
-static __inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b) {
+__inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b) {
   uint_fast64_t temp;
   uint_fast32_t temp2;
   assert (sum <= 0x7FFFFFFE);
@@ -46,7 +46,7 @@ static __inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_f
 #endif
 }
 
-static __inline uint_fast32_t mod_mac2(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d) {
+__inline uint_fast32_t mod_mac2(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d) {
   assert (sum <= 0x7FFFFFFE);
   assert (a <= 0x7FFFFFFE);
   assert (b <= 0x7FFFFFFE);
@@ -55,7 +55,7 @@ static __inline uint_fast32_t mod_mac2(uint_fast32_t sum, uint_fast32_t a, uint_
   return mod_mac(mod_mac(sum, a, b), c, d);
 }
 
-static __inline uint_fast32_t mod_mac3(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d, uint_fast32_t e, uint_fast32_t f) {
+__inline uint_fast32_t mod_mac3(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d, uint_fast32_t e, uint_fast32_t f) {
   assert (sum <= 0x7FFFFFFE);
   assert (a <= 0x7FFFFFFE);
   assert (b <= 0x7FFFFFFE);
@@ -66,7 +66,7 @@ static __inline uint_fast32_t mod_mac3(uint_fast32_t sum, uint_fast32_t a, uint_
   return mod_mac2(mod_mac(sum, a, b), c, d, e, f);
 }
 
-static __inline uint_fast32_t mod_mac4(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d, uint_fast32_t e, uint_fast32_t f, uint_fast32_t g, uint_fast32_t h) {
+__inline uint_fast32_t mod_mac4(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d, uint_fast32_t e, uint_fast32_t f, uint_fast32_t g, uint_fast32_t h) {
   assert (sum <= 0x7FFFFFFE);
   assert (a <= 0x7FFFFFFE);
   assert (b <= 0x7FFFFFFE);

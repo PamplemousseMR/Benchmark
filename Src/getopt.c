@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "getopt.h"
 
 void _vwarnx(const char *fmt,va_list ap)
@@ -379,3 +380,4 @@ int getopt(int nargc, char * const *nargv, const char *options)
 {
     return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
 }
+#endif
