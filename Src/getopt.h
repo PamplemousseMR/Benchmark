@@ -1,4 +1,3 @@
-#ifdef _WIN32
 #ifndef __GETOPT_H__
 #define __GETOPT_H__
 
@@ -66,5 +65,4 @@ int getopt(int, char * const *, const char *);
 }
 #endif
 
-#endif
 #endif

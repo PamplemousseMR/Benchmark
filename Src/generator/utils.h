@@ -7,17 +7,25 @@
 /*  Authors: Jeremiah Willcock                                             */
 /*           Andrew Lumsdaine                                              */
 
-#ifndef MOD_ARITH_H
-#define MOD_ARITH_H
+#ifndef UTILS_H
+#define UTILS_H
 
-#include "user_settings.h"
+#include <stddef.h>
+#include <stdint.h>
+#include "splittable_mrg.h"
 
-
-#ifdef FAST_64BIT_ARITHMETIC
-#include "mod_arith_64bit.h"
-#else
-#include "mod_arith_32bit.h"
+#ifdef __cplusplus
+extern "C" {
 #endif
-#
 
-#endif /* MOD_ARITH_H */
+void* xmalloc(size_t n);
+void* xcalloc(size_t n, size_t k);
+void* xrealloc(void* p, size_t nbytes); /* In utils.c */
+uint_fast64_t random_up_to(mrg_state* st, uint_fast64_t n);
+void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* UTILS_H */

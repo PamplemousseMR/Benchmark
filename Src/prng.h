@@ -9,22 +9,10 @@
 
 #include "generator/splittable_mrg.h"
 
-class Prng
-{
+void init_random (void);
 
-	private:
-
-		static uint64_t userseed;
-		static uint_fast32_t prng_seed[5];
-		static mrg_state prng_state_store;
-		static void* prng_state;
-
-	public:
-
-		static void init_random ();
-		static void* getPrngState();
-		static uint64_t getUserseed();
-
-};
+extern uint64_t userseed;
+extern uint_fast32_t prng_seed[5];
+extern void *prng_state;
 
 #endif /* PRNG_HEADER_ */

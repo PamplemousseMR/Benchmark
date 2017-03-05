@@ -158,35 +158,42 @@ DEFINES +=
 message("-------QMAKE END--------")
 
 #---------------Src----------------
-SOURCES += \
-    Src/options.cpp \
-    Src/prgn.cpp \
-    Src/generator/mrg_transitions.c \
-    Src/generator/splittable_mrg.c \
-    Src/xalloc.cpp \
-    Src/timer.cpp \
-    Src/rmat.cpp \
-    Src/getopt.c \
-    Src/graph500.cpp \
-    Src/BFS/seq-csr/seq-csr.cpp \
-    Src/Verify/verify.cpp \
-    Src/generator/make_graph.cpp
 
 HEADERS += \
-    Src/compat.h \
-    Src/options.h \
+    Src/verify/verify.h \
+    Src/generator/graph_generator.h \
+    Src/generator/make_graph.h \
     Src/generator/mod_arith.h \
     Src/generator/mod_arith_32bit.h \
     Src/generator/mod_arith_64bit.h \
     Src/generator/splittable_mrg.h \
+    Src/generator/user_settings.h \
+    Src/generator/utils.h \
+    Src/compat.h \
     Src/getopt.h \
+    Src/graph500.h \
+    Src/options.h \
     Src/prng.h \
     Src/rmat.h \
     Src/timer.h \
-    Src/verify.h \
-    Src/xalloc.h \
-    Src/BFS.h \
-    Src/BFS/BFS.h \
-    Src/Verify/verify.h \
-    Src/graph_struct.h \
-    Src/generator/make_graph.h
+    Src/xalloc.h
+
+SOURCES += \
+    Src/verify/verify.c \
+    Src/generator/make_graph.c \
+    Src/generator/mrg_transitions.c \
+    Src/generator/splittable_mrg.c \
+    Src/generator/utils.c \
+    Src/omp-csr/omp-csr.c \
+    Src/seq-csr/seq-csr.c \
+    Src/seq-list/seq-list.c \
+    Src/xmt-csr/xmt-csr.c \
+    Src/xmt-csr-local/xmt-csr-local.c \
+    Src/getopt.c \
+    Src/graph500.c \
+    Src/options.c \
+    Src/prng.c \
+    Src/rmat.c \
+    Src/timer.c \
+    Src/xalloc.c
+

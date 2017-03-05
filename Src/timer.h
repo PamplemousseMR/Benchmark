@@ -5,31 +5,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <windows.h>
 #include <time.h>
-#ifdef _WIN32
-	#include <windows.h>
-#else
-	#include <unistd.h>
-#endif
 
-#define TIME(timevar, what) do { Timer::tic (); what; timevar = Timer::toc(); } while (0)
+void tic (void);
+double toc (void);
 
-class Timer
-{
-
-	private:
-
-		#ifdef _WIN32
-		static struct timeval tic_ts;
-		#else
-		static struct timespec tic_ts;
-		#endif
-
-	public:
-
-		static void tic();
-		static double toc();
-
-};
+#define TIME(timevar, what) do { tic (); what; timevar = toc(); } while (0)
 
 #endif /* TIMER_HEADER_ */

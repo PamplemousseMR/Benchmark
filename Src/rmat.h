@@ -10,19 +10,11 @@
 #include <time.h>
 #include <assert.h>
 #include <malloc.h>
-
 #include "xalloc.h"
 #include "prng.h"
 #include "generator/splittable_mrg.h"
-#include "graph_struct.h"
+#include "generator/graph_generator.h"
 
-class Rmat
-{
-
-	public:
-
-		static void rmat_edgelist(struct packed_edge*, int64_t, int, double, double, double);
-
-};
+void rmat_edgelist (struct packed_edge*, int64_t, int, double, double, double);
 
 #endif /* RMAT_HEADER_ */
