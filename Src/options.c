@@ -1,7 +1,6 @@
 #include "options.h"
 
 int VERBOSE = 0;
-int use_RMAT = 0;
 
 char *dumpname = NULL;
 char *rootname = NULL;
@@ -21,13 +20,12 @@ static void print_options()
     printf ("Options:\n"
             "  v   : version\n"
             "  h|? : this message\n"
-            "  R   : use R-MAT from SSCA2 (default: use Kronecker generator)\n"
-            "  s   : R-MAT scale (default %" PRId64 ")\n"
-            "  e   : R-MAT edge factor (default %" PRId64 ")\n"
-            "  A|a : R-MAT A (default %lg) >= 0\n"
-            "  B|b : R-MAT B (default %lg) >= 0\n"
-            "  C|c : R-MAT C (default %lg) >= 0\n"
-            "  D|d : R-MAT D (default %lg) >= 0\n"
+            "  s   : scale (default %" PRId64 ")\n"
+            "  e   : edge factor (default %" PRId64 ")\n"
+            "  A|a : A (default %lg) >= 0\n"
+            "  B|b : B (default %lg) >= 0\n"
+            "  C|c : C (default %lg) >= 0\n"
+            "  D|d : D (default %lg) >= 0\n"
             "        Note: Setting 3 of A,B,C,D requires the arguments to sum to\n"
             "        at most 1.  Otherwise, the parameters are added and normalized\n"
             "        so that the sum is 1.\n"
@@ -82,7 +80,7 @@ void get_options (int argc, char **argv)
 	#endif
         VERBOSE = 1;
 
-    while ((c = getopt(argc, argv, "v?hRs:e:A:a:B:b:C:c:D:d:Vo:r:")) != -1)
+    while ((c = getopt(argc, argv, "v?hs:e:A:a:B:b:C:c:D:d:")) != -1)
         switch (c) {
         case 'v':
             printf ("%s version %d\n", NAME, VERSION);
@@ -95,9 +93,6 @@ void get_options (int argc, char **argv)
             break;
         case 'V':
             VERBOSE = 1;
-            break;
-        case 'R':
-            use_RMAT = 1;
             break;
         case 'o':
 			#ifdef _WIN32
@@ -123,7 +118,7 @@ void get_options (int argc, char **argv)
             break;
         case 's':
             errno = 0;
-            SCALE = strtol (optarg, NULL, 10);
+            SCALE = strtol(optarg, NULL, 10);
             if (errno) {
                 fprintf (stderr, "Error parsing scale %s\n", optarg);
                 err = -1;
@@ -247,7 +242,7 @@ void get_options (int argc, char **argv)
             abort ();
         }
         if (A < 0 || B < 0 || C < 0 || D < 0) {
-            fprintf (stderr, "When setting three R-MAT parameters, all must be < 1.\n"
+            fprintf (stderr, "When setting three parameters, all must be < 1.\n"
                              "  A = %lg\n  B = %lg\n  C = %lg\n  D = %lg\n",
                      A, B, C, D);
             exit (EXIT_FAILURE);

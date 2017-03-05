@@ -13,7 +13,8 @@
 void* xmalloc (size_t n)
 {
     void* p = malloc(n);
-    if (!p) {
+    if (!p)
+    {
         fprintf(stderr, "Out of memory trying to allocate %zu byte(s)\n", n);
         abort();
     }
@@ -126,7 +127,7 @@ void* xmalloc_large_ext(size_t sz)
     else
         tmppath = "/tmp";
 
-    sprintf (extname, "%s/graph500-ext-XXXXXX", tmppath);
+    sprintf (extname, "%s/benchmark-ext-XXXXXX", tmppath);
 
     which = n_large_alloc++;
     if (n_large_alloc > MAX_LARGE) {

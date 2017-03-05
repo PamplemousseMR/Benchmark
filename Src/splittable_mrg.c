@@ -1,17 +1,14 @@
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <inttypes.h>
 #include "splittable_mrg.h"
-#include "mod_arith.h"
+
+#include "mrg_transitions.c"
 
 uint64_t userseed;
 uint_fast32_t prng_seed[5];
 static mrg_state prng_state_store;
 void *prng_state = &prng_state_store;
 
-static void make_seed(uint64_t userseed, uint_fast32_t* seed) {
+static void make_seed(uint64_t userseed, uint_fast32_t* seed)
+{
 	seed[0] = (userseed & 0x3FFFFFFF) + 1;
 	seed[1] = ((userseed >> 30) & 0x3FFFFFFF) + 1;
 	seed[2] = (userseed & 0x3FFFFFFF) + 1;
@@ -23,30 +20,33 @@ void init_random (void)
 {
 	long seed = -1;
 
-#ifdef _WIN32
+    #ifdef _WIN32
 	char* buf = NULL;
 	size_t sz = 0;
 	if (_dupenv_s(&buf,&sz,"SEED"))
-#else
+    #else
 	if (getenv("SEED"))
-#endif
+    #endif
 	{
 		errno = 0;
-#ifdef _WIN32
-		seed = strtol((char*)_dupenv_s(&buf,&sz,"SEED"), NULL, 10);
-#else
-		seed = strtol((char*)getenv("SEED"), NULL, 10);
-#endif
-		if (errno) seed = -1;
+        #ifdef _WIN32
+        seed = strtol((char*)_dupenv_s(&buf,&sz,"SEED"), NULL, 10);
+        #else
+        seed = strtol((char*)getenv("SEED"), NULL, 10);
+        #endif
+        if (errno)
+            seed = -1;
 	}
 
-	if (seed < 0) seed = 0xDECAFBAD;
+    if (seed < 0)
+        seed = 0xDECAFBAD;
 	userseed = seed;
 	make_seed (seed, prng_seed);
 	mrg_seed(&prng_state_store, prng_seed);
 }
 
-void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mrg_state* __restrict  st, mrg_state* r) {
+void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mrg_state* __restrict  st, mrg_state* r)
+{
 	uint_fast32_t o1 = mod_mac_y(mod_mul(mat->d, st->z1), mod_mac4(0, mat->s, st->z2, mat->a, st->z3, mat->b, st->z4, mat->c, st->z5));
 	uint_fast32_t o2 = mod_mac_y(mod_mac2(0, mat->c, st->z1, mat->w, st->z2), mod_mac3(0, mat->s, st->z3, mat->a, st->z4, mat->b, st->z5));
 	uint_fast32_t o3 = mod_mac_y(mod_mac3(0, mat->b, st->z1, mat->v, st->z2, mat->w, st->z3), mod_mac2(0, mat->s, st->z4, mat->a, st->z5));
@@ -59,11 +59,13 @@ void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mr
 	r->z5 = o5;
 }
 
-static void mrg_step(const mrg_transition_matrix* mat, mrg_state* state) {
+static void mrg_step(const mrg_transition_matrix* mat, mrg_state* state)
+{
 	mrg_apply_transition(mat, state, state);
 }
 
-void mrg_orig_step(mrg_state* state) {
+void mrg_orig_step(mrg_state* state)
+{
 	uint_fast32_t new_elt = mod_mac_y(mod_mul_x(state->z1), state->z5);
 	state->z5 = state->z4;
 	state->z4 = state->z3;
@@ -72,36 +74,39 @@ void mrg_orig_step(mrg_state* state) {
 	state->z1 = new_elt;
 }
 
-#include "mrg_transitions.c"
-
-void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exponent_middle, uint_least64_t exponent_low) {
+void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exponent_middle, uint_least64_t exponent_low)
+{
 	int byte_index;
-	for (byte_index = 0; exponent_low; ++byte_index, exponent_low >>= 8) {
+    for (byte_index = 0; exponent_low; ++byte_index, exponent_low >>= 8)
+    {
 		uint_least8_t val = (uint_least8_t)(exponent_low & 0xFF);
 		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
 	}
-	for (byte_index = 8; exponent_middle; ++byte_index, exponent_middle >>= 8) {
+    for (byte_index = 8; exponent_middle; ++byte_index, exponent_middle >>= 8)
+    {
 		uint_least8_t val = (uint_least8_t)(exponent_middle & 0xFF);
 		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
 	}
-	for (byte_index = 16; exponent_high; ++byte_index, exponent_high >>= 8) {
+    for (byte_index = 16; exponent_high; ++byte_index, exponent_high >>= 8)
+    {
 		uint_least8_t val = (uint_least8_t)(exponent_high & 0xFF);
 		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
 	}
 }
 
-uint_fast32_t mrg_get_uint_orig(mrg_state* state) {
+uint_fast32_t mrg_get_uint_orig(mrg_state* state)
+{
 	mrg_orig_step(state);
 	return state->z1;
 }
 
-double mrg_get_double_orig(mrg_state* state) {
-	return (double)mrg_get_uint_orig(state) * .000000000465661287524579692+
-			(double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787
-			;
+double mrg_get_double_orig(mrg_state* state)
+{
+    return (double)mrg_get_uint_orig(state) * .000000000465661287524579692 + (double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787;
 }
 
-void mrg_seed(mrg_state* st, const uint_fast32_t seed[5]) {
+void mrg_seed(mrg_state* st, const uint_fast32_t seed[5])
+{
 	st->z1 = seed[0];
 	st->z2 = seed[1];
 	st->z3 = seed[2];
@@ -109,7 +114,8 @@ void mrg_seed(mrg_state* st, const uint_fast32_t seed[5]) {
 	st->z5 = seed[4];
 }
 
-void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed) {
+void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed)
+{
 	seed[0] = (userseed1 & 0x3FFFFFFF) + 1;
 	seed[1] = ((userseed1 >> 30) & 0x3FFFFFFF) + 1;
 	seed[2] = (userseed2 & 0x3FFFFFFF) + 1;

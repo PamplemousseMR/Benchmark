@@ -164,15 +164,14 @@ HEADERS += \
     Src/verify/verify.h \
     Src/compat.h \
     Src/getopt.h \
-    Src/graph_struct.h \
     Src/mod_arith.h \
     Src/mod_arith_32bit.h \
     Src/mod_arith_64bit.h \
     Src/options.h \
-    Src/rmat.h \
     Src/splittable_mrg.h \
     Src/timer.h \
-    Src/xalloc.h
+    Src/xalloc.h \
+    Src/edge_struct.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
@@ -181,10 +180,9 @@ SOURCES += \
     Src/generator/make_graph.c \
     Src/verify/verify.c \
     Src/getopt.c \
-    Src/graph500.c \
     Src/mrg_transitions.c \
     Src/options.c \
-    Src/rmat.c \
     Src/splittable_mrg.c \
     Src/timer.c \
-    Src/xalloc.c
+    Src/xalloc.c \
+    Src/benchmark.c

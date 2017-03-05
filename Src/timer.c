@@ -68,17 +68,17 @@ int clock_gettime(int X, struct timeval *tv)
 
 void tic (void)
 {
-#if defined(HAVE_MACH_ABSOLUTE_TIME)
+    #if defined(HAVE_MACH_ABSOLUTE_TIME)
     tic_ts = mach_absolute_time();
-#else
+    #else
     clock_gettime (0, &tic_ts);
-#endif
+    #endif
 }
 
 double toc (void)
 {
     double out;
-#if defined(HAVE_MACH_ABSOLUTE_TIME)
+    #if defined(HAVE_MACH_ABSOLUTE_TIME)
     uint64_t ts, nanosec;
     static mach_timebase_info_data_t info = {0,0};
     if (info.denom == 0) {
@@ -87,18 +87,18 @@ double toc (void)
     ts = mach_absolute_time();
     nanosec = (ts - tic_ts) * (info.numer / info.denom);
     out = 1.0e-9 * nanosec;
-#else
-#ifdef _WIN32
-	struct timeval ts;
-	clock_gettime (0, &ts);
-    out = (ts.tv_usec - (double)tic_ts.tv_usec) * 1.0e-9;
-    out += (ts.tv_sec - (double)tic_ts.tv_sec);
-#else
-	struct timespec ts;
-	clock_gettime (0, &ts);
-	out = (ts.tv_nsec - (double)tic_ts.tv_nsec) * 1.0e-9;
-	out += (ts.tv_sec - (double)tic_ts.tv_sec);
-#endif
-#endif
+    #else
+        #ifdef _WIN32
+        struct timeval ts;
+        clock_gettime (0, &ts);
+        out = (ts.tv_usec - (double)tic_ts.tv_usec) * 1.0e-9;
+        out += (ts.tv_sec - (double)tic_ts.tv_sec);
+        #else
+        struct timespec ts;
+        clock_gettime (0, &ts);
+        out = (ts.tv_nsec - (double)tic_ts.tv_nsec) * 1.0e-9;
+        out += (ts.tv_sec - (double)tic_ts.tv_sec);
+        #endif
+    #endif
     return out;
 }

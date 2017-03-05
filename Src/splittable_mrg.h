@@ -2,6 +2,12 @@
 #define SPLITTABLE_MRG_H
 
 #include <stdint.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <inttypes.h>
+#include "mod_arith.h"
 
 #ifdef __cplusplus
 extern "C" {

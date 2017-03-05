@@ -2,7 +2,7 @@
 #define MAKE_GRAPH_H
 
 #include <stdint.h>
-#include "../graph_struct.h"
+#include "../edge_struct.h"
 
 #ifdef __cplusplus
 extern "C" {

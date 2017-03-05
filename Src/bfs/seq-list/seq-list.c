@@ -7,7 +7,7 @@
 //#include <assert.h>
 
 //#include "../compat.h"
-//#include "../graph500.h"
+//#include "../bfs/bfs.h"
 
 //static int64_t maxvtx, maxdeg, nIJ;
 //static const struct packed_edge * __restrict  IJ;
