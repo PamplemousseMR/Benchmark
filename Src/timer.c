@@ -1,6 +1,10 @@
 #include "timer.h"
 
+#ifdef _WIN32
 static struct timeval tic_ts;
+#else
+static struct timespec tic_ts;
+#endif
 
 #ifdef _WIN32
 LARGE_INTEGER getFILETIMEoffset()
@@ -84,11 +88,17 @@ double toc (void)
     nanosec = (ts - tic_ts) * (info.numer / info.denom);
     out = 1.0e-9 * nanosec;
 #else
-    struct timeval ts;
-    clock_gettime (0, &ts);
+#ifdef _WIN32
+	struct timeval ts;
+	clock_gettime (0, &ts);
     out = (ts.tv_usec - (double)tic_ts.tv_usec) * 1.0e-9;
     out += (ts.tv_sec - (double)tic_ts.tv_sec);
+#else
+	struct timespec ts;
+	clock_gettime (0, &ts);
+	out = (ts.tv_nsec - (double)tic_ts.tv_nsec) * 1.0e-9;
+	out += (ts.tv_sec - (double)tic_ts.tv_sec);
 #endif
-
+#endif
     return out;
 }

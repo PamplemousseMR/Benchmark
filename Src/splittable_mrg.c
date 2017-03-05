@@ -4,8 +4,8 @@
 #include <errno.h>
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
-#include "mod_arith.h"
 #include "splittable_mrg.h"
+#include "mod_arith.h"
 
 uint64_t userseed;
 uint_fast32_t prng_seed[5];
