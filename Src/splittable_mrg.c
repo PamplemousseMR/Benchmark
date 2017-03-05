@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 #include "splittable_mrg.h"
 #include "mod_arith.h"
