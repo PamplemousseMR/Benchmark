@@ -19,8 +19,7 @@ static int64_t * __restrict  xoff;
 static int64_t * __restrict  xadjstore;
 static int64_t * __restrict  xadj;
 
-static void
-find_nv (const struct packed_edge * __restrict  IJ, const int64_t nedge)
+static void find_nv (const struct packed_edge * __restrict  IJ, const int64_t nedge)
 {
     int64_t k;
 
@@ -34,8 +33,7 @@ find_nv (const struct packed_edge * __restrict  IJ, const int64_t nedge)
     nv = 1+maxvtx;
 }
 
-static int
-alloc_graph (int64_t nedge)
+static int alloc_graph (int64_t nedge)
 {
     sz = (2*nv+2) * sizeof (*xoff);
     xoff = xmalloc_large_ext (sz);
@@ -43,8 +41,7 @@ alloc_graph (int64_t nedge)
     return 0;
 }
 
-static void
-free_graph (void)
+static void free_graph (void)
 {
     xfree_large (xadjstore);
     xfree_large (xoff);
@@ -53,8 +50,7 @@ free_graph (void)
 #define XOFF(k) (xoff[2*(k)])
 #define XENDOFF(k) (xoff[1+2*(k)])
 
-static int
-setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t nedge)
+static int setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t nedge)
 {
     int64_t k, accum;
     for (k = 0; k < 2*nv+2; ++k)
@@ -85,16 +81,14 @@ setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t nedge)
     return 0;
 }
 
-static void
-scatter_edge (const int64_t i, const int64_t j)
+static void scatter_edge (const int64_t i, const int64_t j)
 {
     int64_t where;
     where = XENDOFF(i)++;
     xadj[where] = j;
 }
 
-static int
-i64cmp (const void *a, const void *b)
+static int i64cmp (const void *a, const void *b)
 {
     const int64_t ia = *(const int64_t*)a;
     const int64_t ib = *(const int64_t*)b;
@@ -103,8 +97,7 @@ i64cmp (const void *a, const void *b)
     return 0;
 }
 
-static void
-pack_vtx_edges (const int64_t i)
+static void pack_vtx_edges (const int64_t i)
 {
     int64_t kcur, k;
     if (XOFF(i)+1 >= XENDOFF(i)) return;
@@ -119,8 +112,7 @@ pack_vtx_edges (const int64_t i)
     XENDOFF(i) = kcur;
 }
 
-static void
-pack_edges (void)
+static void pack_edges (void)
 {
     int64_t v;
 
@@ -128,8 +120,7 @@ pack_edges (void)
         pack_vtx_edges (v);
 }
 
-static void
-gather_edges (const struct packed_edge * __restrict  IJ, int64_t nedge)
+static void gather_edges (const struct packed_edge * __restrict  IJ, int64_t nedge)
 {
     int64_t k;
 
@@ -145,8 +136,7 @@ gather_edges (const struct packed_edge * __restrict  IJ, int64_t nedge)
     pack_edges ();
 }
 
-int 
-create_graph_from_edgelist (struct packed_edge *IJ, int64_t nedge)
+int  create_graph_from_edgelist (struct packed_edge *IJ, int64_t nedge)
 {
     find_nv (IJ, nedge);
     if (alloc_graph (nedge)) return -1;
@@ -158,9 +148,7 @@ create_graph_from_edgelist (struct packed_edge *IJ, int64_t nedge)
     return 0;
 }
 
-int
-make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out,
-               int64_t srcvtx)
+int make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out, int64_t srcvtx)
 {
     int64_t * __restrict  bfs_tree = bfs_tree_out;
     int err = 0;
@@ -202,8 +190,7 @@ make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out,
     return err;
 }
 
-void
-destroy_graph (void)
+void destroy_graph (void)
 {
     free_graph ();
 }

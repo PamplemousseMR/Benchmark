@@ -46,7 +46,7 @@ void init_random (void)
 	mrg_seed(&prng_state_store, prng_seed);
 }
 
-static void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mrg_state* __restrict  st, mrg_state* r) {
+void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mrg_state* __restrict  st, mrg_state* r) {
 	uint_fast32_t o1 = mod_mac_y(mod_mul(mat->d, st->z1), mod_mac4(0, mat->s, st->z2, mat->a, st->z3, mat->b, st->z4, mat->c, st->z5));
 	uint_fast32_t o2 = mod_mac_y(mod_mac2(0, mat->c, st->z1, mat->w, st->z2), mod_mac3(0, mat->s, st->z3, mat->a, st->z4, mat->b, st->z5));
 	uint_fast32_t o3 = mod_mac_y(mod_mac3(0, mat->b, st->z1, mat->v, st->z2, mat->w, st->z3), mod_mac2(0, mat->s, st->z4, mat->a, st->z5));
@@ -63,7 +63,7 @@ static void mrg_step(const mrg_transition_matrix* mat, mrg_state* state) {
 	mrg_apply_transition(mat, state, state);
 }
 
-static void mrg_orig_step(mrg_state* state) {
+void mrg_orig_step(mrg_state* state) {
 	uint_fast32_t new_elt = mod_mac_y(mod_mul_x(state->z1), state->z5);
 	state->z5 = state->z4;
 	state->z4 = state->z3;

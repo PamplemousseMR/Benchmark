@@ -13,6 +13,9 @@
 #include <sys/types.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#include <sys/mman.h>
 #endif
 
 void* xmalloc(size_t);

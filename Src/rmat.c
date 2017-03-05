@@ -176,7 +176,7 @@ void rmat_edgelist (struct packed_edge *IJ_in, int64_t nedge, int SCALE,
 
 #ifdef _OPENMP
 #if defined(__GNUC__)||defined(__INTEL_COMPILER)
-int64_t take_i64 (volatile int64_t *p)
+static int64_t take_i64 (volatile int64_t *p)
 {
     int64_t oldval;
 
@@ -186,13 +186,13 @@ int64_t take_i64 (volatile int64_t *p)
     return oldval;
 }
 
-void release_i64 (volatile int64_t *p, int64_t val)
+static void release_i64 (volatile int64_t *p, int64_t val)
 {
     assert (*p == -1);
     *p = val;
 }
 
-struct packed_edge take_pe (volatile struct packed_edge *p)
+static struct packed_edge take_pe (volatile struct packed_edge *p)
 {
     struct packed_edge out;
     do {
@@ -206,7 +206,7 @@ struct packed_edge take_pe (volatile struct packed_edge *p)
     return out;
 }
 
-void release_pe (volatile struct packed_edge *p, struct packed_edge val)
+static void release_pe (volatile struct packed_edge *p, struct packed_edge val)
 {
     assert (get_v0_from_edge((const struct packed_edge*)p) == -1);
     OMP("omp critical (TAKE)") {
@@ -230,7 +230,7 @@ int64_t take_i64 (volatile int64_t *p)
     return out;
 }
 
-void release_i64 (volatile int64_t *p, int64_t val)
+static void release_i64 (volatile int64_t *p, int64_t val)
 {
     assert (*p == -1);
     OMP("omp critical (TAKE)") {
@@ -240,7 +240,7 @@ void release_i64 (volatile int64_t *p, int64_t val)
     return;
 }
 
-struct packed_edge take_pe (volatile struct packed_edge *p)
+static struct packed_edge take_pe (volatile struct packed_edge *p)
 {
     struct packed_edge out;
     do {
@@ -254,7 +254,7 @@ struct packed_edge take_pe (volatile struct packed_edge *p)
     return out;
 }
 
-void release_pe (volatile struct packed_edge *p, struct packed_edge val)
+static void release_pe (volatile struct packed_edge *p, struct packed_edge val)
 {
     assert (get_v0_from_edge(p) == -1);
     OMP("omp critical (TAKE)") {
