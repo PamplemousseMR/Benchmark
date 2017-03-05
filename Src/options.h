@@ -38,8 +38,6 @@ class Options
 		static int64_t SCALE;
 		static int64_t edgefactor;
 
-		static void printOptions();
-
 	public:
 
 		static void getOptions(int, char**);
