@@ -59,7 +59,7 @@ void mrg_apply_transition(const mrg_transition_matrix* __restrict  mat, const mr
 	r->z5 = o5;
 }
 
-static void mrg_step(const mrg_transition_matrix* mat, mrg_state* state)
+void mrg_step(const mrg_transition_matrix* mat, mrg_state* state)
 {
 	mrg_apply_transition(mat, state, state);
 }
