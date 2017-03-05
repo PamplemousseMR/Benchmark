@@ -1,6 +1,3 @@
-///* -*- mode: C; mode: folding; fill-column: 70; -*- */
-///* Copyright 2010,  Georgia Institute of Technology, USA. */
-///* See COPYING for license. */
 //#define _FILE_OFFSET_BITS 64
 //#define _THREAD_SAFE
 //#include <stdlib.h>
@@ -52,7 +49,7 @@
 //    if (i >= 0 && j >= 0 && i != j) {
 //      next[2*k] = -1;
 //      next[1+2*k] = -1;
-//      t = 2*k+1; /* Point at the *other* end. */
+//      t = 2*k+1;
 //      t_head = head[i];
 //      head[i] = t;
 //      assert (t_head < 2*nIJ);

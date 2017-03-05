@@ -21,18 +21,15 @@ compute_levels (int64_t * level,
 	if (!terr && bfs_tree[k] >= 0 && k != root) {
 	  int64_t parent = k;
 	  int64_t nhop = 0;
-	  /* Run up the tree until we encounter an already-leveled vertex. */
 	  while (parent >= 0 && level[parent] < 0 && nhop < nv) {
 	    assert (parent != bfs_tree[parent]);
 	    parent = bfs_tree[parent];
 	    ++nhop;
 	  }
-	  if (nhop >= nv) terr = -1; /* Cycle. */
-	  if (parent < 0) terr = -2; /* Ran off the end. */
+      if (nhop >= nv) terr = -1;
+      if (parent < 0) terr = -2;
 
 	  if (!terr) {
-	    /* Now assign levels until we meet an already-leveled vertex */
-	    /* NOTE: This permits benign races if parallelized. */
 	    nhop += level[parent];
 	    parent = k;
 	    while (level[parent] < 0) {
@@ -42,7 +39,6 @@ compute_levels (int64_t * level,
 	    }
 	    assert (nhop == level[parent]);
 
-	    /* Internal check to catch mistakes in races... */
 #if !defined(NDEBUG)
 	    nhop = 0;
 	    parent = k;
@@ -71,11 +67,6 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
   int64_t * __restrict  seen_edge, * __restrict  level;
 
   const int64_t nv = max_bfsvtx+1;
-
-  /*
-    This code is horrifically contorted because many compilers
-    complain about continue, return, etc. in parallel sections.
-  */
 
   if (root > max_bfsvtx || bfs_tree[root] != root)
     return -999;
@@ -107,23 +98,16 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 	if (i > max_bfsvtx && j <= max_bfsvtx) terr = -10;
 	if (j > max_bfsvtx && i <= max_bfsvtx) terr = -11;
 	if (terr) { err = terr; OMP("omp flush(err)"); }
-	if (terr || i > max_bfsvtx /* both i & j are on the same side of max_bfsvtx */)
+    if (terr || i > max_bfsvtx)
 	  continue;
 
-	/* All neighbors must be in the tree. */
 	if (bfs_tree[i] >= 0 && bfs_tree[j] < 0) terr = -12;
 	if (bfs_tree[j] >= 0 && bfs_tree[i] < 0) terr = -13;
 	if (terr) { err = terr; OMP("omp flush(err)"); }
-	if (terr || bfs_tree[i] < 0 /* both i & j have the same sign */)
+    if (terr || bfs_tree[i] < 0)
 	  continue;
 
-	/* Both i and j are in the tree, count as a traversed edge.
-
-	   NOTE: This counts self-edges and repeated edges.  They're
-	   part of the input data.
-	*/
 	++nedge_traversed;
-	/* Mark seen tree edges. */
 	if (i != j) {
 	  if (bfs_tree[i] == j)
 	    seen_edge[i] = 1;
@@ -131,14 +115,12 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 	    seen_edge[j] = 1;
 	}
 	lvldiff = level[i] - level[j];
-	/* Check that the levels differ by no more than one. */
 	if (lvldiff > 1 || lvldiff < -1)
 	  terr = -14;
 	if (terr) { err = terr; OMP("omp flush(err)"); }
       }
 
     if (!terr) {
-      /* Check that every BFS edge was seen and that there's only one root. */
       OMP("omp for")
 	for (k = 0; k < nv; ++k) {
 	  terr = err;

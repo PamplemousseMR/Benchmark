@@ -6,6 +6,5 @@
 #else
 #include "mod_arith_32bit.h"
 #endif
-#
 
-#endif /* MOD_ARITH_H */
+#endif

@@ -13,4 +13,4 @@ double toc (void);
 
 #define TIME(timevar, what) do { tic (); what; timevar = toc(); } while (0)
 
-#endif /* TIMER_HEADER_ */
+#endif

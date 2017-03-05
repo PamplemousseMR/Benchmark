@@ -161,7 +161,6 @@ message("-------QMAKE END--------")
 HEADERS += \
     Src/bfs/bfs.h \
     Src/generator/make_graph.h \
-    Src/generator/utils.h \
     Src/verify/verify.h \
     Src/compat.h \
     Src/getopt.h \
@@ -170,7 +169,6 @@ HEADERS += \
     Src/mod_arith_32bit.h \
     Src/mod_arith_64bit.h \
     Src/options.h \
-    Src/prng.h \
     Src/rmat.h \
     Src/splittable_mrg.h \
     Src/timer.h \
@@ -181,13 +179,11 @@ SOURCES += \
     Src/bfs/seq-csr/seq-csr.c \
     Src/bfs/seq-list/seq-list.c \
     Src/generator/make_graph.c \
-    Src/generator/utils.c \
     Src/verify/verify.c \
     Src/getopt.c \
     Src/graph500.c \
     Src/mrg_transitions.c \
     Src/options.c \
-    Src/prng.c \
     Src/rmat.c \
     Src/splittable_mrg.c \
     Src/timer.c \

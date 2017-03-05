@@ -13,11 +13,11 @@
 #endif
 
 #include "../graph_struct.h"
-#include "utils.h"
+#include "../xalloc.h"
+#include "../splittable_mrg.h"
 
 #ifndef GRAPH_GENERATOR_MPI
 void make_graph(int log_numverts, int64_t M, uint64_t userseed1, uint64_t userseed2, int64_t* nedges_ptr_in, packed_edge** result_ptr_in) {
-        /* Add restrict to input pointers. */
         *nedges_ptr_in = M;
         *result_ptr_in = (packed_edge*)xmalloc(M * sizeof(packed_edge));
 
@@ -28,10 +28,10 @@ void make_graph(int log_numverts, int64_t M, uint64_t userseed1, uint64_t userse
 
         for(int i=0 ; i<M ; i++)
         {
-            write_edge(&(*result_ptr_in)[i],mrg_get_uint_orig(seed)%max,mrg_get_uint_orig(seed)%max);
+            write_edge(&(*result_ptr_in)[i],mrg_get_uint_orig((mrg_state*)seed)%max,mrg_get_uint_orig((mrg_state*)seed)%max);
         }
 }
-#endif /* !GRAPH_GENERATOR_MPI */
+#endif
 
 #ifdef GRAPH_GENERATOR_MPI
 void make_graph(int log_numverts, int64_t M, uint64_t userseed1, uint64_t userseed2, int64_t* nedges_ptr, packed_edge** result_ptr) {

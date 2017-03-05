@@ -1,6 +1,3 @@
-///* -*- mode: C; mode: folding; fill-column: 70; -*- */
-///* Copyright 2010,  Georgia Institute of Technology, USA. */
-///* See COPYING for license. */
 //#include "../compat.h"
 //#include <stdlib.h>
 //#include <stdio.h>
@@ -21,8 +18,8 @@
 //#define MINVECT_SIZE 2
 
 //static int64_t maxvtx, nv, sz;
-//static int64_t * __restrict  xoff; /* Length 2*nv+2 */
-//static int64_t * __restrict  xadjstore; /* Length MINVECT_SIZE + (xoff[nv] == nedge) */
+//static int64_t * __restrict  xoff;
+//static int64_t * __restrict  xadjstore;
 //static int64_t * __restrict  xadj;
 
 //static void
@@ -115,7 +112,7 @@
 //      for (k = 0; k < nedge; ++k) {
 //        int64_t i = get_v0_from_edge(&IJ[k]);
 //        int64_t j = get_v1_from_edge(&IJ[k]);
-//	if (i != j) { /* Skip self-edges. */
+//	if (i != j) {
 //	  if (i >= 0)
 //	    OMP("omp atomic")
 //	      ++XOFF(i);
@@ -145,7 +142,7 @@
 //      if (!(xadjstore = xmalloc_large_ext ((XOFF(nv) + MINVECT_SIZE) * sizeof (*xadjstore))))
 //	err = -1;
 //      if (!err) {
-//	xadj = &xadjstore[MINVECT_SIZE]; /* Cheat and permit xadj[-1] to work. */
+//	xadj = &xadjstore[MINVECT_SIZE];
 //	for (k = 0; k < XOFF(nv) + MINVECT_SIZE; ++k)
 //	  xadjstore[k] = -1;
 //      }
@@ -330,7 +327,6 @@
 //  return __sync_bool_compare_and_swap (p, oldval, newval);
 //}
 //#else
-///* XXX: These are not correct, but suffice for the above uses. */
 //int64_t
 //int64_fetch_add (int64_t* p, int64_t incr)
 //{

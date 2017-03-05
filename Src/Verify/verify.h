@@ -16,4 +16,4 @@
 
 int64_t verify_bfs_tree (int64_t*, int64_t ,int64_t , const packed_edge*, int64_t);
 
-#endif /* VERIFY_HEADER_ */
+#endif

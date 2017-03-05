@@ -68,4 +68,4 @@ static __inline uint_fast32_t mod_mac_y(uint_fast32_t sum, uint_fast32_t a) {
   return mod_mac(sum, a, 104480);
 }
 
-#endif /* MOD_ARITH_64BIT_H */
+#endif

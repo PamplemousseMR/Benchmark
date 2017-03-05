@@ -11,10 +11,9 @@
 #include <assert.h>
 #include <malloc.h>
 #include "xalloc.h"
-#include "prng.h"
 #include "splittable_mrg.h"
 #include "graph_struct.h"
 
 void rmat_edgelist(struct packed_edge*, int64_t, int, double, double, double);
 
-#endif /* RMAT_HEADER_ */
+#endif

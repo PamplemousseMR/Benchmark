@@ -11,7 +11,7 @@ static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
 #if 0
   return (a + b) % 0x7FFFFFFF;
 #else
-  x = a + b; /* x <= 0xFFFFFFFC */
+  x = a + b;
   x = (x >= 0x7FFFFFFF) ? (x - 0x7FFFFFFF) : x;
   return x;
 #endif
@@ -25,8 +25,8 @@ static __inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
 #if 0
   return (uint_fast32_t)((uint_fast64_t)a * b % 0x7FFFFFFF);
 #else
-  temp = (uint_fast64_t)a * b; /* temp <= 0x3FFFFFFE00000004 */
-  temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31); /* temp2 <= 0xFFFFFFFB */
+  temp = (uint_fast64_t)a * b;
+  temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31);
   return (temp2 >= 0x7FFFFFFF) ? (temp2 - 0x7FFFFFFF) : temp2;
 #endif
 }
@@ -40,8 +40,8 @@ static __inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_f
 #if 0
   return (uint_fast32_t)(((uint_fast64_t)a * b + sum) % 0x7FFFFFFF);
 #else
-  temp = (uint_fast64_t)a * b + sum; /* temp <= 0x3FFFFFFE80000002 */
-  temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31); /* temp2 <= 0xFFFFFFFC */
+  temp = (uint_fast64_t)a * b + sum;
+  temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31);
   return (temp2 >= 0x7FFFFFFF) ? (temp2 - 0x7FFFFFFF) : temp2;
 #endif
 }
@@ -80,8 +80,8 @@ static __inline uint_fast32_t mod_mac4(uint_fast32_t sum, uint_fast32_t a, uint_
 }
 
 __inline uint_fast32_t mod_mul_x(uint_fast32_t a) {
-  static const int32_t q = 20 /* UINT32_C(0x7FFFFFFF) / 107374182 */;
-  static const int32_t r = 7  /* UINT32_C(0x7FFFFFFF) % 107374182 */;
+  static const int32_t q = 20;
+  static const int32_t r = 7;
   int_fast32_t result = (int_fast32_t)(a) / q;
   result = 107374182 * ((int_fast32_t)(a) - result * q) - result * r;
   result += (result < 0 ? 0x7FFFFFFF : 0);
@@ -90,8 +90,8 @@ __inline uint_fast32_t mod_mul_x(uint_fast32_t a) {
 }
 
 __inline uint_fast32_t mod_mul_y(uint_fast32_t a) {
-  static const int32_t q = 20554 /* UINT32_C(0x7FFFFFFF) / 104480 */;
-  static const int32_t r = 1727  /* UINT32_C(0x7FFFFFFF) % 104480 */;
+  static const int32_t q = 20554;
+  static const int32_t r = 1727;
   int_fast32_t result = (int_fast32_t)(a) / q;
   result = 104480 * ((int_fast32_t)(a) - result * q) - result * r;
   result += (result < 0 ? 0x7FFFFFFF : 0);
@@ -105,4 +105,4 @@ __inline uint_fast32_t mod_mac_y(uint_fast32_t sum, uint_fast32_t a) {
   return result;
 }
 
-#endif /* MOD_ARITH_32BIT_H */
+#endif

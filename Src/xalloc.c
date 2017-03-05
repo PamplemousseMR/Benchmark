@@ -10,21 +10,15 @@
 #define MAP_NOSYNC 0
 #endif
 
-#if 0
-/* Included in the generator. */
-void *
-xmalloc (size_t sz)
+void* xmalloc (size_t n)
 {
-    void *out;
-    if (!(out = malloc (sz))) {
-        perror ("malloc failed");
-        abort ();
+    void* p = malloc(n);
+    if (!p) {
+        fprintf(stderr, "Out of memory trying to allocate %zu byte(s)\n", n);
+        abort();
     }
-    return out;
+    return p;
 }
-#else
-extern void *xmalloc (size_t);
-#endif
 
 #if defined(USE_MMAP_LARGE)||defined(USE_MMAP_LARGE_EXT)
 #define MAX_LARGE 32
@@ -64,8 +58,7 @@ abort_handler (int passthrough)
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
-void *
-xmalloc_large (size_t sz)
+void* xmalloc_large (size_t sz)
 {
 #if defined(USE_MMAP_LARGE)
     void *out;
@@ -91,8 +84,7 @@ xmalloc_large (size_t sz)
 #endif
 }
 
-void
-xfree_large (void *p)
+void xfree_large(void* p)
 {
 #if defined(USE_MMAP_LARGE)||defined(USE_MMAP_LARGE_EXT)
     int k, found = 0;
@@ -119,8 +111,7 @@ xfree_large (void *p)
 #endif
 }
 
-void *
-xmalloc_large_ext (size_t sz)
+void* xmalloc_large_ext(size_t sz)
 {
 #if defined(USE_MMAP_LARGE_EXT)
     char extname[PATH_MAX+1];
