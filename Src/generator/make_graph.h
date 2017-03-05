@@ -7,23 +7,17 @@
 #ifdef GRAPH_GENERATOR_OMP
 #include <omp.h>
 #endif
-#include "graph_generator.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "../graph_struct.h"
 
-void make_graph(
-  /* in */ int          /* log_2 of vertex count */,
-  /* in */ int64_t    /* Target number of edges */,
-  /* in */ uint64_t        /* Arbitrary 64-bit seed value */,
-  /* in */ uint64_t        /* Arbitrary 64-bit seed value */,
-  /* out */ int64_t*           /* Number of generated edges */,
-  /* out */ packed_edge**     /* Array of edges; allocated by*/
-);
+class Graph
+{
 
-#ifdef __cplusplus
-}
-#endif
+	public:
+
+		static void make_graph(int, int64_t, uint64_t, uint64_t, int64_t*, packed_edge**);
+
+};
+
 
 #endif /* MAKE_GRAPH_H */

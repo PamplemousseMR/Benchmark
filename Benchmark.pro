@@ -155,32 +155,38 @@ Debug:DEFINES += DEBUG_EXCEPTION
 DEFINES +=
 #----------------------------------
 
-#---------------Src----------------
-SOURCES += Src/main.cpp \
-    Src/tree.cpp \
-    Src/graph.cpp \
-    Src/node.cpp \
-    Src/edgelist.cpp \
-    Src/list.cpp \
-    Src/generator/make_graph.c \
-    Src/generator/utils.c \
-    Src/generator/splittable_mrg.c \
-    Src/generator/mrg_transitions.c
-#----------------------------------
-
 message("-------QMAKE END--------")
 
+#---------------Src----------------
+SOURCES += \
+    Src/options.cpp \
+    Src/prgn.cpp \
+    Src/generator/mrg_transitions.c \
+    Src/generator/splittable_mrg.c \
+    Src/xalloc.cpp \
+    Src/timer.cpp \
+    Src/rmat.cpp \
+    Src/getopt.c \
+    Src/graph500.cpp \
+    Src/BFS/seq-csr/seq-csr.cpp \
+    Src/Verify/verify.cpp \
+    Src/generator/make_graph.cpp
+
 HEADERS += \
-    Src/node.h \
-    Src/tree.h \
-    Src/graph.h \
-    Src/commun.h \
-    Src/edgelist.h \
-    Src/list.h \
-    Src/generator/graph_generator.h \
-    Src/generator/make_graph.h \
-    Src/generator/splittable_mrg.h \
-    Src/generator/utils.h \
+    Src/compat.h \
+    Src/options.h \
     Src/generator/mod_arith.h \
     Src/generator/mod_arith_32bit.h \
-    Src/generator/mod_arith_64bit.h
+    Src/generator/mod_arith_64bit.h \
+    Src/generator/splittable_mrg.h \
+    Src/getopt.h \
+    Src/prng.h \
+    Src/rmat.h \
+    Src/timer.h \
+    Src/verify.h \
+    Src/xalloc.h \
+    Src/BFS.h \
+    Src/BFS/BFS.h \
+    Src/Verify/verify.h \
+    Src/graph_struct.h \
+    Src/generator/make_graph.h
