@@ -5,22 +5,13 @@ uint_fast32_t Prng::prng_seed[5] = {0,0,0,0,0};
 mrg_state Prng::prng_state_store;
 void* Prng::prng_state = &prng_state_store;
 
-void make_mrg_seed(uint64_t userseed, uint_fast32_t* seed)
+void Prng::make_mrg_seed(uint64_t userseed, uint_fast32_t seed[5])
 {
   seed[0] = (userseed & 0x3FFFFFFF) + 1;
   seed[1] = ((userseed >> 30) & 0x3FFFFFFF) + 1;
   seed[2] = (userseed & 0x3FFFFFFF) + 1;
   seed[3] = ((userseed >> 30) & 0x3FFFFFFF) + 1;
   seed[4] = ((userseed >> 60) << 4) + (userseed >> 60) + 1;
-}
-
-void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed)
-{
-  seed[0] = (userseed1 & 0x3FFFFFFF) + 1;
-  seed[1] = ((userseed1 >> 30) & 0x3FFFFFFF) + 1;
-  seed[2] = (userseed2 & 0x3FFFFFFF) + 1;
-  seed[3] = ((userseed2 >> 30) & 0x3FFFFFFF) + 1;
-  seed[4] = ((userseed2 >> 60) << 4) + (userseed1 >> 60) + 1;
 }
 
 void Prng::init_random ()

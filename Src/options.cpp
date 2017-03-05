@@ -15,7 +15,7 @@ int Options::NBFS = NBFS_max;
 int64_t Options::SCALE = default_SCALE;
 int64_t Options::edgefactor = default_edgefactor;
 
-void printOptions()
+void Options::printOptions()
 {
 	printf ("Options:\n"
 		"  v   : version\n"
