@@ -10,8 +10,7 @@
 #ifndef __STDC_CONSTANT_MACROS
 #define __STDC_CONSTANT_MACROS
 #endif
-#include "splittable_mrg.h"
-#include "graph_generator.h"
+#include "../graph_struct.h"
 #include <stdint.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -27,15 +26,6 @@
 
 void* xmalloc(size_t n) {
   void* p = malloc(n);
-  if (!p) {
-    fprintf(stderr, "Out of memory trying to allocate %zu byte(s)\n", n);
-    abort();
-  }
-  return p;
-}
-
-void* xcalloc(size_t n, size_t k) {
-  void* p = calloc(n, k);
   if (!p) {
     fprintf(stderr, "Out of memory trying to allocate %zu byte(s)\n", n);
     abort();

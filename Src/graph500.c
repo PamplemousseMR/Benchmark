@@ -11,14 +11,14 @@ typedef SSIZE_T ssize_t;
 
 #include "getopt.h"
 #include "timer.h"
-#include "graph500.h"
+#include "bfs/bfs.h"
 #include "rmat.h"
 #include "verify/verify.h"
 #include "prng.h"
 #include "xalloc.h"
 #include "options.h"
-#include "generator/splittable_mrg.h"
-#include "generator/graph_generator.h"
+#include "splittable_mrg.h"
+#include "graph_struct.h"
 #include "generator/make_graph.h"
 
 static int64_t nvtx_scale;

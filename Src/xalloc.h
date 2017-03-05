@@ -13,9 +13,9 @@
 #include <fcntl.h>
 #include <sys/types.h>
 
-void * xmalloc (size_t);
-void * xmalloc_large (size_t);
-void xfree_large (void *);
-void * xmalloc_large_ext (size_t);
+void* xmalloc (size_t);
+void* xmalloc_large (size_t);
+void* xmalloc_large_ext (size_t);
+void xfree_large(void*);
 
 #endif /* XALLOC_HEADER_ */

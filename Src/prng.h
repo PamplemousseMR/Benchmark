@@ -7,9 +7,9 @@
 #include <errno.h>
 #include <stdint.h>
 
-#include "generator/splittable_mrg.h"
+#include "splittable_mrg.h"
 
-void init_random (void);
+void init_random(void);
 
 extern uint64_t userseed;
 extern uint_fast32_t prng_seed[5];

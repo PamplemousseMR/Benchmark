@@ -9,7 +9,9 @@
 #include <windows.h>
 
 #include "getopt.h"
-#include "graph500.h"
+
+#define NAME "Benchmark"
+#define VERSION 0
 
 extern int VERBOSE;
 extern int use_RMAT;

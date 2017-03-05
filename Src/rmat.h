@@ -12,9 +12,9 @@
 #include <malloc.h>
 #include "xalloc.h"
 #include "prng.h"
-#include "generator/splittable_mrg.h"
-#include "generator/graph_generator.h"
+#include "splittable_mrg.h"
+#include "graph_struct.h"
 
-void rmat_edgelist (struct packed_edge*, int64_t, int, double, double, double);
+void rmat_edgelist(struct packed_edge*, int64_t, int, double, double, double);
 
 #endif /* RMAT_HEADER_ */

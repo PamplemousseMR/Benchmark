@@ -12,7 +12,7 @@
 #include <omp.h>
 #endif
 
-#include "graph_generator.h"
+#include "../graph_struct.h"
 #include "utils.h"
 
 #ifndef GRAPH_GENERATOR_MPI

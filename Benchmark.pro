@@ -10,7 +10,7 @@
 
 #----------Configuration----------
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 PLATFORM = NVIDIA
@@ -148,8 +148,7 @@ win32:{
 #RANDOM For activate random seed
 #GRAPH_GENERATOR_OMP For activate OpenMP
 #GRAPH_GENERATOR_OMPI For activate Open MPI
-#GENERATOR_USE_PACKED_EDGE_TYPE 64 bits per edge, else 48 bits per edge
-#FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits
+#FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits(more speed)
 
 Debug:DEFINES += DEBUG_EXCEPTION
 DEFINES +=
@@ -160,40 +159,36 @@ message("-------QMAKE END--------")
 #---------------Src----------------
 
 HEADERS += \
-    Src/verify/verify.h \
-    Src/generator/graph_generator.h \
+    Src/bfs/bfs.h \
     Src/generator/make_graph.h \
-    Src/generator/mod_arith.h \
-    Src/generator/mod_arith_32bit.h \
-    Src/generator/mod_arith_64bit.h \
-    Src/generator/splittable_mrg.h \
-    Src/generator/user_settings.h \
     Src/generator/utils.h \
+    Src/verify/verify.h \
     Src/compat.h \
     Src/getopt.h \
-    Src/graph500.h \
+    Src/graph_struct.h \
+    Src/mod_arith.h \
+    Src/mod_arith_32bit.h \
+    Src/mod_arith_64bit.h \
     Src/options.h \
     Src/prng.h \
     Src/rmat.h \
+    Src/splittable_mrg.h \
     Src/timer.h \
     Src/xalloc.h
 
 SOURCES += \
-    Src/verify/verify.c \
+    Src/bfs/omp-csr/omp-csr.c \
+    Src/bfs/seq-csr/seq-csr.c \
+    Src/bfs/seq-list/seq-list.c \
     Src/generator/make_graph.c \
-    Src/generator/mrg_transitions.c \
-    Src/generator/splittable_mrg.c \
     Src/generator/utils.c \
-    Src/omp-csr/omp-csr.c \
-    Src/seq-csr/seq-csr.c \
-    Src/seq-list/seq-list.c \
-    Src/xmt-csr/xmt-csr.c \
-    Src/xmt-csr-local/xmt-csr-local.c \
+    Src/verify/verify.c \
     Src/getopt.c \
     Src/graph500.c \
+    Src/mrg_transitions.c \
     Src/options.c \
     Src/prng.c \
     Src/rmat.c \
+    Src/splittable_mrg.c \
     Src/timer.c \
     Src/xalloc.c
-

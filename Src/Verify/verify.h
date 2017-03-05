@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "../generator/graph_generator.h"
+#include "../graph_struct.h"
 #include "../xalloc.h"
 
 int64_t verify_bfs_tree (int64_t*, int64_t ,int64_t , const packed_edge*, int64_t);
