@@ -46,26 +46,6 @@ static void mrg_orig_step(mrg_state* state)
 	state->z1 = new_elt;
 }
 
-static void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exponent_middle, uint_least64_t exponent_low)
-{
-	int byte_index;
-    for (byte_index = 0; exponent_low; ++byte_index, exponent_low >>= 8)
-    {
-		uint_least8_t val = (uint_least8_t)(exponent_low & 0xFF);
-		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
-	}
-    for (byte_index = 8; exponent_middle; ++byte_index, exponent_middle >>= 8)
-    {
-		uint_least8_t val = (uint_least8_t)(exponent_middle & 0xFF);
-		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
-	}
-    for (byte_index = 16; exponent_high; ++byte_index, exponent_high >>= 8)
-    {
-		uint_least8_t val = (uint_least8_t)(exponent_high & 0xFF);
-		if (val != 0) mrg_step(&mrg_skip_matrices[byte_index][val], state);
-	}
-}
-
 static void mrg_seed(mrg_state* st, const uint_fast32_t seed[5])
 {
     st->z1 = seed[0];
