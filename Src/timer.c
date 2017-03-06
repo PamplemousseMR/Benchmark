@@ -7,7 +7,7 @@ static struct timespec tic_ts;
 #endif
 
 #ifdef _WIN32
-LARGE_INTEGER getFILETIMEoffset()
+static LARGE_INTEGER getFILETIMEoffset()
 {
     SYSTEMTIME s;
     FILETIME f;
@@ -27,7 +27,7 @@ LARGE_INTEGER getFILETIMEoffset()
     return (t);
 }
 
-int clock_gettime(int X, struct timeval *tv)
+static int clock_gettime(int X, struct timeval *tv)
 {
     LARGE_INTEGER           t;
     FILETIME            f;

@@ -10,10 +10,10 @@ double B = B_PARAM;
 double C = C_PARAM;
 double D = 1.0 - (A_PARAM + B_PARAM + C_PARAM);
 
-int NBFS = NBFS_max;
+int NBFS = NBFS_MAX;
 
-int64_t SCALE = default_SCALE;
-int64_t edgefactor = default_edgefactor;
+int64_t SCALE = DEFAULT_SCALE;
+int64_t edgefactor = DEFAULT_EDGEFACTOR;
 
 static void print_options()
 {
@@ -58,7 +58,7 @@ static void print_options()
             "  max_TEPS\n"
             "  harmonic_mean_TEPS\n"
             "  harmonic_stddev_TEPS\n"
-            , default_SCALE, default_edgefactor,
+            , DEFAULT_SCALE, DEFAULT_EDGEFACTOR,
             A_PARAM, B_PARAM, C_PARAM,
             (1.0 - (A_PARAM + B_PARAM + C_PARAM))
             );

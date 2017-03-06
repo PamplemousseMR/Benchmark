@@ -1,20 +1,43 @@
 #ifndef __MOD_ARITH_32__
 #define __MOD_ARITH_32__
-
+/*!
+ * \file mod_arith_32bits.h
+ * \param Fichier qui permet de faire des calcules sur des int de 32 bits modulo 2147483646.
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
+ */
 #include <stdint.h>		/*	uint_fast32	*/
 #include <assert.h>		/*	assert	*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*	=============== Funtions ===============	*/
+
+static __inline uint_fast32_t mod_add(uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mul(uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac(uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac2(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac3(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac4(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mul_x(uint_fast32_t);
+static __inline uint_fast32_t mod_mul_y(uint_fast32_t);
+static __inline uint_fast32_t mod_mac_y(uint_fast32_t, uint_fast32_t);
+
+/*	=============== Inline definitions ===============	*/
 
 static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
     uint_fast32_t x;
     assert (a <= 0x7FFFFFFE);
     assert (b <= 0x7FFFFFFE);
-#if 0
-    return (a + b) % 0x7FFFFFFF;
-#else
     x = a + b;
     x = (x >= 0x7FFFFFFF) ? (x - 0x7FFFFFFF) : x;
     return x;
-#endif
 }
 
 static __inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
@@ -22,13 +45,9 @@ static __inline uint_fast32_t mod_mul(uint_fast32_t a, uint_fast32_t b) {
     uint_fast32_t temp2;
     assert (a <= 0x7FFFFFFE);
     assert (b <= 0x7FFFFFFE);
-#if 0
-    return (uint_fast32_t)((uint_fast64_t)a * b % 0x7FFFFFFF);
-#else
     temp = (uint_fast64_t)a * b;
     temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31);
     return (temp2 >= 0x7FFFFFFF) ? (temp2 - 0x7FFFFFFF) : temp2;
-#endif
 }
 
 static __inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b) {
@@ -37,13 +56,9 @@ static __inline uint_fast32_t mod_mac(uint_fast32_t sum, uint_fast32_t a, uint_f
     assert (sum <= 0x7FFFFFFE);
     assert (a <= 0x7FFFFFFE);
     assert (b <= 0x7FFFFFFE);
-#if 0
-    return (uint_fast32_t)(((uint_fast64_t)a * b + sum) % 0x7FFFFFFF);
-#else
     temp = (uint_fast64_t)a * b + sum;
     temp2 = (uint_fast32_t)(temp & 0x7FFFFFFF) + (uint_fast32_t)(temp >> 31);
     return (temp2 >= 0x7FFFFFFF) ? (temp2 - 0x7FFFFFFF) : temp2;
-#endif
 }
 
 static __inline uint_fast32_t mod_mac2(uint_fast32_t sum, uint_fast32_t a, uint_fast32_t b, uint_fast32_t c, uint_fast32_t d) {
@@ -104,5 +119,9 @@ static __inline uint_fast32_t mod_mac_y(uint_fast32_t sum, uint_fast32_t a) {
     assert (result == mod_mac(sum, a, 104480));
     return result;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

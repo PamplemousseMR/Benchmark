@@ -5,10 +5,11 @@
 #include <stdlib.h>		/*	NULL */
 #include <errno.h>		/*	errno	*/
 #include "mod_arith.h"	/*	mod_*	*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*	=============== Struct ===============	*/
 
 typedef struct mrg_state {
   uint_fast32_t z1, z2, z3, z4, z5;
@@ -19,9 +20,13 @@ typedef struct mrg_transition_matrix {
     uint_fast32_t a, b, c, d;
 } mrg_transition_matrix;
 
+/*	=============== Global ===============	*/
+
 extern uint64_t userseed;
 extern uint_fast32_t prng_seed[5];
 extern void* prng_state;
+
+/*	=============== Functions ===============	*/
 
 uint_fast32_t mrg_get_uint_orig(mrg_state* state);
 double mrg_get_double_orig(mrg_state* state);

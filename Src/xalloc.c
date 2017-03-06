@@ -33,8 +33,7 @@ static struct {
 static int installed_handler = 0;
 static void (*old_abort_handler)(int);
 
-static void
-exit_handler (void)
+static void exit_handler (void)
 {
     int k;
     for (k = 0; k < n_large_alloc; ++k) {
@@ -47,8 +46,7 @@ exit_handler (void)
     }
 }
 
-static void
-abort_handler (int passthrough)
+static void abort_handler (int passthrough)
 {
     exit_handler ();
     if (old_abort_handler) old_abort_handler (passthrough);

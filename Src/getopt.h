@@ -60,7 +60,7 @@ int parse_long_options(char * const *, const char *,const struct option *, int *
 int gcd(int , int );
 void permute_args(int , int , int , char * const *);
 int getopt_internal(int , char * const *, const char *, const struct option *, int *, int );
-int getopt(int, char * const *, const char *);
+int getopt(int, char * const *, const char*);
 
 #ifdef __cplusplus
 }

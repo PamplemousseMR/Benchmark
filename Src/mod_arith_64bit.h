@@ -1,8 +1,35 @@
 #ifndef __MOD_ARITH_64__
 #define __MOD_ARITH_64__
-
+/*!
+ * \file mod_arith_32bits.h
+ * \param Fichier qui permet de faire des calcules sur des int de 64 bits modulo 2147483646.
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
+ */
 #include <stdint.h>		/*	uint_fast64	*/
 #include <assert.h>		/*	assert	*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*	=============== Funtions ===============	*/
+
+static __inline uint_fast32_t mod_add(uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mul(uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac(uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac2(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac3(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mac4(uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast32_t);
+static __inline uint_fast32_t mod_mul_x(uint_fast32_t);
+static __inline uint_fast32_t mod_mul_y(uint_fast32_t);
+static __inline uint_fast32_t mod_mac_y(uint_fast32_t, uint_fast32_t);
+
+/*	=============== Inline definitions ===============	*/
 
 static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
     assert (a <= 0x7FFFFFFE);
@@ -67,5 +94,9 @@ static __inline uint_fast32_t mod_mul_y(uint_fast32_t a) {
 static __inline uint_fast32_t mod_mac_y(uint_fast32_t sum, uint_fast32_t a) {
     return mod_mac(sum, a, 104480);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,7 @@
 #include "compat.h"
 #include <stdio.h>		/*	printf	*/
 #include <math.h>		/*	sqrt	*/
+#include <malloc.h>     /*  alloca  */
 
 #ifdef _WIN32
 #include <BaseTsd.h>
@@ -22,13 +23,13 @@ typedef SSIZE_T ssize_t;
 
 static int64_t numb_node;
 
-static int64_t bfs_root[NBFS_max];
+static int64_t bfs_root[NBFS_MAX];
 
 static double generation_time;
 static double construction_time;
-static double bfs_time[NBFS_max];
-static double bfs_verify[NBFS_max];
-static int64_t bfs_nedge[NBFS_max];
+static double bfs_time[NBFS_MAX];
+static double bfs_verify[NBFS_MAX];
+static int64_t bfs_nedge[NBFS_MAX];
 
 static packed_edge * __restrict  IJ;
 static int64_t nedge;
@@ -347,27 +348,27 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     printf ("construction_time: %20.17e\n", construction_time);
     printf ("nbfs: %d\n", NBFS);
 
-	printf ("\n=====TIME STATISTICS=====\n\n");
+    printf ("\n===============TIME STATISTICS===============\n\n");
 
     memcpy (tm, bfs_time, NBFS*sizeof(tm[0]));
     statistics (stats, tm, NBFS);
     PRINT_STATS("time", 0);
 
-	printf ("\n=====EDGE STATISTICS=====\n\n");
+    printf ("\n===============EDGE STATISTICS===============\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = (double)bfs_nedge[k];
     statistics (stats, tm, NBFS);
     PRINT_STATS("nedge", 0);
 
-	printf ("\n=====VERIFY STATISTICS=====\n\n");
+    printf ("\n===============VERIFY STATISTICS===============\n\n");
 
 	for (k = 0; k < NBFS; ++k)
 		tm[k] = (double)bfs_verify[k];
 	statistics (stats, tm, NBFS);
 	PRINT_STATS("verify", 0);
 
-	printf ("\n=====TEPS STATISTICS=====\n\n");
+    printf ("\n===============TEPS STATISTICS===============\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = bfs_nedge[k] / bfs_time[k];
