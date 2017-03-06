@@ -1,5 +1,5 @@
-#ifndef MOD_ARITH_H
-#define MOD_ARITH_H
+#ifndef __MOD_ARITH__
+#define __MOD_ARITH__
 
 #ifdef FAST_64BIT_ARITHMETIC
 #include "mod_arith_64bit.h"

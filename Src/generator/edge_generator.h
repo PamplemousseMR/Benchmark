@@ -1,8 +1,8 @@
-#ifndef MAKE_GRAPH_H
-#define MAKE_GRAPH_H
+#ifndef __EDGE_GENERATOR__
+#define __EDGE_GENERATOR__
 
-#include <stdint.h>
-#include "../edge_struct.h"
+#include <stdint.h>				/*	int64_t	*/
+#include "../edge_struct.h"		/*	packed_edge	*/
 
 #ifdef __cplusplus
 extern "C" {

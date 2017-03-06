@@ -1,5 +1,5 @@
-#ifndef COMPAT_HEADER_
-#define COMPAT_HEADER_
+#ifndef __COMPAT__
+#define __COMPAT__
 
 #ifdef _OPENMP
 #define OMP(x) _Pragma(x)

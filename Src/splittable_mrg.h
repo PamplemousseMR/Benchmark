@@ -1,13 +1,10 @@
-#ifndef SPLITTABLE_MRG_H
-#define SPLITTABLE_MRG_H
+#ifndef __SPLITTABLE_MRG__
+#define __SPLITTABLE_MRG__
 
-#include <stdint.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <inttypes.h>
-#include "mod_arith.h"
+#include <stdint.h>		/*	uint64_t	*/
+#include <stdlib.h>		/*	NULL */
+#include <errno.h>		/*	errno	*/
+#include "mod_arith.h"	/*	mod_*	*/
 
 #ifdef __cplusplus
 extern "C" {

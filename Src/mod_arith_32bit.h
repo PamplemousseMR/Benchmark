@@ -1,8 +1,8 @@
-#ifndef MOD_ARITH_32BIT_H
-#define MOD_ARITH_32BIT_H
+#ifndef __MOD_ARITH_32__
+#define __MOD_ARITH_32__
 
-#include <stdint.h>
-#include <assert.h>
+#include <stdint.h>		/*	uint_fast32	*/
+#include <assert.h>		/*	assert	*/
 
 static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
     uint_fast32_t x;

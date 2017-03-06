@@ -160,7 +160,6 @@ message("-------QMAKE END--------")
 
 HEADERS += \
     Src/bfs/bfs.h \
-    Src/generator/make_graph.h \
     Src/verify/verify.h \
     Src/compat.h \
     Src/getopt.h \
@@ -171,13 +170,13 @@ HEADERS += \
     Src/splittable_mrg.h \
     Src/timer.h \
     Src/xalloc.h \
-    Src/edge_struct.h
+    Src/edge_struct.h \
+    Src/generator/edge_generator.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
     Src/bfs/seq-csr/seq-csr.c \
     Src/bfs/seq-list/seq-list.c \
-    Src/generator/make_graph.c \
     Src/verify/verify.c \
     Src/getopt.c \
     Src/mrg_transitions.c \
@@ -185,4 +184,5 @@ SOURCES += \
     Src/splittable_mrg.c \
     Src/timer.c \
     Src/xalloc.c \
-    Src/benchmark.c
+    Src/benchmark.c \
+    Src/generator/edge_generator.c

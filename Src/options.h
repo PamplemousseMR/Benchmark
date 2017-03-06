@@ -1,20 +1,20 @@
-#ifndef OPTIONS_HEADER_
-#define OPTIONS_HEADER_
+#ifndef __OPTIONS__
+#define __OPTIONS__
 
 #include "compat.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <inttypes.h>
+#include <stdio.h>		/*	printf	*/
+#include <stdlib.h>		/*	EXIT_SUCCESS	*/
+#include <errno.h>		/*	errno	*/
+#include <inttypes.h>	/*	int64_t	*/
+#include <string.h>		/*	strdup	*/
 
 #ifdef _WIN32
 #include <windows.h>
+#include "getopt.h"		/*	getopt	*/
 #else
-#include <unistd.h>
+#include <unistd.h>		/*	getopt	*/
 #endif
 
-#include "getopt.h"
 
 #define NAME "Benchmark"
 #define VERSION 1.0

@@ -1,8 +1,8 @@
-#ifndef MOD_ARITH_64BIT_H
-#define MOD_ARITH_64BIT_H
+#ifndef __MOD_ARITH_64__
+#define __MOD_ARITH_64__
 
-#include <stdint.h>
-#include <assert.h>
+#include <stdint.h>		/*	uint_fast64	*/
+#include <assert.h>		/*	assert	*/
 
 static __inline uint_fast32_t mod_add(uint_fast32_t a, uint_fast32_t b) {
     assert (a <= 0x7FFFFFFE);

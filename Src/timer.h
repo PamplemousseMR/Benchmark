@@ -1,16 +1,11 @@
-#ifndef TIMER_HEADER_
-#define TIMER_HEADER_
+#ifndef __TIMER__
+#define __TIMER__
 
 #include "compat.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
+#include <time.h>	/*	timespec	*/
 
 #ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
+#include <windows.h>	/*	timeval	*/
 #endif
 
 void tic (void);

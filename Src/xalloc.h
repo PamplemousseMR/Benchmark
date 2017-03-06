@@ -1,22 +1,12 @@
-#ifndef XALLOC_HEADER_
-#define XALLOC_HEADER_
+#ifndef __XALLOC__
+#define __XALLOC__
 
 #include "compat.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
-#include <errno.h>
-#include <limits.h>
-#include <time.h>
-#include <fcntl.h>
-#include <sys/types.h>
+#include <stdlib.h>		/*	malloc	*/
+#include <stdio.h>		/*	print	*/
 
 #ifdef _WIN32
 #include <windows.h>
-#else
-#include <unistd.h>
-#include <sys/mman.h>
 #endif
 
 void* xmalloc(size_t);

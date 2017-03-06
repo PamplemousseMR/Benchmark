@@ -83,7 +83,7 @@ void get_options (int argc, char **argv)
     while ((c = getopt(argc, argv, "v?hs:e:A:a:B:b:C:c:D:d:")) != -1)
         switch (c) {
         case 'v':
-            printf ("%s version %d\n", NAME, VERSION);
+			printf ("%s version %f\n", NAME, VERSION);
             exit (EXIT_SUCCESS);
             break;
         case 'h':

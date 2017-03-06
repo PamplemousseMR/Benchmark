@@ -1,11 +1,6 @@
 #include "compat.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <math.h>
-#include <assert.h>
-#include <malloc.h>
+#include <stdio.h>		/*	printf	*/
+#include <math.h>		/*	sqrt	*/
 
 #ifdef _WIN32
 #include <BaseTsd.h>
@@ -23,15 +18,16 @@ typedef SSIZE_T ssize_t;
 #include "options.h"
 #include "splittable_mrg.h"
 #include "edge_struct.h"
-#include "generator/make_graph.h"
+#include "generator/edge_generator.h"
 
-static int64_t nvtx_scale;
+static int64_t numb_node;
 
 static int64_t bfs_root[NBFS_max];
 
 static double generation_time;
 static double construction_time;
 static double bfs_time[NBFS_max];
+static double bfs_verify[NBFS_max];
 static int64_t bfs_nedge[NBFS_max];
 
 static packed_edge * __restrict  IJ;
@@ -52,18 +48,24 @@ int main (int argc, char **argv)
     if (argc > 1)
         get_options (argc, argv);
 
-    nvtx_scale = ((int64_t)1)<<SCALE;
+	numb_node = ((int64_t)1)<<SCALE;
 
     init_random();
 
-    desired_nedge = nvtx_scale * edgefactor;
-    assert (desired_nedge >= nvtx_scale);
+	desired_nedge = numb_node * edgefactor;
+	assert (desired_nedge >= numb_node);
     assert (desired_nedge >= edgefactor);
 
     if (!dumpname)
     {
         if (VERBOSE) fprintf (stderr, "Generating edge list...");
-            TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
+		TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
+		/*printf("make_graph\t");
+		for(int i=0 ; i<nedge ; i++)
+		{
+			printf("(%d->%d)",IJ[i].v0,IJ[i].v1);
+		}
+		printf("\n");*/
         if (VERBOSE) fprintf (stderr, " done.\n");
     } else {
         #ifdef _WIN32
@@ -103,7 +105,7 @@ int main (int argc, char **argv)
 
     xfree_large (IJ);
 
-    output_results (SCALE, nvtx_scale, edgefactor, A, B, C, D,generation_time, construction_time, NBFS, bfs_time, bfs_nedge);
+	output_results (SCALE, numb_node, edgefactor, A, B, C, D,generation_time, construction_time, NBFS, bfs_time, bfs_nedge);
 
     return EXIT_SUCCESS;
 }
@@ -111,11 +113,17 @@ int main (int argc, char **argv)
 void run_bfs (void)
 {
     int * __restrict  has_adj;
-    int m, err;
+	int m, err;
     int64_t k, t;
 
     if (VERBOSE) fprintf (stderr, "Creating graph...");
-        TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
+	TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
+	/*printf("create_graph\t");
+	for(int i=0 ; i<nedge ; i++)
+	{
+		printf("(%d->%d)",IJ[i].v0,IJ[i].v1);
+	}
+	printf("\n");*/
     if (VERBOSE) fprintf (stderr, "done.\n");
     if (err)
     {
@@ -125,11 +133,11 @@ void run_bfs (void)
 
     if (!rootname)
     {
-        has_adj = xmalloc_large (nvtx_scale * sizeof (*has_adj));
+		has_adj = xmalloc_large (numb_node * sizeof (*has_adj));
         OMP("omp parallel")
         {
             OMP("omp for")
-            for (k = 0; k < nvtx_scale; ++k)
+			for (k = 0; k < numb_node; ++k)
                 has_adj[k] = 0;
             OMP("omp for")
             for (k = 0; k < nedge; ++k)
@@ -143,13 +151,13 @@ void run_bfs (void)
 
         m = 0;
         t = 0;
-        while (m < NBFS && t < nvtx_scale)
+		while (m < NBFS && t < numb_node)
         {
             double R = mrg_get_double_orig (prng_state);
-            if (!has_adj[t] || (nvtx_scale - t)*R > NBFS - m) ++t;
+			if (!has_adj[t] || (numb_node - t)*R > NBFS - m) ++t;
             else bfs_root[m++] = t++;
         }
-        if (t >= nvtx_scale && m < NBFS)
+		if (t >= numb_node && m < NBFS)
         {
             if (m > 0)
             {
@@ -201,8 +209,8 @@ void run_bfs (void)
     {
         int64_t *bfs_tree, max_bfsvtx;
 
-        bfs_tree = xmalloc_large (nvtx_scale * sizeof (*bfs_tree));
-        assert (bfs_root[m] < nvtx_scale);
+		bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
+		assert (bfs_root[m] < numb_node);
 
         if (VERBOSE) fprintf (stderr, "Running bfs %d...", m);
         TIME(bfs_time[m], err = make_bfs_tree (bfs_tree, &max_bfsvtx, bfs_root[m]));
@@ -215,7 +223,7 @@ void run_bfs (void)
         }
 
         if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
-        bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge);
+		TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
         if (VERBOSE) fprintf (stderr, "done\n");
         if (bfs_nedge[m] < 0)
         {
@@ -339,20 +347,27 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     printf ("construction_time: %20.17e\n", construction_time);
     printf ("nbfs: %d\n", NBFS);
 
-    printf ("\n=====TIME STATISTICS=====\n\n", NBFS);
+	printf ("\n=====TIME STATISTICS=====\n\n");
 
     memcpy (tm, bfs_time, NBFS*sizeof(tm[0]));
     statistics (stats, tm, NBFS);
     PRINT_STATS("time", 0);
 
-    printf ("\n=====EDGE STATISTICS=====\n\n", NBFS);
+	printf ("\n=====EDGE STATISTICS=====\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = (double)bfs_nedge[k];
     statistics (stats, tm, NBFS);
     PRINT_STATS("nedge", 0);
 
-    printf ("\n=====TEPS STATISTICS=====\n\n", NBFS);
+	printf ("\n=====VERIFY STATISTICS=====\n\n");
+
+	for (k = 0; k < NBFS; ++k)
+		tm[k] = (double)bfs_verify[k];
+	statistics (stats, tm, NBFS);
+	PRINT_STATS("verify", 0);
+
+	printf ("\n=====TEPS STATISTICS=====\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = bfs_nedge[k] / bfs_time[k];
