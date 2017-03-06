@@ -1,5 +1,6 @@
 #ifndef __MOD_ARITH_32__
 #define __MOD_ARITH_32__
+
 /*!
  * \file mod_arith_32bits.h
  * \param Fichier qui permet de faire des calcules sur des int de 32 bits modulo 2147483646.
@@ -10,6 +11,9 @@
  * \author Manciaux Romain
  * \author Peccard Remi
  */
+
+/*	=============== Includes ===============	*/
+
 #include <stdint.h>		/*	uint_fast32	*/
 #include <assert.h>		/*	assert	*/
 

@@ -1,5 +1,6 @@
 #ifndef __MOD_ARITH__
 #define __MOD_ARITH__
+
 /*!
  * \file mod_arith.h
  * \param Fichier qui permet d'inclure les modes de calcules corespondant a 64 ou 32 bits.

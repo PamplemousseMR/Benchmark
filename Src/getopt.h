@@ -23,8 +23,8 @@ extern "C" {
 
 #undef	optreset
 #define optreset  __mingw_optreset
-static int optreset;
 
+static int optreset;
 static int	optind = 1;
 static int	opterr = 1;
 static int	optopt = '?';
