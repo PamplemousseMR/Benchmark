@@ -66,7 +66,7 @@ double mrg_get_double_orig(mrg_state* state)
     return (double)mrg_get_uint_orig(state) * .000000000465661287524579692 + (double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787;
 }
 
-void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed)
+void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t seed[5])
 {
 	seed[0] = (userseed1 & 0x3FFFFFFF) + 1;
 	seed[1] = ((userseed1 >> 30) & 0x3FFFFFFF) + 1;

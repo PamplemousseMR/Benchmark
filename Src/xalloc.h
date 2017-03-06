@@ -1,6 +1,19 @@
 #ifndef __XALLOC__
 #define __XALLOC__
 
+/*!
+ * \file xalloc.h
+ * \param Fichier contenent des fonction permetant de faire des allocations dynamiques.
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
+ */
+
+/*	=============== Includes ===============	*/
+
 #include "compat.h"
 #include <stdlib.h>		/*	malloc	*/
 #include <stdio.h>		/*	print	*/

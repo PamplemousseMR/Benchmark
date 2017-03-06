@@ -1,5 +1,6 @@
 #ifndef __COMPAT__
 #define __COMPAT__
+
 /*!
  * \file compat.h
  * \param Fichier qui permet d'inclure le bon systeme de calcule.

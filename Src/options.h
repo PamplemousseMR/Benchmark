@@ -1,6 +1,19 @@
 #ifndef __OPTIONS__
 #define __OPTIONS__
 
+/*!
+ * \file options.h
+ * \param Fichier qui permet de traiter et stocker les arguments du programme.
+ * \author Appert Kevin
+ * \author Bocahu Florent
+ * \author Hun Tony
+ * \author Lataix Maxime
+ * \author Manciaux Romain
+ * \author Peccard Remi
+ */
+
+/*	=============== Includes ===============	*/
+
 #include "compat.h"
 #include <stdio.h>		/*	printf	*/
 #include <stdlib.h>		/*	EXIT_SUCCESS	*/

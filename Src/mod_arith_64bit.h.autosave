@@ -1,5 +1,6 @@
 #ifndef __MOD_ARITH_64__
 #define __MOD_ARITH_64__
+
 /*!
  * \file mod_arith_32bits.h
  * \param Fichier qui permet de faire des calcules sur des int de 64 bits modulo 2147483646.

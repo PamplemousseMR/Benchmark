@@ -1,8 +1,9 @@
 #ifndef __EDGE_STRUCT__
 #define __EDGE_STRUCT__
+
 /*!
  * \file edge_struct.h
- * \param fichier qui englobe le systeme de representation des aretes
+ * \param Fichier qui englobe le systeme de representation des aretes
  * \author Appert Kevin
  * \author Bocahu Florent
  * \author Hun Tony
@@ -10,6 +11,9 @@
  * \author Manciaux Romain
  * \author Peccard Remi
  */
+
+/*	=============== Includes ===============	*/
+
 #include <inttypes.h>	/* int64_t */
 
 #ifdef __cplusplus
