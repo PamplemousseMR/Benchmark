@@ -47,24 +47,57 @@
  */
 #define NBFS_MAX 64
 /*!
- * \def default_SCALE
+ * \def DEFAULT_SCALE
  * \brief Log2 du nombre de sommet par default.
  */
 #define DEFAULT_SCALE ((int64_t)14)
 /*!
- * \def default_edgefactor
+ * \def DEFAULT_EDGEFACTOR
  * \brief Ratio d'aretes par default.
  */
 #define DEFAULT_EDGEFACTOR ((int64_t)16)
 
 /*	=============== Global ===============	*/
 
+/*!
+ * \brief Pour permettre des affichages supplementaires.
+ */
 extern int VERBOSE;
+/*!
+ * \brief Le chemin du fichier contenent les aretes.
+ */
 extern char *dumpname;
+/*!
+ * \brief Le chemin du fichier contenent les racines.
+ */
 extern char *rootname;
-extern double A, B, C, D;
+/*!
+ * \brief La probabilite de A
+ */
+extern double A;
+/*!
+ * \brief La probabilite de B
+ */
+extern double B;
+/*!
+ * \brief La probabilite de C
+ */
+extern double C;
+/*!
+ * \brief La probabilite de D
+ */
+extern double D;
+/*!
+ * \brief Le nombre maximum de parcourt en largeur a calculer.
+ */
 extern int NBFS;
+/*!
+ * \brief Le log2 du nombre de sommets.
+ */
 extern int64_t SCALE;
+/*!
+ * \brief Le ratio du nombre d'aretes.
+ */
 extern int64_t edgefactor;
 
 /*	=============== Functions ===============	*/

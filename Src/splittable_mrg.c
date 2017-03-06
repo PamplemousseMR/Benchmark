@@ -2,10 +2,11 @@
 
 #include "mrg_transitions.c"
 
-uint64_t userseed;
-uint_fast32_t prng_seed[5];
+static uint_fast32_t prng_seed[5];
 static mrg_state prng_state_store;
-void *prng_state = &prng_state_store;
+
+uint64_t userseed;
+void* prng_state = &prng_state_store;
 
 static void make_seed(uint64_t userseed, uint_fast32_t* seed)
 {
@@ -45,7 +46,7 @@ static void mrg_orig_step(mrg_state* state)
 	state->z1 = new_elt;
 }
 
-void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exponent_middle, uint_least64_t exponent_low)
+static void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exponent_middle, uint_least64_t exponent_low)
 {
 	int byte_index;
     for (byte_index = 0; exponent_low; ++byte_index, exponent_low >>= 8)
@@ -65,6 +66,15 @@ void mrg_skip(mrg_state* state, uint_least64_t exponent_high, uint_least64_t exp
 	}
 }
 
+static void mrg_seed(mrg_state* st, const uint_fast32_t seed[5])
+{
+    st->z1 = seed[0];
+    st->z2 = seed[1];
+    st->z3 = seed[2];
+    st->z4 = seed[3];
+    st->z5 = seed[4];
+}
+
 uint_fast32_t mrg_get_uint_orig(mrg_state* state)
 {
 	mrg_orig_step(state);
@@ -74,15 +84,6 @@ uint_fast32_t mrg_get_uint_orig(mrg_state* state)
 double mrg_get_double_orig(mrg_state* state)
 {
     return (double)mrg_get_uint_orig(state) * .000000000465661287524579692 + (double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787;
-}
-
-void mrg_seed(mrg_state* st, const uint_fast32_t seed[5])
-{
-	st->z1 = seed[0];
-	st->z2 = seed[1];
-	st->z3 = seed[2];
-	st->z4 = seed[3];
-	st->z5 = seed[4];
 }
 
 void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t* seed)
