@@ -59,7 +59,7 @@ static void abort_handler (int passthrough)
 
 void* xmalloc_large (size_t sz)
 {
-#if defined(USE_MMAP_LARGE)
+#ifdef USE_MMAP_LARGE
     void *out;
     int which = n_large_alloc++;
     if (n_large_alloc > MAX_LARGE) {
@@ -69,8 +69,7 @@ void* xmalloc_large (size_t sz)
     }
     large_alloc[which].p = NULL;
     large_alloc[which].fd = -1;
-    out = mmap (NULL, sz, PROT_READ|PROT_WRITE,
-                MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB|MAP_POPULATE, 0, 0);
+    out = mmap (NULL, sz, PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB|MAP_POPULATE, 0, 0);
     if (out == MAP_FAILED || !out) {
         perror ("mmap failed");
         abort ();
@@ -83,36 +82,9 @@ void* xmalloc_large (size_t sz)
 #endif
 }
 
-void xfree_large(void* p)
-{
-#if defined(USE_MMAP_LARGE)||defined(USE_MMAP_LARGE_EXT)
-    int k, found = 0;
-    for (k = 0; k < n_large_alloc; ++k) {
-        if (p == large_alloc[k].p) {
-            munmap (p, large_alloc[k].sz);
-            large_alloc[k].p = NULL;
-            if (large_alloc[k].fd >= 0) {
-                close (large_alloc[k].fd);
-                large_alloc[k].fd = -1;
-            }
-            found = 1;
-            break;
-        }
-    }
-    if (found) {
-        --n_large_alloc;
-        for (; k < n_large_alloc; ++k)
-            large_alloc[k] = large_alloc[k+1];
-    } else
-        free (p);
-#else
-    free (p);
-#endif
-}
-
 void* xmalloc_large_ext(size_t sz)
 {
-#if defined(USE_MMAP_LARGE_EXT)
+#ifdef USE_MMAP_LARGE_EXT
     char extname[PATH_MAX+1];
     char *tmppath;
     void *out;
@@ -193,6 +165,33 @@ errout:
     if (fd >= 0) close (fd);
     abort ();
 #else
-    return xmalloc_large (sz);
+    return xmalloc_large(sz);
+#endif
+}
+
+void xfree_large(void* p)
+{
+#if defined(USE_MMAP_LARGE)||defined(USE_MMAP_LARGE_EXT)
+    int k, found = 0;
+    for (k = 0; k < n_large_alloc; ++k) {
+        if (p == large_alloc[k].p) {
+            munmap (p, large_alloc[k].sz);
+            large_alloc[k].p = NULL;
+            if (large_alloc[k].fd >= 0) {
+                close (large_alloc[k].fd);
+                large_alloc[k].fd = -1;
+            }
+            found = 1;
+            break;
+        }
+    }
+    if (found) {
+        --n_large_alloc;
+        for (; k < n_large_alloc; ++k)
+            large_alloc[k] = large_alloc[k+1];
+    } else
+        free (p);
+#else
+    free (p);
 #endif
 }

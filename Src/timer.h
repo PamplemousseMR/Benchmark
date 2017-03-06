@@ -15,7 +15,7 @@
 /*	=============== Includes ===============	*/
 
 #include "compat.h"
-#include <time.h>	/*	timespec	*/
+#include <time.h>       /*	timespec	*/
 #ifdef _WIN32
 #include <windows.h>	/*	timeval	*/
 #endif

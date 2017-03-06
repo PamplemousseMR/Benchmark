@@ -18,7 +18,9 @@
 #include <stdlib.h>		/*	malloc	*/
 #include <stdio.h>		/*	print	*/
 #ifdef _WIN32
-#include <windows.h>
+#include "mman_win.h"   /*  mmap    */
+#else
+#include <sys/mman.h>   /*  mmap    */
 #endif
 
 /*	=============== Functions ===============	*/

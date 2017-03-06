@@ -143,14 +143,12 @@ win32:{
 #----------------------------------
 
 #--------------Define--------------
-#DEBUG_EXCEPTION For activate exceptions
-#DEBUG_OUTPUT For activate constructor/destructor message
-#RANDOM For activate random seed
-#GRAPH_GENERATOR_OMP For activate OpenMP
-#GRAPH_GENERATOR_OMPI For activate Open MPI
+#GRAPH_GENERATOR_OMP For activate edges generation with OpenMP
+#GRAPH_GENERATOR_OMPI For activate edges generation with Open MPI
 #FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits(more speed)
+#USE_MMAP_LARGE
+#USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-Debug:DEFINES += DEBUG_EXCEPTION
 DEFINES +=
 #----------------------------------
 
@@ -171,7 +169,8 @@ HEADERS += \
     Src/timer.h \
     Src/xalloc.h \
     Src/edge_struct.h \
-    Src/generator/edge_generator.h
+    Src/generator/edge_generator.h \
+    Src/mman_win.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
@@ -185,4 +184,5 @@ SOURCES += \
     Src/timer.c \
     Src/xalloc.c \
     Src/benchmark.c \
-    Src/generator/edge_generator.c
+    Src/generator/edge_generator.c \
+    Src/mman_win.cpp

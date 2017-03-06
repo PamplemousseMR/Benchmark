@@ -68,7 +68,7 @@ static int clock_gettime(int X, struct timeval *tv)
 
 void tic (void)
 {
-    #if defined(HAVE_MACH_ABSOLUTE_TIME)
+    #ifdef HAVE_MACH_ABSOLUTE_TIME
     tic_ts = mach_absolute_time();
     #else
     clock_gettime (0, &tic_ts);
@@ -78,7 +78,7 @@ void tic (void)
 double toc (void)
 {
     double out;
-    #if defined(HAVE_MACH_ABSOLUTE_TIME)
+    #ifdef HAVE_MACH_ABSOLUTE_TIME
     uint64_t ts, nanosec;
     static mach_timebase_info_data_t info = {0,0};
     if (info.denom == 0) {
