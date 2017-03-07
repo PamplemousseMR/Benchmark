@@ -170,7 +170,8 @@ HEADERS += \
     Src/xalloc.h \
     Src/edge_struct.h \
     Src/generator/edge_generator.h \
-    Src/mman_win.h
+    Src/mman_win.h \
+    Src/generator/kronecker_generator.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
@@ -185,4 +186,5 @@ SOURCES += \
     Src/xalloc.c \
     Src/benchmark.c \
     Src/generator/edge_generator.c \
-    Src/mman_win.cpp
+    Src/mman_win.cpp \
+    Src/generator/kronecker_generator.c

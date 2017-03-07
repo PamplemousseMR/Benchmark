@@ -12,7 +12,6 @@
  * \author Peccard Remi
  */
 
-
 #ifdef _OPENMP
 #define OMP(x) _Pragma(x)
 #else
