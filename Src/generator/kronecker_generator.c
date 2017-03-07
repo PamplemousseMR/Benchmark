@@ -23,7 +23,8 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	/*	parcours	*/
 	for(i=0 ; i<scale ; ++i)
 	{
-		printf("%d\n",i);
+		if(VERBOSE)
+			printf("Edge generation : %d/%d\n",i+1,scale);
 		mul = 1<<i;
 		for(edge=0 ; edge<edge_number ; edge++)
 		{

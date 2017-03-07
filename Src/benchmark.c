@@ -59,15 +59,9 @@ int main (int argc, char **argv)
 
     if (!dumpname)
     {
-        if (VERBOSE) fprintf (stderr, "Generating edge list...");
+		if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
 		TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
-		/*printf("make_graph\t");
-		for(int i=0 ; i<nedge ; i++)
-		{
-			printf("(%d->%d)",IJ[i].v0,IJ[i].v1);
-		}
-		printf("\n");*/
-        if (VERBOSE) fprintf (stderr, " done.\n");
+		if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
     } else {
         #ifdef _WIN32
         FILE* fd;
@@ -119,12 +113,6 @@ void run_bfs (void)
 
     if (VERBOSE) fprintf (stderr, "Creating graph...");
 	TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
-	/*printf("create_graph\t");
-	for(int i=0 ; i<nedge ; i++)
-	{
-		printf("(%d->%d)",IJ[i].v0,IJ[i].v1);
-	}
-	printf("\n");*/
     if (VERBOSE) fprintf (stderr, "done.\n");
     if (err)
     {
