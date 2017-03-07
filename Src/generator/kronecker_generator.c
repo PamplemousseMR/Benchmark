@@ -47,7 +47,7 @@ static void shuffle(int* array, int64_t l)
 	for(i=0 ; i<l ; i++)
 	{
 		int j = i+rand()/(RAND_MAX / (l-i)+1);
-		int t = array[j];
+		int64_t t = array[j];
 		array[j] = array[i];
 		array[i] = t;
 	}
