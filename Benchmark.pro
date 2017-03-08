@@ -55,17 +55,20 @@ message("-----Loading OpenMP-----")
 unix:{
     message("        Unix")
     QMAKE_CXXFLAGS+= -fopenmp
+    QMAKE_CFLAGS+= -fopenmp
     QMAKE_LFLAGS +=  -fopenmp
     message("        Done")
 }
 win32-msvc*:{
     message("        Windows msvc")
     QMAKE_CXXFLAGS += -openmp
+    QMAKE_CFLAGS += -openmp
     message("        Done")
 }
 win32-g++:{
     message("        Windows mingw")
     QMAKE_CXXFLAGS+= -fopenmp
+    QMAKE_CFLAGS+= -fopenmp
     QMAKE_LFLAGS +=  -fopenmp
     message("        Done")
 }
@@ -149,7 +152,7 @@ win32:{
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-DEFINES +=
+DEFINES += GRAPH_GENERATOR_OMP
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -186,5 +189,5 @@ SOURCES += \
     Src/xalloc.c \
     Src/benchmark.c \
     Src/generator/edge_generator.c \
-    Src/mman_win.cpp \
-    Src/generator/kronecker_generator.c
+    Src/generator/kronecker_generator.c \
+    Src/mman_win.cpp

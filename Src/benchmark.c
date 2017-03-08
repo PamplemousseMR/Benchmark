@@ -368,7 +368,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     statistics (stats, tm, NBFS);
     PRINT_STATS("time", 0);
 
-    printf ("\n===============EDGE STATISTICS===============\n\n");
+    /*printf ("\n===============EDGE STATISTICS===============\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = (double)bfs_nedge[k];
@@ -387,7 +387,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     for (k = 0; k < NBFS; ++k)
         tm[k] = bfs_nedge[k] / bfs_time[k];
     statistics (stats, tm, NBFS);
-    PRINT_STATS("TEPS", 1);
+    PRINT_STATS("TEPS", 1);*/
 
     printf("\n");
 }

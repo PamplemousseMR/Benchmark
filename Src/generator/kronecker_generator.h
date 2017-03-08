@@ -10,8 +10,14 @@
 /*	=============== Defines ===============	*/
 
 #ifdef GRAPH_GENERATOR_OMP
-	#include <omp.h>
-	#define	GRAPH_OMP(X) _Pragma(X)
+    #ifdef _WIN32
+    #define GRAPH_OMP(x) __pragma(x)
+    #else
+    #define GRAPH_OMP(x) _Pragma(x)
+    #endif
+
+    #include <omp.h>
+
 #else
 	#define	GRAPH_OMP(X)
 #endif
