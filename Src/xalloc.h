@@ -5,7 +5,6 @@
  * \file xalloc.h
  * \param Fichier contenent des fonction permetant de faire des allocations dynamiques.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain

@@ -5,7 +5,6 @@
  * \file compat.h
  * \param Fichier qui permet d'inclure le bon systeme de calcule.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain

@@ -21,24 +21,40 @@ typedef SSIZE_T ssize_t;
 #include "edge_struct.h"
 #include "generator/edge_generator.h"
 
-static int64_t numb_node;
+static int64_t numb_node;				/*!< Nombre de sommets. */
 
-static int64_t bfs_root[NBFS_MAX];
+static int64_t bfs_root[NBFS_MAX];		/*!< Les sommets racines de pour chaque bfs. */
 
-static double generation_time;
-static double construction_time;
-static double bfs_time[NBFS_MAX];
-static double bfs_verify[NBFS_MAX];
-static int64_t bfs_nedge[NBFS_MAX];
+static double generation_time;			/*!< Temps de generation des aretes. */
+static double construction_time;		/*!< Temps de construction du graph. */
+static double bfs_time[NBFS_MAX];		/*!< Temps de parcours de chaque bfs. */
+static double bfs_verify[NBFS_MAX];		/*!< Temps de verification de chaque bfs. */
+static int64_t bfs_nedge[NBFS_MAX];		/*!< Nombre d'aretes traverse lors du bfs. */
 
-static packed_edge * __restrict  IJ;
-static int64_t nedge;
+static packed_edge * __restrict  IJ;	/*!< Liste des aretes. */
+static int64_t nedge;					/*!< Nombre d'aretes. */
 
-static void run_bfs (void);
+/*!
+ * \fn static void run_bfs()
+ * \brief Cree le graph, selectionnes le plus de sommet possible et realise un bfs sur chacun puis une verification.
+ */
+static void run_bfs();
+/*!
+ * \fn static void output_results (const int64_t, int64_t, int64_t, const double, const double, const double, const double, const double, const double, const int, const double*, const int64_t*)
+ * \brief Affiche les resultat du benchmark.
+ */
 static void output_results (const int64_t, int64_t, int64_t, const double, const double, const double, const double, const double, const double, const int, const double*, const int64_t*);
 
+/*!
+ * \fn main(int, char**)
+ * \brief Fonction principale de Benchmark.c. Pemret d'initialiser/construire le graphe et de calculer les arbres de parcours pour enfin faire les affichages des resultats
+ * \param argc nombre d'arguments
+ * \param argv arguments
+ * \return int : code de retour
+ */
 int main (int argc, char **argv)
 {
+	/* Verification des paramètres et utilisation des arguments */
     int64_t desired_nedge;
     if (sizeof (int64_t) < 8)
     {
@@ -49,6 +65,7 @@ int main (int argc, char **argv)
     if (argc > 1)
         get_options (argc, argv);
 
+	/* Initialisations */
 	numb_node = ((int64_t)1)<<SCALE;
 
     init_random();
@@ -57,13 +74,17 @@ int main (int argc, char **argv)
 	assert (desired_nedge >= numb_node);
     assert (desired_nedge >= edgefactor);
 
+	/* Utilisation ou creation du fichier du graphe */
     if (!dumpname)
     {
+		/* creation */
 		if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
 		TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
 		if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
     } else {
-        #ifdef _WIN32
+
+		/* ouverture et lecture du fichier */
+		#ifdef _WIN32
         FILE* fd;
         #else
         int fd;
@@ -96,10 +117,13 @@ int main (int argc, char **argv)
         #endif
     }
 
-    run_bfs ();
+	/* lancement du calcul des arbres */
+	run_bfs ();
 
+	/* liberation */
     xfree_large (IJ);
 
+	/* affichage des resultats */
 	output_results (SCALE, numb_node, edgefactor, A, B, C, D,generation_time, construction_time, NBFS, bfs_time, bfs_nedge);
 
     return EXIT_SUCCESS;
@@ -196,6 +220,8 @@ void run_bfs (void)
 
     for (m = 0; m < NBFS; ++m)
     {
+		/*	bfs_tree : liste des parents de chacun des sommets en partant d'un sommet precise	*/
+		/*	max_bfsvtx : sommet maximum present dans la liste	*/
         int64_t *bfs_tree, max_bfsvtx;
 
 		bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
@@ -203,7 +229,7 @@ void run_bfs (void)
 
         if (VERBOSE) fprintf (stderr, "Running bfs %d...", m);
         TIME(bfs_time[m], err = make_bfs_tree (bfs_tree, &max_bfsvtx, bfs_root[m]));
-        if (VERBOSE) fprintf (stderr, "done\n");
+		if (VERBOSE) fprintf (stderr, "done\n");
 
         if (err)
         {

@@ -5,7 +5,6 @@
  * \file options.h
  * \param Fichier qui permet de traiter et stocker les arguments du programme.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain
@@ -63,7 +62,7 @@
  * \def DEFAULT_SCALE
  * \brief Log2 du nombre de sommet par default.
  */
-#define DEFAULT_SCALE ((int64_t)14)
+#define DEFAULT_SCALE ((int64_t)20)
 /*!
  * \def DEFAULT_EDGEFACTOR
  * \brief Ratio d'aretes par default.

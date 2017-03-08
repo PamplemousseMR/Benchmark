@@ -5,7 +5,6 @@
  * \file splittable_mrg.h
  * \param Fichier qui contient un generateur de valeur aleatoire.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain
@@ -22,6 +21,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*	=============== Defines ===============	*/
+
+#define	MRG_RAND_MAX 2147483647
 
 /*	=============== Struct ===============	*/
 

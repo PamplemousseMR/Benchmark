@@ -1,8 +1,6 @@
 #include "verify.h"
 
-static int
-compute_levels (int64_t * level,
-        int64_t nv, const int64_t * __restrict  bfs_tree, int64_t root)
+static int compute_levels (int64_t * level,int64_t nv, const int64_t * __restrict  bfs_tree, int64_t root)
 {
   int err = 0;
 

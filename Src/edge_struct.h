@@ -5,7 +5,6 @@
  * \file edge_struct.h
  * \param Fichier qui englobe le systeme de representation des aretes
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain

@@ -5,7 +5,6 @@
  * \file timer.h
  * \param Fichier contenent une macro qui permet de conaitre le temps d'execution d'une fonction.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain

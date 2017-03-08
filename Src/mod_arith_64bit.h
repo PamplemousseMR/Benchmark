@@ -5,7 +5,6 @@
  * \file mod_arith_32bits.h
  * \param Fichier qui permet de faire des calcules sur des int de 64 bits modulo 2147483646.
  * \author Appert Kevin
- * \author Bocahu Florent
  * \author Hun Tony
  * \author Lataix Maxime
  * \author Manciaux Romain
