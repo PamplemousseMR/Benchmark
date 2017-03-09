@@ -3,16 +3,16 @@
 #define SHUFFLE(name,type)                                                  \
 static void name(type* array, int64_t l, mrg_state* seed)                   \
 {                                                                           \
-    int i;                                                                  \
-    int j;                                                                  \
-    type t;                                                                 \
-    for(i=0 ; i<l ; i++)                                                    \
-    {                                                                       \
-        j = (int)(i+mrg_get_uint_orig(seed)/(MRG_RAND_MAX / (l-i)+1));		\
-            t = array[j];                                                   \
-            array[j] = array[i];                                            \
-            array[i] = t;                                                   \
-    }                                                                       \
+	int i;                                                                  \
+	int j;                                                                  \
+	type t;                                                                 \
+	for(i=0 ; i<l ; i++)                                                    \
+	{                                                                       \
+		j = (int)(i+mrg_get_uint_orig(seed)/(MRG_RAND_MAX / (l-i)+1));		\
+			t = array[j];                                                   \
+			array[j] = array[i];                                            \
+			array[i] = t;                                                   \
+	}                                                                       \
 }
 
 SHUFFLE(suffle_int,int)
@@ -29,7 +29,7 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 	for(i=0 ; i<numb_node;i++)
 		vec[i] = i;
 
-    suffle_int(vec,numb_node,seed);
+	suffle_int(vec,numb_node,seed);
 
 	GRAPH_OMP("omp parallel for shared(edges,vec)")
 	for(i=0 ; i<edge_number ; i++)
@@ -52,7 +52,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	int i;
 	int edge;
 	int mul;
-    int	ii_bit;
+	int	ii_bit;
 
 	double ab = A+B;
 
@@ -87,14 +87,14 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		{
 			ii_bit = ( mrg_get_double_orig(&seeds[omp_get_thread_num()])>ab );
 			edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[omp_get_thread_num()]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
-            edges[edge].v0 +=  mul * ii_bit;
-        }
-    }
+			edges[edge].v0 +=  mul * ii_bit;
+		}
+	}
 
 	free(seeds);
 
 	/* permutation aleatoire des sommets	*/
-    random_node_permutation(1<<scale, edge_number, edges,seed);
-    /*	permutation ameatoire des aretes	*/
-    random_edges_permutation(edge_number, edges, seed);
+	random_node_permutation(1<<scale, edge_number, edges,seed);
+	/*	permutation ameatoire des aretes	*/
+	random_edges_permutation(edge_number, edges, seed);
 }
