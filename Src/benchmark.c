@@ -81,6 +81,8 @@ int main (int argc, char **argv)
 		if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
 		TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
 		if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
+        printf ("generation_time: %lf\n", generation_time);
+        fflush(stdout);
     } else {
 
 		/* ouverture et lecture du fichier */

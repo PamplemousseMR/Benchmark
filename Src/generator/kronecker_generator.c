@@ -29,10 +29,7 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 	for(i=0 ; i<numb_node;i++)
 		vec[i] = i;
 
-	suffle_int(vec,numb_node,seed);
-
-    /*for(i=0 ; i<numb_node;i++)
-        printf("%d, \n",vec[i]);*/
+    suffle_int(vec,numb_node,seed);
 
 	GRAPH_OMP("omp parallel for shared(edges,vec)")
 	for(i=0 ; i<edge_number ; i++)
@@ -40,6 +37,7 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 		edges[i].v0 = vec[edges[i].v0-1];
 		edges[i].v1 = vec[edges[i].v1-1];
 	}
+
 	xfree_large(vec);
 }
 
@@ -54,8 +52,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	int i;
 	int edge;
 	int mul;
-	int	ii_bit;
-	uint64_t v0, v1;
+    int	ii_bit;
 
 	double ab = A+B;
 
@@ -78,19 +75,17 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
 		mul = 1<<i;
 
-		GRAPH_OMP("omp parallel for shared(edges, mul, ab, c_norm, a_norm, seed) private(ii_bit, v0, v1)")
+		GRAPH_OMP("omp parallel for shared(edges, mul, ab, c_norm, a_norm, seed) private(ii_bit)")
 		for(edge=0 ; edge<edge_number ; edge++)
         {
-			ii_bit = ( mrg_get_double_orig(seed)>ab );
-			v1 =  mul * ( mrg_get_double_orig(seed) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
-			v0 =  mul * ii_bit;
-			edges[edge].v1 += v1;
-			edges[edge].v0 += v0;
-		}
-	}
+            ii_bit = ( mrg_get_double_orig(seed)>ab );
+            edges[edge].v1 +=  mul * ( mrg_get_double_orig(seed) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
+            edges[edge].v0 +=  mul * ii_bit;
+        }
+    }
 
 	/* permutation aleatoire des sommets	*/
-	random_node_permutation(1<<scale, edge_number, edges,seed);
-	/*	permutation ameatoire des aretes	*/
+    random_node_permutation(1<<scale, edge_number, edges,seed);
+    /*	permutation ameatoire des aretes	*/
     random_edges_permutation(edge_number, edges, seed);
 }
