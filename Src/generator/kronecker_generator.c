@@ -59,6 +59,9 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	double c_norm = C/(1-ab);
 	double a_norm = A/ab;
 
+	int maxThreads = omp_get_max_threads();
+	mrg_state* seeds = (mrg_state*)xmalloc(sizeof(mrg_state) * maxThreads);
+
 	/*	initialisation	*/
 	GRAPH_OMP("omp parallel for shared(edges)")
 	for(edge=0 ; edge<edge_number ; ++edge)
@@ -67,22 +70,28 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		edges[edge].v0 = 1;
 	}
 
+	GRAPH_OMP("omp parallel for shared(seeds)")
+	for(i=0 ; i<maxThreads ; ++i)
+		make_mrg_seed(mrg_get_uint_orig(seed), mrg_get_uint_orig(seed), (uint_fast32_t*)&seeds[i]);
+
 	/*	parcours	*/
 	for(i=0 ; i<scale ; ++i)
 	{
 		if(VERBOSE)
-			printf("Edge generation : %d/%d\n",i+1,scale);
+			printf("Edges generation : %d/%d\n",i+1,scale);
 
 		mul = 1<<i;
 
-		GRAPH_OMP("omp parallel for shared(edges, mul, ab, c_norm, a_norm, seed) private(ii_bit)")
+		GRAPH_OMP("omp parallel for shared(edges, mul, ab, c_norm, a_norm, seeds) private(ii_bit)")
 		for(edge=0 ; edge<edge_number ; edge++)
-        {
-            ii_bit = ( mrg_get_double_orig(seed)>ab );
-            edges[edge].v1 +=  mul * ( mrg_get_double_orig(seed) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
+		{
+			ii_bit = ( mrg_get_double_orig(&seeds[omp_get_thread_num()])>ab );
+			edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[omp_get_thread_num()]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
             edges[edge].v0 +=  mul * ii_bit;
         }
     }
+
+	free(seeds);
 
 	/* permutation aleatoire des sommets	*/
     random_node_permutation(1<<scale, edge_number, edges,seed);
