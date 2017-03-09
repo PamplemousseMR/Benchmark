@@ -13,7 +13,7 @@
     #ifdef _WIN32
 		#define GRAPH_OMP(x) __pragma(x)
 	#else
-		#define GRAPH_OMP(x) _Pragma(x)
+        #define GRAPH_OMP(x) _Pragma(#x)
     #endif
 
     #include <omp.h>

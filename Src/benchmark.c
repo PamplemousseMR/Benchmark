@@ -54,7 +54,7 @@ static void output_results (const int64_t, int64_t, int64_t, const double, const
  */
 int main (int argc, char **argv)
 {
-	/* Verification des paramètres et utilisation des arguments */
+    /* Verification des paramètres et utilisation des arguments */
     int64_t desired_nedge;
     if (sizeof (int64_t) < 8)
     {
@@ -65,28 +65,28 @@ int main (int argc, char **argv)
     if (argc > 1)
         get_options (argc, argv);
 
-	/* Initialisations */
-	numb_node = ((int64_t)1)<<SCALE;
+    /* Initialisations */
+    numb_node = ((int64_t)1)<<SCALE;
 
     init_random();
 
-	desired_nedge = numb_node * edgefactor;
-	assert (desired_nedge >= numb_node);
+    desired_nedge = numb_node * edgefactor;
+    assert (desired_nedge >= numb_node);
     assert (desired_nedge >= edgefactor);
 
-	/* Utilisation ou creation du fichier du graphe */
+    /* Utilisation ou creation du fichier du graphe */
     if (!dumpname)
     {
-		/* creation */
-		if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
-		TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
-		if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
+        /* creation */
+        if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
+        TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
+        if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
         printf ("generation_time: %lf\n", generation_time);
         fflush(stdout);
     } else {
 
-		/* ouverture et lecture du fichier */
-		#ifdef _WIN32
+        /* ouverture et lecture du fichier */
+        #ifdef _WIN32
         FILE* fd;
         #else
         int fd;
@@ -119,14 +119,14 @@ int main (int argc, char **argv)
         #endif
     }
 
-	/* lancement du calcul des arbres */
-	run_bfs ();
+    /* lancement du calcul des arbres */
+    run_bfs ();
 
-	/* liberation */
+    /* liberation */
     xfree_large (IJ);
 
-	/* affichage des resultats */
-	output_results (SCALE, numb_node, edgefactor, A, B, C, D,generation_time, construction_time, NBFS, bfs_time, bfs_nedge);
+    /* affichage des resultats */
+    output_results (SCALE, numb_node, edgefactor, A, B, C, D,generation_time, construction_time, NBFS, bfs_time, bfs_nedge);
 
     return EXIT_SUCCESS;
 }
@@ -134,11 +134,11 @@ int main (int argc, char **argv)
 void run_bfs (void)
 {
     int * __restrict  has_adj;
-	int m, err;
+    int m, err;
     int64_t k, t;
 
     if (VERBOSE) fprintf (stderr, "Creating graph...");
-	TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
+    TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
     if (VERBOSE) fprintf (stderr, "done.\n");
     if (err)
     {
@@ -148,11 +148,11 @@ void run_bfs (void)
 
     if (!rootname)
     {
-		has_adj = xmalloc_large (numb_node * sizeof (*has_adj));
+        has_adj = xmalloc_large (numb_node * sizeof (*has_adj));
         OMP("omp parallel")
         {
             OMP("omp for")
-			for (k = 0; k < numb_node; ++k)
+            for (k = 0; k < numb_node; ++k)
                 has_adj[k] = 0;
             OMP("omp for")
             for (k = 0; k < nedge; ++k)
@@ -166,13 +166,13 @@ void run_bfs (void)
 
         m = 0;
         t = 0;
-		while (m < NBFS && t < numb_node)
+        while (m < NBFS && t < numb_node)
         {
             double R = mrg_get_double_orig (prng_state);
-			if (!has_adj[t] || (numb_node - t)*R > NBFS - m) ++t;
+            if (!has_adj[t] || (numb_node - t)*R > NBFS - m) ++t;
             else bfs_root[m++] = t++;
         }
-		if (t >= numb_node && m < NBFS)
+        if (t >= numb_node && m < NBFS)
         {
             if (m > 0)
             {
@@ -222,16 +222,16 @@ void run_bfs (void)
 
     for (m = 0; m < NBFS; ++m)
     {
-		/*	bfs_tree : liste des parents de chacun des sommets en partant d'un sommet precise	*/
-		/*	max_bfsvtx : sommet maximum present dans la liste	*/
+        /*	bfs_tree : liste des parents de chacun des sommets en partant d'un sommet precise	*/
+        /*	max_bfsvtx : sommet maximum present dans la liste	*/
         int64_t *bfs_tree, max_bfsvtx;
 
-		bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
-		assert (bfs_root[m] < numb_node);
+        bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
+        assert (bfs_root[m] < numb_node);
 
         if (VERBOSE) fprintf (stderr, "Running bfs %d...", m);
         TIME(bfs_time[m], err = make_bfs_tree (bfs_tree, &max_bfsvtx, bfs_root[m]));
-		if (VERBOSE) fprintf (stderr, "done\n");
+        if (VERBOSE) fprintf (stderr, "done\n");
 
         if (err)
         {
@@ -240,7 +240,7 @@ void run_bfs (void)
         }
 
         if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
-		TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
+        TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
         if (VERBOSE) fprintf (stderr, "done\n");
         if (bfs_nedge[m] < 0)
         {
@@ -370,7 +370,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     statistics (stats, tm, NBFS);
     PRINT_STATS("time", 0);
 
-	printf ("\n===============EDGE STATISTICS===============\n\n");
+    printf ("\n===============EDGE STATISTICS===============\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = (double)bfs_nedge[k];
@@ -379,17 +379,17 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
 
     printf ("\n===============VERIFY STATISTICS===============\n\n");
 
-	for (k = 0; k < NBFS; ++k)
-		tm[k] = (double)bfs_verify[k];
-	statistics (stats, tm, NBFS);
-	PRINT_STATS("verify", 0);
+    for (k = 0; k < NBFS; ++k)
+        tm[k] = (double)bfs_verify[k];
+    statistics (stats, tm, NBFS);
+    PRINT_STATS("verify", 0);
 
     printf ("\n===============TEPS STATISTICS===============\n\n");
 
     for (k = 0; k < NBFS; ++k)
         tm[k] = bfs_nedge[k] / bfs_time[k];
     statistics (stats, tm, NBFS);
-	PRINT_STATS("TEPS", 1);
+    PRINT_STATS("TEPS", 1);
 
     printf("\n");
 }
