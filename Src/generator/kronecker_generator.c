@@ -70,7 +70,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		edges[edge].v0 = 1;
 	}
 
-    GRAPH_OMP(omp parallel for shared(seeds))
+	GRAPH_OMP(omp parallel for shared(seeds))
 	for(i=0 ; i<maxThreads ; ++i)
 		make_mrg_seed(mrg_get_uint_orig(seed), mrg_get_uint_orig(seed), (uint_fast32_t*)&seeds[i]);
 
@@ -94,7 +94,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	free(seeds);
 
 	/* permutation aleatoire des sommets	*/
-    random_node_permutation(1<<scale, edge_number, edges,seed);
+	random_node_permutation(1<<scale, edge_number, edges,seed);
 	/*	permutation ameatoire des aretes	*/
-    random_edges_permutation(edge_number, edges, seed);
+	random_edges_permutation(edge_number, edges, seed);
 }

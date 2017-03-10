@@ -26,11 +26,11 @@ static int64_t * __restrict  xadj;
 static void find_nv (const struct packed_edge * __restrict  IJ, const int64_t nedge)
 {
     maxvtx = -1;
-    OMP("omp parallel")
+	OMP(omp parallel)
     {
         int64_t k, gmaxvtx, tmaxvtx = -1;
 
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < nedge; ++k)
         {
             if (get_v0_from_edge(&IJ[k]) > tmaxvtx)
@@ -45,7 +45,7 @@ static void find_nv (const struct packed_edge * __restrict  IJ, const int64_t ne
     nv = 1+maxvtx;
 }
 
-static int alloc_graph (int64_t nedge)
+static int alloc_graph ()
 {
     sz = (2*nv+2) * sizeof (*xoff);
     xoff = xmalloc_large_ext (sz);
@@ -78,8 +78,8 @@ static int64_t prefix_sum (int64_t *buf)
     buf[tid] = 0;
     for (k = slice_begin; k < slice_end; ++k)
         buf[tid] += XOFF(k);
-    OMP("omp barrier");
-    OMP("omp single")
+	OMP(omp barrier);
+	OMP(omp single)
     for (k = 1; k < nt; ++k)
         buf[k] += buf[k-1];
     if (tid)
@@ -92,8 +92,8 @@ static int64_t prefix_sum (int64_t *buf)
         XOFF(k) = t1;
         t1 += tmp;
     }
-    OMP("omp flush (xoff)");
-    OMP("omp barrier");
+	OMP(omp flush (xoff));
+	OMP(omp barrier);
     return buf[nt-1];
 }
 
@@ -102,13 +102,13 @@ static int setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t ned
     int err = 0;
     int64_t *buf = NULL;
     xadj = NULL;
-    OMP("omp parallel")
+	OMP(omp parallel)
     {
         int64_t k, accum;
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < 2*nv+2; ++k)
             xoff[k] = 0;
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < nedge; ++k)
         {
             int64_t i = get_v0_from_edge(&IJ[k]);
@@ -116,14 +116,14 @@ static int setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t ned
             if (i != j)
             {
                 if (i >= 0)
-                    OMP("omp atomic")
+					OMP(omp atomic)
                     ++XOFF(i);
                 if (j >= 0)
-                    OMP("omp atomic")
+					OMP(omp atomic)
                     ++XOFF(j);
             }
         }
-        OMP("omp single")
+		OMP(omp single)
         {
             buf = alloca (omp_get_num_threads () * sizeof (*buf));
             if (!buf)
@@ -132,16 +132,16 @@ static int setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t ned
                 abort ();
             }
         }
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < nv; ++k)
             if (XOFF(k) < MINVECT_SIZE) XOFF(k) = MINVECT_SIZE;
 
         accum = prefix_sum (buf);
 
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < nv; ++k)
             XENDOFF(k) = XOFF(k);
-        OMP("omp single")
+		OMP(omp single)
         {
             XOFF(nv) = accum;
             if (!(xadjstore = xmalloc_large_ext ((XOFF(nv) + MINVECT_SIZE) * sizeof (*xadjstore))))
@@ -192,18 +192,18 @@ static void pack_edges (void)
 {
     int64_t v;
 
-    OMP("omp for")
+	OMP(omp for)
     for (v = 0; v < nv; ++v)
         pack_vtx_edges (v);
 }
 
 static void gather_edges (const struct packed_edge * __restrict  IJ, int64_t nedge)
 {
-    OMP("omp parallel")
+	OMP(omp parallel)
     {
         int64_t k;
 
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < nedge; ++k)
         {
             int64_t i = get_v0_from_edge(&IJ[k]);
@@ -221,7 +221,7 @@ static void gather_edges (const struct packed_edge * __restrict  IJ, int64_t ned
 int create_graph_from_edgelist (struct packed_edge *IJ, int64_t nedge)
 {
     find_nv (IJ, nedge);
-    if (alloc_graph (nedge)) return -1;
+	if (alloc_graph ()) return -1;
     if (setup_deg_off (IJ, nedge))
     {
         xfree_large (xoff);
@@ -250,14 +250,14 @@ int make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out, int64_t srcvtx)
 
 #define THREAD_BUF_LEN 16384
 
-    OMP("omp parallel shared(k1, k2)")
+	OMP(omp parallel shared(k1, k2))
     {
         int64_t k;
         int64_t nbuf[THREAD_BUF_LEN];
-        OMP("omp for")
+		OMP(omp for)
         for (k = 0; k < srcvtx; ++k)
                 bfs_tree[k] = -1;
-        OMP("omp for")
+		OMP(omp for)
         for (k = srcvtx+1; k < nv; ++k)
                 bfs_tree[k] = -1;
 
@@ -265,8 +265,8 @@ int make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out, int64_t srcvtx)
         {
             const int64_t oldk2 = k2;
             int64_t kbuf = 0;
-            OMP("omp barrier");
-            OMP("omp for")
+			OMP(omp barrier);
+			OMP(omp for)
             for (k = k1; k < oldk2; ++k)
             {
                 const int64_t v = vlist[k];
@@ -301,9 +301,9 @@ int make_bfs_tree (int64_t *bfs_tree_out, int64_t *max_vtx_out, int64_t srcvtx)
                 for (vk = 0; vk < kbuf; ++vk)
                     vlist[voff + vk] = nbuf[vk];
             }
-            OMP("omp single")
+			OMP(omp single)
                     k1 = oldk2;
-            OMP("omp barrier");
+			OMP(omp barrier);
         }
     }
 
@@ -336,37 +336,37 @@ int int64_cas(int64_t* p, int64_t oldval, int64_t newval)
 int64_t int64_fetch_add (int64_t* p, int64_t incr)
 {
     int64_t t;
-    OMP("omp critical") {
+	OMP(omp critical) {
         t = *p;
         *p += incr;
     }
-    OMP("omp flush (p)");
+	OMP(omp flush (p));
     return t;
 }
 
 int64_t int64_casval(int64_t* p, int64_t oldval, int64_t newval)
 {
     int64_t v;
-    OMP("omp critical (CAS)") {
+	OMP(omp critical (CAS)) {
         v = *p;
         if (v == oldval)
             *p = newval;
     }
-    OMP("omp flush (p)");
+	OMP(omp flush (p));
     return v;
 }
 
 int int64_cas(int64_t* p, int64_t oldval, int64_t newval)
 {
     int out = 0;
-    OMP("omp critical (CAS)") {
+	OMP(omp critical (CAS)) {
         int64_t v = *p;
         if (v == oldval) {
             *p = newval;
             out = 1;
         }
     }
-    OMP("omp flush (p)");
+	OMP(omp flush (p));
     return out;
 }
 #endif

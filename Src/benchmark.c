@@ -149,12 +149,12 @@ void run_bfs (void)
     if (!rootname)
     {
         has_adj = xmalloc_large (numb_node * sizeof (*has_adj));
-        OMP("omp parallel")
+		OMP(omp parallel)
         {
-            OMP("omp for")
+			OMP(omp for)
             for (k = 0; k < numb_node; ++k)
                 has_adj[k] = 0;
-            OMP("omp for")
+			OMP(omp for)
             for (k = 0; k < nedge; ++k)
             {
                 const int64_t i = get_v0_from_edge(&IJ[k]);

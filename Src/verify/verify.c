@@ -4,15 +4,15 @@ static int compute_levels (int64_t * level,int64_t nv, const int64_t * __restric
 {
   int err = 0;
 
-  OMP("omp parallel shared(err)") {
+  OMP(omp parallel shared(err)) {
     int terr;
     int64_t k;
 
-    OMP("omp for")
+	OMP(omp for)
       for (k = 0; k < nv; ++k)
 	level[k] = (k == root? 0 : -1);
 
-    OMP("omp for")
+	OMP(omp for)
       for (k = 0; k < nv; ++k) {
 	if (level[k] >= 0) continue;
 	terr = err;
@@ -50,7 +50,7 @@ static int compute_levels (int64_t * level,int64_t nv, const int64_t * __restric
 #endif
 	  }
 	}
-	if (terr) { err = terr;	OMP("omp flush (err)"); }
+	if (terr) { err = terr;	OMP(omp flush (err)); }
       }
   }
   return err;
@@ -78,14 +78,14 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 
   if (err) goto done;
 
-  OMP("omp parallel shared(err)") {
+  OMP(omp parallel shared(err)) {
     int64_t k;
     int terr = 0;
-    OMP("omp for")
+	OMP(omp for)
       for (k = 0; k < nv; ++k)
 	seen_edge[k] = 0;
 
-    OMP("omp for reduction(+:nedge_traversed)")
+	OMP(omp for reduction(+:nedge_traversed))
       for (k = 0; k < 2*nedge; k+=2) {
 	const int64_t i = IJ[k];
 	const int64_t j = IJ[k+1];
@@ -95,13 +95,13 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 	if (i < 0 || j < 0) continue;
 	if (i > max_bfsvtx && j <= max_bfsvtx) terr = -10;
 	if (j > max_bfsvtx && i <= max_bfsvtx) terr = -11;
-	if (terr) { err = terr; OMP("omp flush(err)"); }
+	if (terr) { err = terr; OMP(omp flush(err)); }
     if (terr || i > max_bfsvtx)
 	  continue;
 
 	if (bfs_tree[i] >= 0 && bfs_tree[j] < 0) terr = -12;
 	if (bfs_tree[j] >= 0 && bfs_tree[i] < 0) terr = -13;
-	if (terr) { err = terr; OMP("omp flush(err)"); }
+	if (terr) { err = terr; OMP(omp flush(err)); }
     if (terr || bfs_tree[i] < 0)
 	  continue;
 
@@ -115,11 +115,11 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 	lvldiff = level[i] - level[j];
 	if (lvldiff > 1 || lvldiff < -1)
 	  terr = -14;
-	if (terr) { err = terr; OMP("omp flush(err)"); }
+	if (terr) { err = terr; OMP(omp flush(err)); }
       }
 
     if (!terr) {
-      OMP("omp for")
+	  OMP(omp for)
 	for (k = 0; k < nv; ++k) {
 	  terr = err;
 	  if (!terr && k != root) {
@@ -127,7 +127,7 @@ int64_t verify_bfs_tree (int64_t *bfs_tree_in, int64_t max_bfsvtx, int64_t root,
 	      terr = -15;
 	    if (bfs_tree[k] == k)
 	      terr = -16;
-	    if (terr) { err = terr; OMP("omp flush(err)"); }
+		if (terr) { err = terr; OMP(omp flush(err)); }
 	  }
 	}
     }
