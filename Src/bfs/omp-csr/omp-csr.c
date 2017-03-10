@@ -1,4 +1,4 @@
-#include "../../compat.h"
+/*#include "../../compat.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -397,3 +397,4 @@ int int64_cas(int64_t* p, int64_t oldval, int64_t newval)
     return out;
 }
 #endif
+*/
