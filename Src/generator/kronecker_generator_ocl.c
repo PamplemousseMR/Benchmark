@@ -111,7 +111,11 @@ static void createContexts()
            fprintf(stderr,"[createContexts] error when create context\n");
            exit(EXIT_FAILURE);
         }
+        #ifdef _WIN32
+        commands[i] = clCreateCommandQueue(contexts[i], devices[i], 0, &err);
+        #else
 		commands[i] = clCreateCommandQueueWithProperties(contexts[i], devices[i], 0, &err);
+        #endif
         if(err != CL_SUCCESS)
         {
            fprintf(stderr,"[createContexts] error when create command queue\n");
