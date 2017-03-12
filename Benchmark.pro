@@ -152,7 +152,7 @@ win32:{
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-DEFINES += GRAPH_GENERATOR_OMP
+DEFINES += GRAPH_GENERATOR_OCL
 #----------------------------------
 
 message("-------QMAKE END--------")
