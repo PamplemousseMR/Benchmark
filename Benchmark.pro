@@ -189,5 +189,7 @@ SOURCES += \
     Src/xalloc.c \
     Src/benchmark.c \
     Src/generator/edge_generator.c \
-    Src/generator/kronecker_generator.c \
-    Src/mman_win.cpp
+    Src/mman_win.cpp \
+    Src/generator/kronecker_generator_seq.c \
+    Src/generator/kronecker_generator_ocl.c \
+    Src/generator/kronecker_generator_ompi.c

@@ -1,0 +1,6 @@
+#ifdef GRAPH_GENERATOR_OMPI
+#ifndef GRAPH_GENERATOR_OCL
+
+
+#endif /* GRAPH_GENERATOR_OCL */
+#endif /* GRAPH_GENERATOR_MPI */

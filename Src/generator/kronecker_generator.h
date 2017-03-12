@@ -9,6 +9,16 @@
 
 /*	=============== Defines ===============	*/
 
+/*testes pour les defines*/
+#ifdef GRAPH_GENERATOR_OCL
+    #ifdef GRAPH_GENERATOR_OMP
+    #error OpenCL cannot run with OpenMP
+    #endif
+    #ifdef GRAPH_GENERATOR_OMPI
+    #error OpenCL cannot run with OpenMPI
+    #endif
+#endif
+
 #ifdef GRAPH_GENERATOR_OMP
     #ifdef _WIN32
 		#define GRAPH_OMP(x) __pragma(x)

@@ -1,3 +1,6 @@
+#ifndef GRAPH_GENERATOR_OMPI
+#ifndef GRAPH_GENERATOR_OCL
+
 #include "kronecker_generator.h"
 
 #define SHUFFLE(name,type)                                                  \
@@ -98,3 +101,6 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	/*	permutation ameatoire des aretes	*/
 	random_edges_permutation(edge_number, edges, seed);
 }
+
+#endif /* GRAPH_GENERATOR_OCL */
+#endif /* GRAPH_GENERATOR_OMPI */
