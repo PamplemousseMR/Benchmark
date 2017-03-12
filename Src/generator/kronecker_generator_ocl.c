@@ -69,7 +69,7 @@ static void createContexts()
         chosenPlatform = atoi(tempPlatform);
         valid = 1;
 
-        if (chosenPlatform < 0 || chosenPlatform >= platformCount) {
+		if (chosenPlatform >= platformCount) {
 
             printf("Numéro invalide\n");
             valid = 0;
@@ -111,7 +111,7 @@ static void createContexts()
            fprintf(stderr,"[createContexts] error when create context\n");
            exit(EXIT_FAILURE);
         }
-        commands[i] = clCreateCommandQueue(contexts[i], devices[i], 0, &err);
+		commands[i] = clCreateCommandQueueWithProperties(contexts[i], devices[i], 0, &err);
         if(err != CL_SUCCESS)
         {
            fprintf(stderr,"[createContexts] error when create command queue\n");
@@ -149,14 +149,17 @@ static void destroyContexts()
 static char* loadKernel(const char* path)
 {
     FILE *fp;
-    errno_t  err;
     long lSize;
     char *buffer;
+	#ifdef _WIN32
+	errno_t  err;
 
-    err = fopen_s (&fp,path , "rb");
+	err = fopen_s (&fp,path , "rb");
+	#else
+	fp = fopen(path , "rb");
+	#endif
     if(!fp)
     {
-        perror(path);
         perror("[loadKernel] can't open file");
         exit(EXIT_FAILURE);
     }
@@ -197,7 +200,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     size_t global;
     int i;
 
-    char* prog = loadKernel("C:\\Users\\romai\\Desktop\\Benchmark\\Src\\generator\\kernel.cl");
+	char* prog = loadKernel("/home/romain/Documents/Benchmark/Src/generator/kernel.cl");
     createContexts();
 
     /* creer le programme */
