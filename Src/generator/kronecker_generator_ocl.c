@@ -115,6 +115,14 @@ static void createContexts()
         clGetDeviceInfo(devices[i], CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
         printf("dim : %d\n",dim);
 
+        cl_ulong buf = 0;
+        clGetDeviceInfo(devices[i], CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
+        printf("buf : %d\n",buf);
+
+        cl_ulong mem = 0;
+        clGetDeviceInfo(devices[i], CL_DEVICE_MAX_MEM_ALLOC_SIZE ,sizeof(cl_ulong), &mem, NULL);
+        printf("mem : %d\n",mem);
+
         clGetDeviceInfo(devices[i], CL_DEVICE_MAX_COMPUTE_UNITS,sizeof(cl_uint), &maxComputeUnits[i], NULL);
         printf("units : %d\n",maxComputeUnits[i]);
     }
@@ -240,12 +248,12 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	releaseMemObject(&cl_seed);
 	releaseProgram(&program);
 
-                    printf("%d : output: \n",sizeof(packed_edge));
+                    /*printf("%d : output: \n",sizeof(packed_edge));
 
                     for(i=0;i<edge_number; i++)
 					{
 						printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
-                    }
+                    }*/
 
 
 	/* supression des contextes */
