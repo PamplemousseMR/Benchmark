@@ -61,75 +61,62 @@ static void createContexts()
     cl_uint platformCount;
     cl_platform_id* platforms;
     cl_device_id* devices;
-    cl_int err;
     cl_context_properties properties[3];
 	unsigned int chosenPlatform;
 
-    if(clGetPlatformIDs(0, NULL, &platformCount) != CL_SUCCESS )
-    {
-        fprintf(stderr,"[createContexts] error when get platforms id\n");
-        exit(EXIT_FAILURE);
-    }
+    /* recuperer les platformes */
+    getPlatformIDs(0, NULL, &platformCount);
     if(platformCount<=0)
     {
         fprintf(stderr,"[createContexts] no platforms found\n");
         exit(EXIT_FAILURE);
     }
     platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
-    if(clGetPlatformIDs(platformCount, platforms, NULL) != CL_SUCCESS )
-    {
-        fprintf(stderr,"[createContexts] error when get platforms id\n");
-        exit(EXIT_FAILURE);
-	}
+    getPlatformIDs(platformCount, platforms, NULL);
 
-	chosenPlatform = printAndGetPlatforms(platformCount, platforms);
+    /* choisir la platform */
+    chosenPlatform = printAndGetPlatforms(platformCount, platforms);
 
-    if(clGetDeviceIDs(platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount) != CL_SUCCESS )
-    {
-        fprintf(stderr,"[createContexts] error when get devices id\n");
-        exit(EXIT_FAILURE);
-    }
+    /* recuperer les peripheriques de la platforme */
+    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount);
     if(deviceCount<=0)
     {
         fprintf(stderr,"[createContexts] no devices found\n");
         exit(EXIT_FAILURE);
     }
     devices = (cl_device_id*)xmalloc(sizeof(cl_device_id) * deviceCount);
-    if(clGetDeviceIDs(platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, deviceCount, devices, NULL) != CL_SUCCESS )
-    {
-        fprintf(stderr,"[createContexts] error when get devices id\n");
-        exit(EXIT_FAILURE);
-    }
+    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, deviceCount, devices, NULL);
 
+    /* alouer un espace pour un(e) contexte/commande par peripherique */
     contexts = (cl_context*)xmalloc(sizeof(cl_context) * deviceCount);
     commands = (cl_command_queue*)xmalloc(sizeof(cl_command_queue) * deviceCount);
     maxComputeUnits = (cl_uint*)xmalloc(sizeof(cl_uint) * deviceCount);
 
+    /* creer les contextes et les commandes */
     properties[0]= CL_CONTEXT_PLATFORM;
     properties[1]= (cl_context_properties)platforms[chosenPlatform];
     properties[2]= 0;
 
-	GRAPH_OMP(omp parallel for shared(commands,contexts,properties,devices) private(err))
+    GRAPH_OMP(omp parallel for shared(commands,contexts,properties,devices))
     for (i=0; i<deviceCount; ++i)
     {
-        contexts[i] = clCreateContext(properties,1,&devices[i],NULL,NULL,&err);
-        if(err != CL_SUCCESS)
-        {
-           fprintf(stderr,"[createContexts] error when create context\n");
-           exit(EXIT_FAILURE);
-        }
-        #ifdef _WIN32
-        commands[i] = clCreateCommandQueue(contexts[i], devices[i], 0, &err);
-        #else
-		commands[i] = clCreateCommandQueueWithProperties(contexts[i], devices[i], 0, &err);
-        #endif
-        if(err != CL_SUCCESS)
-        {
-           fprintf(stderr,"[createContexts] error when create command queue\n");
-           exit(EXIT_FAILURE);
-        }
+        createContext(properties,1,&devices[i],NULL,NULL,&contexts[i]);
+        createCommandQueue(&contexts[i], &devices[i], 0, &commands[i]);
+
+        size_t si;
+        clGetDeviceInfo(devices[i], CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(size_t), &si, NULL);
+        printf("group : %d\n",si);
+
+        size_t item[3];
+        clGetDeviceInfo(devices[i], CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*3, &item, NULL);
+        printf("item : %d %d %d\n",item[0],item[1],item[2]);
+
+        cl_uint dim;
+        clGetDeviceInfo(devices[i], CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
+        printf("dim : %d\n",dim);
 
         clGetDeviceInfo(devices[i], CL_DEVICE_MAX_COMPUTE_UNITS,sizeof(cl_uint), &maxComputeUnits[i], NULL);
+        printf("units : %d\n",maxComputeUnits[i]);
     }
 
 
@@ -196,6 +183,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     cl_mem cl_scale;
     cl_mem cl_edge_number;
 	size_t global;
+    size_t local;
     unsigned int i;
 
 	createContexts();
@@ -210,7 +198,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
 	createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
 
-    /* alouer les buffers */
+    /* creer les buffers */
     createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*maxComputeUnits[0], NULL, &cl_seed);
 	createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(int), NULL, &cl_scale);
     createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(int64_t), NULL, &cl_edge_number);
@@ -232,10 +220,11 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
     /* lancer le programme */
     global=maxComputeUnits[0];
-	enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
+    local = 4;
+    enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
     finish(&commands[0]);
 
-	/* netoyage des donnees GPU */
+    /* netoyage du GPU */
 	releaseKernel(&kernel);
 
 	/* permutation aleatoire des sommets puis des aretes	*/
@@ -253,10 +242,10 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
                     printf("%d : output: \n",sizeof(packed_edge));
 
-                    /*for(i=0;i<edge_number; i++)
+                    for(i=0;i<edge_number; i++)
 					{
 						printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
-                    }*/
+                    }
 
 
 	/* supression des contextes */

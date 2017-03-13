@@ -27,7 +27,10 @@ static __inline int finish(cl_command_queue*);
 static __inline int releaseKernel(cl_kernel*);
 static __inline int releaseMemObject(cl_mem*);
 static __inline int releaseProgram(cl_program*);
-
+static __inline int getPlatformIDs(cl_uint, cl_platform_id*, cl_uint*);
+static __inline int getDeviceIDs(cl_platform_id*,cl_device_type,cl_uint,cl_device_id*, cl_uint*);
+static __inline int createContext(const cl_context_properties*, cl_uint,const cl_device_id*,void(*)(const char*, const void*, size_t, void*), void*, cl_context*);
+static __inline int createCommandQueue(cl_context*, cl_device_id* ,cl_command_queue_properties, cl_command_queue*);
 
 /*	=============== Inline definitions ===============	*/
 
@@ -318,6 +321,109 @@ static __inline int releaseProgram(cl_program* program)
 		return -1;
 	}
 	return 1;
+}
+
+static __inline int getPlatformIDs(cl_uint entries, cl_platform_id* platform, cl_uint* num_platforms)
+{
+    cl_int err = clGetPlatformIDs(entries,platform,num_platforms);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_VALUE  :
+            fprintf(stderr,"[getPlatformIDs] invalid values\n");
+            break;
+        }
+        return -1;
+    }
+    return 1;
+}
+
+static __inline int getDeviceIDs(cl_platform_id* platform,cl_device_type type,cl_uint entries,cl_device_id* devices, cl_uint* num_device)
+{
+    cl_int err = clGetDeviceIDs(*platform, type, entries, devices, num_device);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_PLATFORM  :
+            fprintf(stderr,"[getDevicesIds] invalid platform\n");
+            break;
+        case CL_INVALID_DEVICE_TYPE  :
+            fprintf(stderr,"[getDevicesIds] invalid device type\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[getDevicesIds] invalid value\n");
+            break;
+        case CL_DEVICE_NOT_FOUND  :
+            fprintf(stderr,"[getDevicesIds] device not found\n");
+            break;
+        }
+        return -1;
+    }
+    return 1;
+}
+
+static __inline int createContext(const cl_context_properties* properties, cl_uint num_devices,const cl_device_id* devices,void(*pfn_notify)(const char*, const void*, size_t, void*), void* user_data, cl_context* context)
+{
+    cl_int err;
+    *context = clCreateContext(properties,num_devices,devices,pfn_notify, user_data, &err);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_PLATFORM  :
+            fprintf(stderr,"[createContext] invalid platform\n");
+            break;
+        case CL_INVALID_DEVICE  :
+            fprintf(stderr,"[createContext] invalid device\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[createContext] invalid value\n");
+            break;
+        case CL_DEVICE_NOT_AVAILABLE  :
+            fprintf(stderr,"[createContext] device not available\n");
+            break;
+        case CL_OUT_OF_HOST_MEMORY  :
+            fprintf(stderr,"[createContext] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
+            break;
+        }
+        return -1;
+    }
+    return 1;
+}
+
+static __inline int createCommandQueue(cl_context* context, cl_device_id* device,cl_command_queue_properties properties, cl_command_queue* command)
+{
+    cl_int err;
+    #ifdef _WIN32
+    *command = clCreateCommandQueue(*context, *device, 0, &err);
+    #else
+    *command = clCreateCommandQueueWithProperties(*context, *device, 0, &err);
+    #endif
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_CONTEXT  :
+            fprintf(stderr,"[createCommandQueue] invalid context\n");
+            break;
+        case CL_INVALID_DEVICE  :
+            fprintf(stderr,"[createCommandQueue] invalid device\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[createCommandQueue] invalid value\n");
+            break;
+        case CL_INVALID_QUEUE_PROPERTIES  :
+            fprintf(stderr,"[createCommandQueue] invalid queue properties\n");
+            break;
+        case CL_OUT_OF_HOST_MEMORY  :
+            fprintf(stderr,"[createCommandQueue] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
+            break;
+        }
+        return -1;
+    }
+    return 1;
 }
 
 #endif
