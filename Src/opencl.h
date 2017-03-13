@@ -40,22 +40,22 @@ static __inline int createBuffer(cl_context* context, cl_mem_flags flag, size_t 
 		switch(err)
 		{
 		case CL_INVALID_CONTEXT :
-			fprintf(stderr,"[createBuffer] context is not a valid context");
+            fprintf(stderr,"[createBuffer] context is not a valid context\n");
 			break;
 		case CL_INVALID_VALUE :
-			fprintf(stderr,"[createBuffer] values specified in flags are not valid");
+            fprintf(stderr,"[createBuffer] values specified in flags are not valid\n");
 			break;
 		case CL_INVALID_BUFFER_SIZE :
-			fprintf(stderr,"[createBuffer] invalide size");
+            fprintf(stderr,"[createBuffer] invalide size\n");
 			break;
 		case CL_INVALID_HOST_PTR :
-			fprintf(stderr,"[createBuffer] invalid host pointer");
+            fprintf(stderr,"[createBuffer] invalid host pointer\n");
 			break;
 		case CL_MEM_OBJECT_ALLOCATION_FAILURE :
-			fprintf(stderr,"[createBuffer] there is a failure to allocate memory for buffer object");
+            fprintf(stderr,"[createBuffer] there is a failure to allocate memory for buffer object\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[createBuffer] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[createBuffer] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -72,13 +72,13 @@ static __inline int createProgram(cl_context* context,cl_uint i, const char* pro
 		switch(err)
 		{
 		case CL_INVALID_CONTEXT :
-			fprintf(stderr,"[createProgram] context is not a valid context");
+            fprintf(stderr,"[createProgram] context is not a valid context\n");
 			break;
 		case CL_INVALID_VALUE :
-			fprintf(stderr,"[createProgram] values specified in flags are not valid");
+            fprintf(stderr,"[createProgram] values specified in flags are not valid\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[createProgram] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[createProgram] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -90,7 +90,7 @@ static __inline int buildProgram(cl_program* program, cl_context* context, cl_ui
 {
 	if (clBuildProgram(*program, numDevices, devices, options, notify, data) != CL_SUCCESS)
 	{
-		fprintf(stderr,"[buildProgram] Error building program\n");
+        fprintf(stderr,"[buildProgram] Error building program\n\n");
 		size_t len = 0;
 		cl_device_id deviceId;
 		clGetContextInfo(*context,CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
@@ -113,22 +113,22 @@ static __inline int createKernel(cl_program* program, const char* name, cl_kerne
 		switch(err)
 		{
 		case CL_INVALID_PROGRAM :
-			fprintf(stderr,"[createKernel] invalid program");
+            fprintf(stderr,"[createKernel] invalid program\n");
 			break;
 		case CL_INVALID_PROGRAM_EXECUTABLE :
-			fprintf(stderr,"[createKernel] program executable was not successfully built");
+            fprintf(stderr,"[createKernel] program executable was not successfully built\n");
 			break;
 		case CL_INVALID_KERNEL_NAME :
-			fprintf(stderr,"[createKernel] invalid kernel name");
+            fprintf(stderr,"[createKernel] invalid kernel name\n");
 			break;
 		case CL_INVALID_KERNEL_DEFINITION :
-			fprintf(stderr,"[createKernel] invalid kernel definition");
+            fprintf(stderr,"[createKernel] invalid kernel definition\n");
 			break;
 		case CL_INVALID_VALUE :
-			fprintf(stderr,"[createKernel] values specified in flags are not valid");
+            fprintf(stderr,"[createKernel] values specified in flags are not valid\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[createKernel] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[createKernel] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -144,25 +144,25 @@ static __inline int enqueueWriteBuffer(cl_command_queue* command, cl_mem* mem, c
 		switch(err)
 		{
 		case CL_INVALID_COMMAND_QUEUE :
-			fprintf(stderr,"[enqueueWriteBuffer] invalid command queue");
+            fprintf(stderr,"[enqueueWriteBuffer] invalid command queue\n");
 			break;
 		case CL_INVALID_CONTEXT :
-			fprintf(stderr,"[enqueueWriteBuffer] context is not a valid context");
+            fprintf(stderr,"[enqueueWriteBuffer] context is not a valid context\n");
 			break;
 		case CL_INVALID_MEM_OBJECT :
-			fprintf(stderr,"[enqueueWriteBuffer] invalid buffer");
+            fprintf(stderr,"[enqueueWriteBuffer] invalid buffer\n");
 			break;
 		case CL_INVALID_VALUE :
-			fprintf(stderr,"[enqueueWriteBuffer] values specified in flags are not valid");
+            fprintf(stderr,"[enqueueWriteBuffer] values specified in flags are not valid\n");
 			break;
 		case CL_INVALID_EVENT_WAIT_LIST :
-			fprintf(stderr,"[enqueueWriteBuffer] invalid events wait list");
+            fprintf(stderr,"[enqueueWriteBuffer] invalid events wait list\n");
 			break;
 		case CL_MEM_OBJECT_ALLOCATION_FAILURE :
-			fprintf(stderr,"[enqueueWriteBuffer] there is a failure to allocate memory for buffer object");
+            fprintf(stderr,"[enqueueWriteBuffer] there is a failure to allocate memory for buffer object\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[enqueueWriteBuffer] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[enqueueWriteBuffer] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -178,22 +178,22 @@ static __inline int setKernelArg(cl_kernel* kernel, cl_uint num, size_t size, vo
 		switch(err)
 		{
 		case CL_INVALID_KERNEL :
-			fprintf(stderr,"[setKernelArg] invalid kernel");
+            fprintf(stderr,"[setKernelArg] invalid kernel\n");
 			break;
 		case CL_INVALID_ARG_INDEX :
-			fprintf(stderr,"[setKernelArg] invalid index");
+            fprintf(stderr,"[setKernelArg] invalid index\n");
 			break;
 		case CL_INVALID_ARG_VALUE :
-			fprintf(stderr,"[setKernelArg] if data is NULL for not declared __local");
+            fprintf(stderr,"[setKernelArg] if data is NULL for not declared __local\n");
 			break;
 		case CL_INVALID_MEM_OBJECT :
-			fprintf(stderr,"[setKernelArg] invalid mem object");
+            fprintf(stderr,"[setKernelArg] invalid mem object\n");
 			break;
 		case CL_INVALID_SAMPLER :
-			fprintf(stderr,"[setKernelArg] argument declared to be of type sampler_t when the specified arg_value is not a valid sampler object");
+            fprintf(stderr,"[setKernelArg] argument declared to be of type sampler_t when the specified arg_value is not a valid sampler object\n");
 			break;
 		case CL_INVALID_ARG_SIZE :
-			fprintf(stderr,"[setKernelArg] invalid arg size");
+            fprintf(stderr,"[setKernelArg] invalid arg size\n");
 			break;
 		}
 		return -1;
@@ -209,43 +209,43 @@ static __inline int enqueueNDRangeKernel(cl_command_queue* command, cl_kernel* k
 		switch(err)
 		{
 		case CL_INVALID_PROGRAM_EXECUTABLE :
-			fprintf(stderr,"[enqueueNDRangeKernel] program executable was not successfully built");
+            fprintf(stderr,"[enqueueNDRangeKernel] program executable was not successfully built\n");
 			break;
 		case CL_INVALID_COMMAND_QUEUE :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid command queue");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid command queue\n");
 			break;
 		case CL_INVALID_KERNEL :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid kernel");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid kernel\n");
 			break;
 		case CL_INVALID_CONTEXT :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid context");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid context\n");
 			break;
 		case CL_INVALID_KERNEL_ARGS :
-			fprintf(stderr,"[enqueueNDRangeKernel] kernel argument value is not specifie");
+            fprintf(stderr,"[enqueueNDRangeKernel] kernel argument value is not specifie\n");
 			break;
 		case CL_INVALID_WORK_DIMENSION :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid work dimension");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid work dimension\n");
 			break;
 		case CL_INVALID_WORK_GROUP_SIZE :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid group size");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid group size\n");
 			break;
 		case CL_INVALID_WORK_ITEM_SIZE :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid work item size");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid work item size\n");
 			break;
 		case CL_INVALID_GLOBAL_OFFSET :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid global offset");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid global offset\n");
 			break;
 		case CL_OUT_OF_RESOURCES :
-			fprintf(stderr,"[enqueueNDRangeKernel] out of resources");
+            fprintf(stderr,"[enqueueNDRangeKernel] out of resources\n");
 			break;
 		case CL_MEM_OBJECT_ALLOCATION_FAILURE :
-			fprintf(stderr,"[enqueueNDRangeKernel] there is a failure to allocate memory for buffer object");
+            fprintf(stderr,"[enqueueNDRangeKernel] there is a failure to allocate memory for buffer object\n");
 			break;
 		case CL_INVALID_EVENT_WAIT_LIST :
-			fprintf(stderr,"[enqueueNDRangeKernel] invalid events wait list");
+            fprintf(stderr,"[enqueueNDRangeKernel] invalid events wait list\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[enqueueNDRangeKernel] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[enqueueNDRangeKernel] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -261,10 +261,10 @@ static __inline int finish(cl_command_queue* command)
 		switch(err)
 		{
 		case CL_INVALID_COMMAND_QUEUE :
-			fprintf(stderr,"[finish] invalid command queue");
+            fprintf(stderr,"[finish] invalid command queue\n");
 			break;
 		case CL_OUT_OF_HOST_MEMORY :
-			fprintf(stderr,"[finish] there is a failure to allocate resources required by the OpenCL implementation on the host");
+            fprintf(stderr,"[finish] there is a failure to allocate resources required by the OpenCL implementation on the host\n");
 			break;
 		}
 		return -1;
@@ -280,7 +280,7 @@ static __inline int releaseKernel(cl_kernel* kernel)
 		switch(err)
 		{
 		case CL_INVALID_KERNEL :
-			fprintf(stderr,"[releaseKernel] invalid kernel");
+            fprintf(stderr,"[releaseKernel] invalid kernel\n");
 			break;
 		}
 		return -1;
@@ -296,7 +296,7 @@ static __inline int releaseMemObject(cl_mem* mem)
 		switch(err)
 		{
 		case CL_INVALID_MEM_OBJECT :
-			fprintf(stderr,"[releaseMemObject] invalid mem object");
+            fprintf(stderr,"[releaseMemObject] invalid mem object\n");
 			break;
 		}
 		return -1;
@@ -312,7 +312,7 @@ static __inline int releaseProgram(cl_program* program)
 		switch(err)
 		{
 		case CL_INVALID_PROGRAM :
-			fprintf(stderr,"[releaseProgram] invalid program");
+            fprintf(stderr,"[releaseProgram] invalid program\n");
 			break;
 		}
 		return -1;

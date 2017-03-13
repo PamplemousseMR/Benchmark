@@ -7,7 +7,7 @@ static const char* kernel_kronecker=
 	"/*  =================== random ===================  */\n"\
 
 	"typedef struct mrg_state {\n"\
-		"unsigned long int z1, z2, z3, z4, z5;\n"\
+        "unsigned int z1, z2, z3, z4, z5;\n"\
 	"} mrg_state;\n"\
 
 	"unsigned long int mod_add(unsigned long int a, unsigned long int b)\n"\
@@ -43,7 +43,7 @@ static const char* kernel_kronecker=
 		"return (unsigned long int)result;\n"\
 	"}\n"\
 
-	"void mrg_orig_step(__private mrg_state* state)\n"\
+    "void mrg_orig_step(__global mrg_state* state)\n"\
 	"{\n"\
 		"unsigned long int new_elt = mod_mac_y(mod_mul_x(state->z1), state->z5);\n"\
 		"state->z5 = state->z4;\n"\
@@ -53,13 +53,13 @@ static const char* kernel_kronecker=
 		"state->z1 = new_elt;\n"\
 	"}\n"\
 
-	"unsigned long int mrg_get_uint_orig(__private mrg_state* state)\n"\
+    "unsigned long int mrg_get_uint_orig(__global mrg_state* state)\n"\
 	"{\n"\
 		"mrg_orig_step(state);\n"\
 		"return state->z1;\n"\
 	"}\n"\
 
-	"double mrg_get_double_orig(__private mrg_state* state)\n"\
+    "double mrg_get_double_orig(__global mrg_state* state)\n"\
 	"{\n"\
 		"double temp = (double)mrg_get_uint_orig(state) * .000000000465661287524579692 + (double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787;\n"\
 		"temp -= (unsigned long int)temp;\n"\
@@ -79,19 +79,15 @@ static const char* kernel_kronecker=
 
 	"typedef struct packed_edge\n"\
 	"{\n"\
-		"long v0;\n"\
-		"long v1;\n"\
+        "unsigned long v0;\n"\
+        "unsigned long v1;\n"\
 	"} packed_edge;\n"\
 
-	"__kernel void generate_kronecker(__private mrg_state* seed,const __global int* scale,const __global unsigned long int* edge_number, __global packed_edge* edges)\n"\
+    "__kernel void generate_kronecker(__global mrg_state* seeds,const __global int* scale,const __global unsigned long int* edge_number, __global packed_edge* edges)\n"\
 	"{\n"\
 		"unsigned int i;\n"\
 		"unsigned int edge;\n"\
 		"size_t id = get_global_id(0);\n"\
-		"unsigned long int mySeed[5];\n"\
-
-		"for(i=0 ; i<id ; ++i)\n"\
-		"make_mrg_seed(mrg_get_uint_orig(seed) , mrg_get_uint_orig(seed), (mrg_state*)mySeed);\n"\
 
 		"int mul;\n"\
 		"int	ii_bit;\n"\
@@ -113,16 +109,16 @@ static const char* kernel_kronecker=
 			"mul = 1<<i;\n"\
 			"for(edge=bornMin ; edge<bornMax ; ++edge)\n"\
 			"{\n"\
-				"ii_bit = ( mrg_get_double_orig((mrg_state*)mySeed)>ab );\n"\
-				"edges[edge].v1 +=  mul * ( mrg_get_double_orig((mrg_state*)mySeed) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-				"edges[edge].v0 +=  mul * ii_bit;\n"\
+                    "ii_bit = ( mrg_get_double_orig(&seeds[id])>ab );\n"\
+                    "edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                    "edges[edge].v0 +=  mul * ii_bit;\n"\
 			"}\n"\
 		"}\n"\
 	"};\n"\
 
 	"/*	=================== permutation =================== */\n"\
 
-	"void shuffle_long(__global long* array,__private mrg_state* seed, long l)\n"\
+    "void shuffle_long(__global long* array,__global mrg_state* seed, long l)\n"\
 	"{\n"\
 		"long t;\n"\
 		"int i;\n"\
@@ -137,7 +133,7 @@ static const char* kernel_kronecker=
 		"}\n"\
 	"}\n"\
 
-	"__kernel void random_node_permutation(const __global int* scale,const __global unsigned long int* edge_number,__global packed_edge* edges,__private mrg_state* seed, __global long* perm)\n"\
+    "__kernel void random_node_permutation(const __global int* scale,const __global unsigned long int* edge_number,__global packed_edge* edges,__global mrg_state* seed, __global long* perm)\n"\
 	"{\n"\
 		"int i;\n"\
 		"long numbNode = 1<<(*scale);\n"\
