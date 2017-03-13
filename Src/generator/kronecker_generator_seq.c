@@ -9,7 +9,7 @@ static void name(type* array, int64_t l, mrg_state* seed)                   \
 	int i;                                                                  \
 	int j;                                                                  \
 	type t;                                                                 \
-	for(i=0 ; i<l ; i++)                                                    \
+	for(i=0 ; i<l ; ++i)                                                    \
 	{                                                                       \
 		j = (int)(i+mrg_get_uint_orig(seed)/(MRG_RAND_MAX / (l-i)+1));		\
 			t = array[j];                                                   \
@@ -86,7 +86,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		mul = 1<<i;
 
         GRAPH_OMP(omp parallel for shared(edges, mul, ab, c_norm, a_norm, seeds) private(ii_bit))
-		for(edge=0 ; edge<edge_number ; edge++)
+		for(edge=0 ; edge<edge_number ; ++edge)
 		{
 			ii_bit = ( mrg_get_double_orig(&seeds[omp_get_thread_num()])>ab );
 			edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[omp_get_thread_num()]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );

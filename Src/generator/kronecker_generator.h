@@ -7,13 +7,15 @@
 #include "../options.h"			/*	for A B C D	*/
 #include "../xalloc.h"			/*	xmalloc	*/
 
+#ifdef GRAPH_GENERATOR_OCL
+#include <CL/cl.h>				/*	openCL */
+#include "../opencl.h"
+#endif
+
 /*	=============== Defines ===============	*/
 
-/*testes pour les defines*/
+/*tests pour les defines*/
 #ifdef GRAPH_GENERATOR_OCL
-    #ifdef GRAPH_GENERATOR_OMP
-    #error OpenCL cannot run with OpenMP
-    #endif
     #ifdef GRAPH_GENERATOR_OMPI
     #error OpenCL cannot run with OpenMPI
     #endif

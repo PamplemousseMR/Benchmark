@@ -1,35 +1,69 @@
 #ifdef GRAPH_GENERATOR_OCL
 #ifndef GRAPH_GENERATOR_OMPI
-#ifndef GRAPH_GENERATOR_OMP
 
 #include "kronecker_generator.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <CL/cl.h>
+#include "kernel_kronecker.c"
 
 static cl_context* contexts;
 static cl_command_queue* commands;
 static cl_uint* maxComputeUnits;
 static cl_uint deviceCount;
 
+static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* platforms)
+{
+	unsigned int chosenPlatform;
+	unsigned int i;
+	int valid;
+	int tempBufferLength = 10;
+	char tempPlatform[10];
+	const cl_platform_info attributeTypes[4] = { CL_PLATFORM_NAME, CL_PLATFORM_VENDOR, CL_PLATFORM_VERSION, CL_PLATFORM_PROFILE };
+	size_t infoSize;
+	char* info;
+
+	printf("%d platforme(s) disponible(s) :\n", platformCount);
+
+	for(i=0 ; i<platformCount ; ++i)
+	{
+		clGetPlatformInfo(platforms[i], attributeTypes[0], 0, NULL, &infoSize);
+		info = (char*) malloc(infoSize);
+		clGetPlatformInfo(platforms[i], attributeTypes[0], infoSize, info, NULL);
+		printf("\t%d -> %s\n", i, info);
+		free(info);
+	}
+
+	printf("\n");
+	valid = 0;
+
+	if(platformCount == 1)
+		return 0;
+
+	do {
+
+		printf("Veuillez choisir une platforme (défaut : 0) : ");
+		fgets(tempPlatform, tempBufferLength, stdin);
+		chosenPlatform = atoi(tempPlatform);
+		valid = 1;
+
+		if (chosenPlatform >= platformCount) {
+
+			printf("Numéro invalide\n");
+			valid = 0;
+
+		}
+
+	} while (!valid);
+	return chosenPlatform;
+}
+
 static void createContexts()
 {
     unsigned int i;
-    int valid;
     cl_uint platformCount;
     cl_platform_id* platforms;
     cl_device_id* devices;
     cl_int err;
     cl_context_properties properties[3];
-    unsigned int chosenPlatform;
-    int tempBufferLength = 10;
-    char tempPlatform[10];
-
-    /* for printing infos */
-    const cl_platform_info attributeTypes[4] = { CL_PLATFORM_NAME, CL_PLATFORM_VENDOR, CL_PLATFORM_VERSION, CL_PLATFORM_PROFILE };
-    size_t infoSize;
-    char* info;
+	unsigned int chosenPlatform;
 
     if(clGetPlatformIDs(0, NULL, &platformCount) != CL_SUCCESS )
     {
@@ -46,37 +80,9 @@ static void createContexts()
     {
         fprintf(stderr,"[createContexts] error when get platforms id\n");
         exit(EXIT_FAILURE);
-    }
+	}
 
-    printf("%d platforme(s) disponibles :\n", platformCount);
-
-    for(i=0 ; i<platformCount ; ++i)
-    {
-        clGetPlatformInfo(platforms[i], attributeTypes[0], 0, NULL, &infoSize);
-        info = (char*) malloc(infoSize);
-        clGetPlatformInfo(platforms[i], attributeTypes[0], infoSize, info, NULL);
-        printf("\t%d -> %s\n", i, info);
-        free(info);
-    }
-
-    printf("\n");
-    valid = 0;
-
-    do {
-
-        printf("Veuillez choisir une platforme (défaut : 0) : ");
-        fgets(tempPlatform, tempBufferLength, stdin);
-        chosenPlatform = atoi(tempPlatform);
-        valid = 1;
-
-		if (chosenPlatform >= platformCount) {
-
-            printf("Numéro invalide\n");
-            valid = 0;
-
-        }
-
-    } while (!valid);
+	chosenPlatform = printAndGetPlatforms(platformCount, platforms);
 
     if(clGetDeviceIDs(platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount) != CL_SUCCESS )
     {
@@ -103,6 +109,7 @@ static void createContexts()
     properties[1]= (cl_context_properties)platforms[chosenPlatform];
     properties[2]= 0;
 
+	GRAPH_OMP(omp parallel for shared(commands,contexts,properties,devices) private(err))
     for (i=0; i<deviceCount; ++i)
     {
         contexts[i] = clCreateContext(properties,1,&devices[i],NULL,NULL,&err);
@@ -133,6 +140,7 @@ static void createContexts()
 static void destroyContexts()
 {
     unsigned int i;
+	GRAPH_OMP(omp parallel for shared(commands,contexts))
     for (i=0; i<deviceCount; ++i)
     {
         if(clReleaseCommandQueue(commands[i]) != CL_SUCCESS )
@@ -148,117 +156,104 @@ static void destroyContexts()
     }
     xfree_large(contexts);
     xfree_large(commands);
+	xfree_large(maxComputeUnits);
 }
 
-static char* loadKernel(const char* path)
+static void permutation(int64_t numb_node, cl_mem* scale,cl_mem* edge_number, cl_mem* edges, cl_mem* seed, cl_program* program)
 {
-    FILE *fp;
-    long lSize;
-    char *buffer;
-	#ifdef _WIN32
-	errno_t  err;
+	/*	variables utiles */
+	size_t global;
+	cl_kernel kernel;
+	cl_mem cl_perm;
 
-	err = fopen_s (&fp,path , "rb");
-	#else
-	fp = fopen(path , "rb");
-	#endif
-    if(!fp)
-    {
-        perror("[loadKernel] can't open file");
-        exit(EXIT_FAILURE);
-    }
+	/* creer les buffers */
+	createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(int64_t)*numb_node, NULL, &cl_perm);
+	createKernel(program, KERNEL_NODE_SHUFFLE_NAME, &kernel);
 
-    fseek( fp , 0L , SEEK_END);
-    lSize = ftell( fp );
-    rewind( fp );
+	/* affecter les arguments au programme */
+	setKernelArg(&kernel, 0, sizeof(cl_mem), scale);
+	setKernelArg(&kernel, 1, sizeof(cl_mem), edge_number);
+	setKernelArg(&kernel, 2, sizeof(cl_mem), edges);
+	setKernelArg(&kernel, 3, sizeof(cl_mem), seed);
+	setKernelArg(&kernel, 4, sizeof(cl_mem), &cl_perm);
 
-    buffer = calloc( 1, lSize+1 );
-    if( !buffer )
-    {
-        fclose(fp);
-        fprintf(stderr,"[loadKernel] error when allocate buffer\n");
-        exit(1);
-    }
+	/* lancer le programme */
+	global=1;
+	enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
+	finish(&commands[0]);
 
-    if( 1!=fread( buffer , lSize, 1 , fp) )
-    {
-        fclose(fp);
-        free(buffer);
-        perror("[loadKernel] can't read file");
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(fp);
-    return buffer;
+	/*	netoyer le GPU */
+	releaseMemObject(&cl_perm);
+	releaseKernel(&kernel);
 }
 
 void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, packed_edge* edges)
 {
     cl_kernel kernel;
     cl_program program;
-    cl_int err;
-    cl_mem output;
+	cl_mem cl_seed;
+	cl_mem cl_edges;
     cl_mem cl_scale;
     cl_mem cl_edge_number;
-    cl_mem cl_compute_units;
-    size_t global;
-    int i;
+	size_t global;
+	int i;
 
-	char* prog = loadKernel("/home/romain/Documents/Benchmark/Src/generator/kernel.cl");
-    createContexts();
+	createContexts();
 
-    /* creer le programme */
-    program = clCreateProgramWithSource(contexts[0],1,(const char **) &prog, NULL, &err);
-    if (clBuildProgram(program, 0, NULL, NULL, NULL, NULL) != CL_SUCCESS)
-    {
-        printf("[generate_kronecker_egdes] Error building program\n");
-        exit(EXIT_FAILURE);
-    }
-    kernel = clCreateKernel(program, "generate_kronecker", &err);
+	/* creer le programme */
+	createProgram(&contexts[0],1,kernel_kronecker, NULL, &program);
+	buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
+	createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
 
     /* alouer les buffers */
-    cl_scale = clCreateBuffer(contexts[0], CL_MEM_READ_ONLY, sizeof(int), NULL, NULL);
-    cl_edge_number = clCreateBuffer(contexts[0], CL_MEM_READ_ONLY, sizeof(long), NULL, NULL);
-    cl_compute_units = clCreateBuffer(contexts[0], CL_MEM_WRITE_ONLY, sizeof(cl_uint), NULL, NULL);
-    output = clCreateBuffer(contexts[0], CL_MEM_WRITE_ONLY, sizeof(packed_edge) * edge_number, NULL, NULL);
+	createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state), NULL, &cl_seed);
+	createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(int), NULL, &cl_scale);
+	createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(long), NULL, &cl_edge_number);
+	createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge) * edge_number, NULL, &cl_edges);
 
     /* affecter les donnees aux buffers */
-    clEnqueueWriteBuffer(commands[0], cl_scale, CL_TRUE, 0, sizeof(int), &scale, 0, NULL, NULL);
-    clEnqueueWriteBuffer(commands[0], cl_edge_number, CL_TRUE, 0, sizeof(long), &edge_number, 0, NULL, NULL);
-    clEnqueueWriteBuffer(commands[0], cl_compute_units, CL_TRUE, 0, sizeof(cl_uint), &maxComputeUnits[0], 0, NULL, NULL);
+	enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(int), seed, 0, NULL, NULL);
+	enqueueWriteBuffer(&commands[0], &cl_scale, CL_TRUE, 0, sizeof(int), &scale, 0, NULL, NULL);
+	enqueueWriteBuffer(&commands[0], &cl_edge_number, CL_TRUE, 0, sizeof(unsigned long int), &edge_number, 0, NULL, NULL);
 
     /* affecter les arguments au programme */
-    clSetKernelArg(kernel, 0, sizeof(cl_mem), &cl_scale);
-    clSetKernelArg(kernel, 1, sizeof(cl_mem), &cl_edge_number);
-    clSetKernelArg(kernel, 2, sizeof(cl_mem), &cl_compute_units);
-    clSetKernelArg(kernel, 3, sizeof(cl_mem), &output);
+	setKernelArg(&kernel, 0, sizeof(cl_mem), &cl_seed);
+	setKernelArg(&kernel, 1, sizeof(cl_mem), &cl_scale);
+	setKernelArg(&kernel, 2, sizeof(cl_mem), &cl_edge_number);
+	setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
 
     /* lancer le programme */
-    global=maxComputeUnits[0];
-    clEnqueueNDRangeKernel(commands[0], kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
-    clFinish(commands[0]);
+	global=maxComputeUnits[0];
+	enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
+	finish(&commands[0]);
 
-    /* recuperer les donnees GPU dans le CPU */
-    clEnqueueReadBuffer(commands[0], output, CL_TRUE, 0, sizeof(packed_edge) *edge_number, edges, 0, NULL, NULL);
+	/* netoyage des donnees GPU */
+	releaseKernel(&kernel);
 
-    printf("output: \n");
+	/* permutation aleatoire des sommets puis des aretes	*/
+	permutation(1<<scale,&cl_scale, &cl_edge_number, &cl_edges,&cl_seed, &program);
 
-    for(i=0;i<32; i++)
-    {
-        printf("%d -> %d\n",edges[i].v0, edges[i].v1);
-    }
+	/* recuperer les donnees GPU dans le CPU */
+	clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_number, edges, 0, NULL, NULL);
 
-    // cleanup - release OpenCL resources
-    clReleaseMemObject(output);
-    clReleaseMemObject(cl_compute_units);
-    clReleaseMemObject(cl_scale);
-    clReleaseMemObject(cl_edge_number);
-    clReleaseProgram(program);
-    clReleaseKernel(kernel);
+	/* dernier netoyage */
+	releaseMemObject(&cl_scale);
+	releaseMemObject(&cl_edges);
+	releaseMemObject(&cl_edge_number);
+	releaseMemObject(&cl_seed);
+	releaseProgram(&program);
+
+					printf("output: \n");
+
+					for(i=0;i<32; i++)
+					{
+						printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
+					}
+
+
+	/* supression des contextes */
     destroyContexts();
-    free(prog);
 }
 
-#endif /* GRAPH_GENERATOR_OMP */
 #endif /* GRAPH_GENERATOR_OMPI */
 #endif /* GRAPH_GENERATOR_OCL */
