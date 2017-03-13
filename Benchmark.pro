@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = NVIDIA
+PLATFORM = AMD
 #----------------------------------
 
 #---------OpenMPI Settings---------
@@ -152,7 +152,7 @@ win32:{
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-DEFINES += GRAPH_GENERATOR_OCL
+DEFINES += GRAPH_GENERATOR_OCL GRAPH_GENERATOR_OMP
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -174,7 +174,8 @@ HEADERS += \
     Src/edge_struct.h \
     Src/generator/edge_generator.h \
     Src/mman_win.h \
-    Src/generator/kronecker_generator.h
+    Src/generator/kronecker_generator.h \
+    Src/opencl.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
@@ -192,4 +193,5 @@ SOURCES += \
     Src/mman_win.cpp \
     Src/generator/kronecker_generator_seq.c \
     Src/generator/kronecker_generator_ocl.c \
-    Src/generator/kronecker_generator_ompi.c
+    Src/generator/kronecker_generator_ompi.c \
+    Src/generator/kernel_kronecker.c
