@@ -141,18 +141,18 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	/*creation des contextes */
 	createContexts();
 
+    /* verifier le define */
+    if(ITEMS_BY_GROUP % OPTIMAL_MOD != 0)
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] items by group %d is not mod %d",ITEMS_BY_GROUP,OPTIMAL_MOD);
+        exit(EXIT_FAILURE);
+    }
+
 	/* peripherique associer */
 	cl_device_id deviceId;
 	clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
 
-	/* verifier le define */
-	if(ITEMS_BY_GROUP % OPTIMAL_MOD != 0)
-	{
-		fprintf(stderr,"[generate_kronecker_egdes] items by group %d is not mod %d",ITEMS_BY_GROUP,OPTIMAL_MOD);
-		exit(EXIT_FAILURE);
-	}
-
-	/* calculs du nombre de groupe */
+    /* calculs du nombre de groupe et d'item */
 	global = edge_number;
 	if(edge_number > getMaxWorkItem(&deviceId))
 		global = getMaxWorkItem(&deviceId);
@@ -196,6 +196,8 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	setKernelArg(&kernel, 2, sizeof(int64_t), &edge_number);
 	setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
 
+    printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
+
     cl_ulong buf = 0;
     clGetDeviceInfo(deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
     printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE : %u\n",buf);
@@ -204,11 +206,14 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE ,sizeof(cl_ulong), &mem, NULL);
     printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE : %u\n",mem);
 
-	printf("max item : %d\n",getMaxWorkItem(&deviceId));
-	printf("numb edges : %d\n",edge_number);
-	printf("item par block : %d\n",global/local);
-	printf("iteration moyenne par item : %f\n",((double)(edge_number))/global);
-    printf("global %u , local %u\n",global, local);
+    printf("Packed edge size : %u\n",sizeof(packed_edge) * edge_number);
+
+    printf("Item's maximum : %d\n",getMaxWorkItem(&deviceId));
+    printf("Edges number : %d\n",edge_number);
+    printf("Item per block : %d\n",global/local);
+    printf("Items's number %u\n",global);
+    printf("Blocks's number %u\n",local);
+    printf("Item's iterations : %f\n",((double)(edge_number))/global);
 
 	/* lancer le programme */
 	enqueueNDRangeKernel( &commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
@@ -217,12 +222,14 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	/* recuperer les donnees GPU dans le CPU */
 	clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_number, edges, 0, NULL, NULL);
 
-					/*printf("\noutput: \n");
+                    printf("\noutput: \n");
 
 					for(i=0;i<edge_number; i++)
 					{
 						printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
-					}*/
+                    }
+
+    printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
 	/* netoyage GPU */
 	releaseMemObject(&cl_edges);
@@ -233,20 +240,6 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	/* supression des contextes */
 	destroyContexts();
 }
-
-/* pour les tests */
-/*cl_device_id deviceId;
-clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
-
-cl_ulong buf = 0;
-clGetDeviceInfo(deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
-printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE : %zu\n",buf);
-
-cl_ulong mem = 0;
-clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE ,sizeof(cl_ulong), &mem, NULL);
-printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE : %zu\n",mem);
-
-printf("CL_DEVICE_MAX_COMPUTE_UNITS : %d\n",maxComputeUnits[0]);*/
 
 /*	fin tests */
 

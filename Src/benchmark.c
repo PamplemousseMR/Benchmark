@@ -358,6 +358,9 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     }
 
     sz = (int64_t)(1L << SCALE) * edgefactor * 2 * sizeof(int64_t);
+
+    printf ("\n===============GENERATION STATISTICS===============\n\n");
+
     printf ("SCALE: %" PRId64 "\nsommet: %" PRId64 "\nedgefactor: %" PRId64 "\n" "terasize: %20.17e\n",SCALE, nvtx_scale, edgefactor, sz/1.0e12);
     printf ("A: %20.17e\nB: %20.17e\nC: %20.17e\nD: %20.17e\n", A, B, C, D);
     printf ("generation_time: %20.17e\n", generation_time);

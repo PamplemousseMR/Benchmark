@@ -97,9 +97,9 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	free(seeds);
 
 	/* permutation aleatoire des sommets	*/
-	random_node_permutation(1<<scale, edge_number, edges,seed);
+    random_node_permutation(1<<scale, edge_number, edges,seed);
 	/*	permutation ameatoire des aretes	*/
-	random_edges_permutation(edge_number, edges, seed);
+    random_edges_permutation(edge_number, edges, seed);
 }
 
 #endif /* GRAPH_GENERATOR_OCL */

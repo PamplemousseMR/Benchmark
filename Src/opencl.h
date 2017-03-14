@@ -431,11 +431,36 @@ static __inline int createCommandQueue(cl_context* context, cl_device_id* device
 static __inline unsigned int getMaxWorkItem(cl_device_id* device)
 {
 	unsigned int i;
+    cl_int err;
 	cl_uint dim = 0;
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
+    err = clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_DEVICE  :
+            fprintf(stderr,"[getMaxWorkItem] invalid device\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[getMaxWorkItem] invalid value\n");
+            break;        }
+        return -1;
+    }
 
     size_t item[3];
-    clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*3, &item, NULL);
+    err = clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*3, &item, NULL);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_DEVICE  :
+            fprintf(stderr,"[getMaxWorkItem] invalid device\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[getMaxWorkItem] invalid value\n");
+            break;        }
+        return -1;
+    }
 
 	for(i=1 ; i<dim ; ++i)
 		item[0] *= item[i];
@@ -447,8 +472,20 @@ static __inline unsigned int getMaxWorkItem(cl_device_id* device)
 static __inline size_t getMaxItemByGroup(cl_device_id* device)
 {
 	size_t si = 0;
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(size_t), &si, NULL);
-	return si;
+    cl_int err = clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(size_t), &si, NULL);
+    if(err != CL_SUCCESS)
+    {
+        switch(err)
+        {
+        case CL_INVALID_DEVICE  :
+            fprintf(stderr,"[getMaxItemByGroup] invalid device\n");
+            break;
+        case CL_INVALID_VALUE :
+            fprintf(stderr,"[getMaxItemByGroup] invalid value\n");
+            break;        }
+        return -1;
+    }
+    return si;
 }
 
 #endif
