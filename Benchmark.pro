@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = AMD
+PLATFORM = NVIDIA
 #----------------------------------
 
 #---------OpenMPI Settings---------
@@ -24,13 +24,7 @@ unix:{
     QMAKE_CXX_RELEASE = $$QMAKE_CXX
     QMAKE_CXX_DEBUG = $$QMAKE_CXX
     QMAKE_LINK = $$QMAKE_CXX
-
-    #QMAKE_CFLAGS += $$system(mpicc --showme:compile)
-    #QMAKE_LFLAGS += $$system(mpic++ --showme:link)
     QMAKE_CXXFLAGS += -std=c++11
-
-    #QMAKE_CXXFLAGS_DEBUG += $$system(mpic++ --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
-    #QMAKE_CXXFLAGS_RELEASE += $$system(mpic++ --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DOMPI_BUILD_CXX_BINDINGS
     message("        Done")
 }
 win32:{
@@ -190,8 +184,8 @@ SOURCES += \
     Src/xalloc.c \
     Src/benchmark.c \
     Src/generator/edge_generator.c \
-    Src/mman_win.cpp \
     Src/generator/kronecker_generator_seq.c \
     Src/generator/kronecker_generator_ocl.c \
     Src/generator/kronecker_generator_ompi.c \
-    Src/generator/kernel_kronecker.c
+    Src/generator/kernel_kronecker.c \
+    Src/mman_win.c

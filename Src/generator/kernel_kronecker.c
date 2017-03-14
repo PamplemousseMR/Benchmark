@@ -65,15 +65,6 @@ static const char* kernel_kronecker=
 		"return temp;\n"\
 	"}\n"\
 
-	"void make_mrg_seed(unsigned long int userseed1, unsigned long int userseed2, mrg_state* seed)\n"\
-	"{\n"\
-		"seed->z1 = (userseed1 & 0x3FFFFFFF) + 1;\n"\
-		"seed->z2 = ((userseed1 >> 30) & 0x3FFFFFFF) + 1;\n"\
-		"seed->z3 = (userseed2 & 0x3FFFFFFF) + 1;\n"\
-		"seed->z4 = ((userseed2 >> 30) & 0x3FFFFFFF) + 1;\n"\
-		"seed->z5 = ((userseed2 >> 60) << 4) + (userseed1 >> 60) + 1;\n"\
-	"}\n"\
-
 	"/*  =================== programme ===================   */\n"\
 
 	"typedef struct packed_edge\n"\

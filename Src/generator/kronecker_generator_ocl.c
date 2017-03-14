@@ -8,138 +8,179 @@ static cl_context* contexts;
 static cl_command_queue* commands;
 static cl_uint deviceCount;
 
+#define SHUFFLE(name,type)                                                  \
+static void name(type* array, int64_t l, mrg_state* seed)                   \
+{                                                                           \
+    int i;                                                                  \
+    int j;                                                                  \
+    type t;                                                                 \
+    for(i=0 ; i<l ; ++i)                                                    \
+    {                                                                       \
+        j = (int)(i+mrg_get_uint_orig(seed)/(MRG_RAND_MAX / (l-i)+1));		\
+            t = array[j];                                                   \
+            array[j] = array[i];                                            \
+            array[i] = t;                                                   \
+    }                                                                       \
+}
+
+SHUFFLE(suffle_int,int)
+SHUFFLE(suffle_edges,packed_edge)
+
+#undef SHUFFLE
+
+static void random_node_permutation(int numb_node,int64_t edge_number, packed_edge* edges, mrg_state* seed)
+{
+    int i;
+    int* vec = (int*)xmalloc(numb_node * sizeof(int));
+
+    GRAPH_OMP(omp parallel for shared(vec))
+    for(i=0 ; i<numb_node;++i)
+        vec[i] = i;
+
+    suffle_int(vec,numb_node,seed);
+
+    GRAPH_OMP(omp parallel for shared(edges,vec))
+    for(i=0 ; i<edge_number ; ++i)
+    {
+        edges[i].v0 = vec[edges[i].v0-1];
+        edges[i].v1 = vec[edges[i].v1-1];
+    }
+
+    xfree_large(vec);
+}
+
+static void random_edges_permutation(int64_t edge_number, packed_edge* edges, mrg_state* seed)
+{
+    suffle_edges(edges,edge_number, seed);
+}
+
 static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* platforms)
 {
-	unsigned int chosenPlatform;
-	unsigned int i;
-	int valid;
-	int tempBufferLength = 10;
-	char tempPlatform[10];
-	const cl_platform_info attributeTypes[4] = { CL_PLATFORM_NAME, CL_PLATFORM_VENDOR, CL_PLATFORM_VERSION, CL_PLATFORM_PROFILE };
-	size_t infoSize;
-	char* info;
+    /*unsigned int chosenPlatform;
+    unsigned int i;
+    int valid;
+    int tempBufferLength = 10;
+    char tempPlatform[10];
+    const cl_platform_info attributeTypes[4] = { CL_PLATFORM_NAME, CL_PLATFORM_VENDOR, CL_PLATFORM_VERSION, CL_PLATFORM_PROFILE };
+    size_t infoSize;
+    char* info;
 
-	printf("%d platforme(s) disponible(s) :\n", platformCount);
+    printf("%d platforme(s) disponible(s) :\n", platformCount);
 
-	for(i=0 ; i<platformCount ; ++i)
-	{
-		clGetPlatformInfo(platforms[i], attributeTypes[0], 0, NULL, &infoSize);
-		info = (char*) malloc(infoSize);
-		clGetPlatformInfo(platforms[i], attributeTypes[0], infoSize, info, NULL);
-		printf("\t%d -> %s\n", i, info);
-		free(info);
-	}
+    for(i=0 ; i<platformCount ; ++i)
+    {
+        clGetPlatformInfo(platforms[i], attributeTypes[0], 0, NULL, &infoSize);
+        info = (char*)malloc(infoSize);
+        clGetPlatformInfo(platforms[i], attributeTypes[0], infoSize, info, NULL);
+        printf("\t%d -> %s\n", i, info);
+        free(info);
+    }
 
-	printf("\n");
-	valid = 0;
+    printf("\n");
+    valid = 0;
 
-	if(platformCount == 1)
-		return 0;
+    if(platformCount == 1)
+        return 0;
 
-	do {
+    do {
 
-		printf("Veuillez choisir une platforme (défaut : 0) : ");
-		fgets(tempPlatform, tempBufferLength, stdin);
-		chosenPlatform = atoi(tempPlatform);
-		valid = 1;
+        printf("Veuillez choisir une platforme (défaut : 0) : ");
+        fgets(tempPlatform, tempBufferLength, stdin);
+        chosenPlatform = atoi(tempPlatform);
+        valid = 1;
 
-		if (chosenPlatform >= platformCount) {
+        if (chosenPlatform >= platformCount) {
 
-			printf("Numéro invalide\n");
-			valid = 0;
+            printf("Numéro invalide\n");
+            valid = 0;
 
-		}
+        }
 
-	} while (!valid);
-	return chosenPlatform;
+    } while (!valid);
+    return chosenPlatform;*/
+    return 0;
 }
 
 static void createContexts()
 {
-	int i;
-	cl_uint platformCount;
-	cl_platform_id* platforms;
-	cl_device_id* devices;
-	cl_context_properties properties[3];
-	unsigned int chosenPlatform;
+    int i;
+    cl_uint platformCount;
+    cl_platform_id* platforms;
+    cl_device_id* devices;
+    cl_context_properties properties[3];
+    unsigned int chosenPlatform;
 
-	/* recuperer les platformes */
-	getPlatformIDs(0, NULL, &platformCount);
-	if(platformCount<=0)
-	{
-		fprintf(stderr,"[createContexts] no platforms found\n");
-		exit(EXIT_FAILURE);
-	}
-	platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
-	getPlatformIDs(platformCount, platforms, NULL);
+    /* recuperer les platformes */
+    getPlatformIDs(0, NULL, &platformCount);
+    if(platformCount<=0)
+    {
+        fprintf(stderr,"[createContexts] no platforms found\n");
+        exit(EXIT_FAILURE);
+    }
+    platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
+    getPlatformIDs(platformCount, platforms, NULL);
 
-	/* choisir la platform */
-	chosenPlatform = printAndGetPlatforms(platformCount, platforms);
+    /* choisir la platform */
+    chosenPlatform = printAndGetPlatforms(platformCount, platforms);
 
-	/* recuperer les peripheriques de la platforme */
-	getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount);
-	if(deviceCount<=0)
-	{
-		fprintf(stderr,"[createContexts] no devices found\n");
-		exit(EXIT_FAILURE);
-	}
-	devices = (cl_device_id*)xmalloc(sizeof(cl_device_id) * deviceCount);
-	getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, deviceCount, devices, NULL);
+    /* recuperer les peripheriques de la platforme */
+    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount);
+    if(deviceCount<=0)
+    {
+        fprintf(stderr,"[createContexts] no devices found\n");
+        exit(EXIT_FAILURE);
+    }
+    devices = (cl_device_id*)xmalloc(sizeof(cl_device_id) * deviceCount);
+    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, deviceCount, devices, NULL);
 
-	/* alouer un espace pour un(e) contexte/commande par peripherique */
-	contexts = (cl_context*)xmalloc(sizeof(cl_context) * deviceCount);
-	commands = (cl_command_queue*)xmalloc(sizeof(cl_command_queue) * deviceCount);
+    /* alouer un espace pour un(e) contexte/commande par peripherique */
+    contexts = (cl_context*)xmalloc(sizeof(cl_context) * deviceCount);
+    commands = (cl_command_queue*)xmalloc(sizeof(cl_command_queue) * deviceCount);
 
-	/* creer les contextes et les commandes */
-	properties[0]= CL_CONTEXT_PLATFORM;
-	properties[1]= (cl_context_properties)platforms[chosenPlatform];
-	properties[2]= 0;
+    /* creer les contextes et les commandes */
+    properties[0]= CL_CONTEXT_PLATFORM;
+    properties[1]= (cl_context_properties)platforms[chosenPlatform];
+    properties[2]= 0;
 
-	GRAPH_OMP(omp parallel for shared(commands,contexts,properties,devices))
-	for (i=0; i<deviceCount; ++i)
-	{
-		createContext(properties,1,&devices[i],NULL,NULL,&contexts[i]);
-		createCommandQueue(&contexts[i], &devices[i], 0, &commands[i]);
-	}
+    GRAPH_OMP(omp parallel for shared(commands,contexts,properties,devices))
+    for (i=0; i<(signed)deviceCount; ++i)
+    {
+        createContext(properties,1,&devices[i],NULL,NULL,&contexts[i]);
+        createCommandQueue(&contexts[i], &devices[i], 0, &commands[i]);
+    }
 
-
-	xfree_large(devices);
-	xfree_large(platforms);
+    xfree_large(devices);
+    xfree_large(platforms);
 }
 
 static void destroyContexts()
 {
-	int i;
-	GRAPH_OMP(omp parallel for shared(commands,contexts))
-	for (i=0; i<deviceCount; ++i)
-	{
-		if(clReleaseCommandQueue(commands[i]) != CL_SUCCESS )
-		{
-			fprintf(stderr,"[destroyContexts] error when release command queue\n");
-			exit(EXIT_FAILURE);
-		}
-		if(clReleaseContext(contexts[i]) != CL_SUCCESS )
-		{
-			fprintf(stderr,"[destroyContexts] error when release device\n");
-			exit(EXIT_FAILURE);
-		}
-	}
-	xfree_large(contexts);
-	xfree_large(commands);
+    int i;
+    GRAPH_OMP(omp parallel for shared(commands,contexts))
+    for (i=0; i<(signed)deviceCount; ++i)
+    {
+        releaseCommandQueue(&commands[i]);
+        releaseContext(&contexts[i]);
+    }
+    xfree_large(contexts);
+    xfree_large(commands);
 }
 
 void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, packed_edge* edges)
 {
-	cl_kernel kernel;
-	cl_program program;
-	cl_mem cl_seed;
-	cl_mem cl_edges;
-	size_t global;
-	size_t local;
-	unsigned int i;
+    /* variables utiles */
+    cl_kernel kernel;
+    cl_program program;
+    cl_mem cl_seed;
+    cl_mem cl_edges;
+    size_t global;
+    size_t local;
+    unsigned int i;
+    cl_device_id deviceId;
+    mrg_state* seeds;
 
-	/*creation des contextes */
-	createContexts();
+    /*creation des contextes */
+    createContexts();
 
     /* verifier le define */
     if(ITEMS_BY_GROUP % OPTIMAL_MOD != 0)
@@ -148,53 +189,49 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
         exit(EXIT_FAILURE);
     }
 
-	/* peripherique associer */
-	cl_device_id deviceId;
-	clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
+    /* peripherique associer */
+    clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
 
     /* calculs du nombre de groupe et d'item */
-	global = edge_number;
-	if(edge_number > getMaxWorkItem(&deviceId))
-		global = getMaxWorkItem(&deviceId);
+    global = edge_number;
+    if(edge_number > getMaxWorkItem(&deviceId))
+        global = getMaxWorkItem(&deviceId);
 
-	if(global > ITEMS_BY_GROUP)
-	{
-		global -= global%ITEMS_BY_GROUP;
-		local = global/ITEMS_BY_GROUP;
-		if(local > getMaxItemByGroup(&deviceId))
-		{
-			local = getMaxItemByGroup(&deviceId);
+    if(global > ITEMS_BY_GROUP)
+    {
+        global -= global%ITEMS_BY_GROUP;
+        local = global/ITEMS_BY_GROUP;
+        if(local > getMaxItemByGroup(&deviceId))
+        {
+            local = getMaxItemByGroup(&deviceId);
             global = local*ITEMS_BY_GROUP;
-		}
-	}
-	else
-		local = 1;
+        }
+    }
+    else
+        local = 1;
 
-	/* une graine par thread */
-	mrg_state* seeds = (mrg_state*)xmalloc(sizeof(mrg_state) * global);
-	for(i=0 ; i<global ; ++i)
-		make_mrg_seed(mrg_get_uint_orig(seed),mrg_get_uint_orig(seed),(uint_fast32_t*)&seeds[i]);
+    /* une graine par thread */
+    seeds = (mrg_state*)xmalloc(sizeof(mrg_state)*global);
+    for(i=0 ; i<global ; ++i)
+        make_mrg_seed(mrg_get_uint_orig(seed),mrg_get_uint_orig(seed),(uint_fast32_t*)&seeds[i]);
 
-	/* creer le programme */
-	createProgram(&contexts[0],1,kernel_kronecker, NULL, &program);
-	buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
-	createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
+    /* creer le programme */
+    createProgram(&contexts[0],1,kernel_kronecker, NULL, &program);
+    buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
+    createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
 
-	/* creer les buffers */
-	createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed);
-	createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge) * edge_number, NULL, &cl_edges);
+    /* creer les buffers */
+    createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed);
+    createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge) * edge_number, NULL, &cl_edges);
 
-	/* affecter les donnees aux buffers */
-	enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
+    /* affecter les donnees aux buffers */
+    enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
 
-	/* suppression des graine dans le CPU */
-	free(seeds);
-
-	/* affecter les arguments au programme */
-	setKernelArg(&kernel, 0, sizeof(cl_mem), &cl_seed);
-	setKernelArg(&kernel, 1, sizeof(int), &scale);
-	setKernelArg(&kernel, 2, sizeof(int64_t), &edge_number);
-	setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
+    /* affecter les arguments au programme */
+    setKernelArg(&kernel, 0, sizeof(cl_mem), &cl_seed);
+    setKernelArg(&kernel, 1, sizeof(int), &scale);
+    setKernelArg(&kernel, 2, sizeof(int64_t), &edge_number);
+    setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
 
     printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
@@ -215,30 +252,36 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     printf("Blocks's number %u\n",local);
     printf("Item's iterations : %f\n",((double)(edge_number))/global);
 
-	/* lancer le programme */
-	enqueueNDRangeKernel( &commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
-	finish(&commands[0]);
+    /* lancer le programme */
+    enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
+    finish(&commands[0]);
 
-	/* recuperer les donnees GPU dans le CPU */
-	clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_number, edges, 0, NULL, NULL);
+    /* recuperer les donnees GPU dans le CPU */
+    clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_number, edges, 0, NULL, NULL);
 
-                    printf("\noutput: \n");
-
-					for(i=0;i<edge_number; i++)
-					{
-						printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
-                    }
+                    /*for(i=0;i<edge_number; i++)
+                    {
+                        printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
+                    }*/
 
     printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
-	/* netoyage GPU */
-	releaseMemObject(&cl_edges);
-	releaseMemObject(&cl_seed);
-	releaseProgram(&program);
-	releaseKernel(&kernel);
+    /* permutation aleatoire des sommets	*/
+    random_node_permutation(1<<scale, edge_number, edges,seed);
+    /*	permutation ameatoire des aretes	*/
+    random_edges_permutation(edge_number, edges, seed);
 
-	/* supression des contextes */
-	destroyContexts();
+    /* netoyage GPU */
+    releaseMemObject(&cl_edges);
+    releaseMemObject(&cl_seed);
+    releaseProgram(&program);
+    releaseKernel(&kernel);
+
+    /* netoyage CPU */
+    free(seeds);
+
+    /* supression des contextes */
+    destroyContexts();
 }
 
 /*	fin tests */

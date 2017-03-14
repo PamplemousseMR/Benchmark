@@ -78,11 +78,11 @@ extern int VERBOSE;
 /*!
  * \brief Le chemin du fichier contenent les aretes.
  */
-extern char *dumpname;
+extern char* dumpname;
 /*!
  * \brief Le chemin du fichier contenent les racines.
  */
-extern char *rootname;
+extern char* rootname;
 /*!
  * \brief La probabilite de A
  */

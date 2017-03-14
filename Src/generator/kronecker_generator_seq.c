@@ -29,13 +29,13 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 	int* vec = (int*)xmalloc(numb_node * sizeof(int));
 
     GRAPH_OMP(omp parallel for shared(vec))
-	for(i=0 ; i<numb_node;i++)
+    for(i=0 ; i<numb_node;++i)
 		vec[i] = i;
 
 	suffle_int(vec,numb_node,seed);
 
     GRAPH_OMP(omp parallel for shared(edges,vec))
-	for(i=0 ; i<edge_number ; i++)
+    for(i=0 ; i<edge_number ; ++i)
 	{
 		edges[i].v0 = vec[edges[i].v0-1];
 		edges[i].v1 = vec[edges[i].v1-1];

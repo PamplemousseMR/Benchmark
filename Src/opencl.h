@@ -33,6 +33,8 @@ static __inline int createContext(const cl_context_properties*, cl_uint,const cl
 static __inline int createCommandQueue(cl_context*, cl_device_id* , cl_command_queue_properties, cl_command_queue*);
 static __inline unsigned int getMaxWorkItem(cl_device_id* );
 static __inline size_t getMaxItemByGroup(cl_device_id*);
+static __inline int releaseCommandQueue(cl_command_queue*);
+static __inline int releaseContext(cl_context*);
 
 /*	=============== Inline definitions ===============	*/
 
@@ -486,6 +488,26 @@ static __inline size_t getMaxItemByGroup(cl_device_id* device)
         return -1;
     }
     return si;
+}
+
+static __inline int releaseCommandQueue(cl_command_queue* command)
+{
+    if(clReleaseCommandQueue(*command) != CL_SUCCESS )
+    {
+        fprintf(stderr,"[releaseCommandQueue] error when release command queue\n");
+        return -1;
+    }
+    return 1;
+}
+
+static __inline int releaseContext(cl_context* context)
+{
+    if(clReleaseContext(*context) != CL_SUCCESS )
+    {
+        fprintf(stderr,"[releaseContext] error when release device\n");
+        return -1;
+    }
+    return 1;
 }
 
 #endif
