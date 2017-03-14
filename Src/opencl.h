@@ -30,7 +30,9 @@ static __inline int releaseProgram(cl_program*);
 static __inline int getPlatformIDs(cl_uint, cl_platform_id*, cl_uint*);
 static __inline int getDeviceIDs(cl_platform_id*,cl_device_type,cl_uint,cl_device_id*, cl_uint*);
 static __inline int createContext(const cl_context_properties*, cl_uint,const cl_device_id*,void(*)(const char*, const void*, size_t, void*), void*, cl_context*);
-static __inline int createCommandQueue(cl_context*, cl_device_id* ,cl_command_queue_properties, cl_command_queue*);
+static __inline int createCommandQueue(cl_context*, cl_device_id* ,cl_command_queue_properties*, cl_command_queue*);
+static __inline uint getMaxWorkItem(cl_device_id* );
+static __inline size_t getMaxItemByGroup(cl_device_id*);
 
 /*	=============== Inline definitions ===============	*/
 
@@ -393,13 +395,13 @@ static __inline int createContext(const cl_context_properties* properties, cl_ui
     return 1;
 }
 
-static __inline int createCommandQueue(cl_context* context, cl_device_id* device,cl_command_queue_properties properties, cl_command_queue* command)
+static __inline int createCommandQueue(cl_context* context, cl_device_id* device,cl_command_queue_properties* properties, cl_command_queue* command)
 {
     cl_int err;
     #ifdef _WIN32
-    *command = clCreateCommandQueue(*context, *device, 0, &err);
+	*command = clCreateCommandQueue(*context, *device, *properties, &err);
     #else
-    *command = clCreateCommandQueueWithProperties(*context, *device, 0, &err);
+	*command = clCreateCommandQueueWithProperties(*context, *device, properties, &err);
     #endif
     if(err != CL_SUCCESS)
     {
@@ -424,6 +426,29 @@ static __inline int createCommandQueue(cl_context* context, cl_device_id* device
         return -1;
     }
     return 1;
+}
+
+static __inline uint getMaxWorkItem(cl_device_id* device)
+{
+	unsigned int i;
+	cl_uint dim = 0;
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
+
+	size_t item[dim];
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*dim, &item, NULL);
+
+	for(i=1 ; i<dim ; ++i)
+		item[0] *= item[i];
+
+	dim = item[0];
+	return dim;
+}
+
+static __inline size_t getMaxItemByGroup(cl_device_id* device)
+{
+	size_t si = 0;
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(size_t), &si, NULL);
+	return si;
 }
 
 #endif

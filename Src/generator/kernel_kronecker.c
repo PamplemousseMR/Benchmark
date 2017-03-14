@@ -1,7 +1,6 @@
 #ifdef GRAPH_GENERATOR_OCL
 
 static const char* KERNEL_KRONECKER_NAME = "generate_kronecker";
-static const char* KERNEL_NODE_SHUFFLE_NAME = "random_node_permutation";
 
 static const char* kernel_kronecker=
 	"/*  =================== random ===================  */\n"\
@@ -83,20 +82,20 @@ static const char* kernel_kronecker=
         "unsigned long v1;\n"\
 	"} packed_edge;\n"\
 
-    "__kernel void generate_kronecker(__global mrg_state* seeds,const __global int* scale,const __global unsigned long int* edge_number, __global packed_edge* edges)\n"\
+	"__kernel void generate_kronecker(__global mrg_state* seeds,const int scale,const unsigned long int edge_number, __global packed_edge* edges)\n"\
 	"{\n"\
 		"unsigned int i;\n"\
 		"unsigned int edge;\n"\
 		"size_t id = get_global_id(0);\n"\
 
 		"int mul;\n"\
-		"int	ii_bit;\n"\
+		"int ii_bit;\n"\
 		"double ab = 0.57+0.19;\n"\
 		"double c_norm = 0.19/(1-ab);\n"\
 		"double a_norm = 0.57/ab;\n"\
 
-		"unsigned long int bornMin = ((*edge_number)*id)/get_global_size(0);\n"\
-		"unsigned long int bornMax = ((*edge_number)*(id+1))/get_global_size(0);\n"\
+		"unsigned long int bornMin = (edge_number*id)/get_global_size(0);\n"\
+		"unsigned long int bornMax = (edge_number*(id+1))/get_global_size(0);\n"\
 
 		"for(int i=bornMin ; i<bornMax ; ++i)\n"\
 		"{\n"\
@@ -104,43 +103,17 @@ static const char* kernel_kronecker=
 			"edges[i].v1 = 1;\n"\
 		"}\n"\
 
-		"for(i=0 ; i<*scale ; ++i)\n"\
+		"for(i=0 ; i<scale ; ++i)\n"\
 		"{\n"\
 			"mul = 1<<i;\n"\
 			"for(edge=bornMin ; edge<bornMax ; ++edge)\n"\
 			"{\n"\
-                    "ii_bit = ( mrg_get_double_orig(&seeds[id])>ab );\n"\
-                    "edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                    "edges[edge].v0 +=  mul * ii_bit;\n"\
+					"ii_bit = mrg_get_double_orig(&seeds[id])>ab;\n"\
+					"edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+					"edges[edge].v0 +=  mul * ii_bit;\n"\
 			"}\n"\
 		"}\n"\
 	"};\n"\
-
-	"/*	=================== permutation =================== */\n"\
-
-    "void shuffle_long(__global long* array,__global mrg_state* seed, long l)\n"\
-	"{\n"\
-		"long t;\n"\
-		"int i;\n"\
-		"int j;\n"\
-		"unsigned max = -1;\n"\
-		"for(i=0 ; i<l ; ++i)\n"\
-		"{\n"\
-			"j = (int)(i+mrg_get_uint_orig(seed)/(max / (l-i)+1));\n"\
-			"t = array[j];\n"\
-			"array[j] = array[i];\n"\
-			"array[i] = t;\n"\
-		"}\n"\
-	"}\n"\
-
-    "__kernel void random_node_permutation(const __global int* scale,const __global unsigned long int* edge_number,__global packed_edge* edges,__global mrg_state* seed, __global long* perm)\n"\
-	"{\n"\
-		"int i;\n"\
-		"long numbNode = 1<<(*scale);\n"\
-
-		"for(i=0 ; i<numbNode ; ++i)\n"\
-			"perm[i] = i;\n"\
-	"}\n"\
 ;
 
 #endif
