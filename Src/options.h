@@ -62,7 +62,7 @@
  * \def DEFAULT_SCALE
  * \brief Log2 du nombre de sommet par default.
  */
-#define DEFAULT_SCALE ((int64_t)22)
+#define DEFAULT_SCALE ((int64_t)14)
 /*!
  * \def DEFAULT_EDGEFACTOR
  * \brief Ratio d'aretes par default.

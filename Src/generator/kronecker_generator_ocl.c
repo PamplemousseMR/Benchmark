@@ -164,7 +164,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		if(local > getMaxItemByGroup(&deviceId))
 		{
 			local = getMaxItemByGroup(&deviceId);
-			global = local*ITEMS_BY_GROUP;
+            global = local*ITEMS_BY_GROUP;
 		}
 	}
 	else
@@ -196,12 +196,19 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	setKernelArg(&kernel, 2, sizeof(int64_t), &edge_number);
 	setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
 
+    cl_ulong buf = 0;
+    clGetDeviceInfo(deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
+    printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE : %u\n",buf);
+
+    cl_ulong mem = 0;
+    clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE ,sizeof(cl_ulong), &mem, NULL);
+    printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE : %u\n",mem);
 
 	printf("max item : %d\n",getMaxWorkItem(&deviceId));
 	printf("numb edges : %d\n",edge_number);
 	printf("item par block : %d\n",global/local);
 	printf("iteration moyenne par item : %f\n",((double)(edge_number))/global);
-	printf("global %zu , local %zu\n",global, local);
+    printf("global %u , local %u\n",global, local);
 
 	/* lancer le programme */
 	enqueueNDRangeKernel( &commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
@@ -230,24 +237,6 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 /* pour les tests */
 /*cl_device_id deviceId;
 clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
-
-size_t si;
-clGetDeviceInfo(deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(size_t), &si, NULL);
-printf("CL_DEVICE_MAX_WORK_GROUP_SIZE : %zu\n",si);
-
-size_t work = 0;
-clGetKernelWorkGroupInfo(kernel,deviceId, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t),&work,NULL);
-printf("CL_KERNEL_WORK_GROUP_SIZE : %zu\n",work);
-
-size_t item[3];
-clGetDeviceInfo(deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*3, &item, NULL);
-printf("CL_DEVICE_MAX_WORK_ITEM_SIZES : %zu %zu %zu\n",item[0],item[1],item[2]);
-
-cl_uint dim;
-clGetDeviceInfo(deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,sizeof(cl_uint), &dim, NULL);
-printf("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS : %d\n",dim);
-
-printf("%u\n",getMaxWorkItem(&deviceId));
 
 cl_ulong buf = 0;
 clGetDeviceInfo(deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
