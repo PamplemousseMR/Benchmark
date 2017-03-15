@@ -229,9 +229,16 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
 		printf("Packed edge size : %lu B\n",sizeof(packed_edge) * edge_count);
         printf("Maximum items per device : %d\n",max_work_item);
 		printf("Buffer per device : %lu\n",buffer_count);
-		printf("Edges count : %ld\n",edge_count);
-		printf("Items count %zu\n",global);
-		printf("Blocks count %zu\n",local);
+        printf("Edges count : %ld\n",edge_count);
+        #ifdef _WIN32
+        printf("Items count %u\n",global);
+        printf("Blocks count %u\n",local);
+        printf("Items per block : %u\n",global/local);
+        #else
+        printf("Items count %zu\n",global);
+        printf("Blocks count %zu\n",local);
+        printf("Items per block : %zu\n",global/local);
+        #endif
 		printf("Items per block : %zu\n",global/local);
         printf("Items iterations : %f\n",((double)(edge_count))/global);
         printf("Run on : \n");
