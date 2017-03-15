@@ -143,6 +143,9 @@ win32:{
 #GRAPH_GENERATOR_OMP For activate edges generation with OpenMP
 #GRAPH_GENERATOR_OMPI For activate edges generation with Open MPI
 #FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits(more speed)
+#OPENCL_GPU only GPU for OpenCL
+#OPENCL_CPU only CPU for OpenCL
+#OPENCL_ACCELERATOR only accelerator for OpenCL
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
@@ -169,7 +172,8 @@ HEADERS += \
     Src/generator/edge_generator.h \
     Src/mman_win.h \
     Src/generator/kronecker_generator.h \
-    Src/opencl.h
+    Src/opencl.h \
+    Src/generator/kernel_kronecker.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
