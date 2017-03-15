@@ -89,8 +89,8 @@ static const char* kernel_kronecker=
 
 		"for(int i=bornMin ; i<bornMax ; ++i)\n"\
 		"{\n"\
-			"edges[i].v0 = 1;\n"\
-			"edges[i].v1 = 1;\n"\
+            "edges[i].v0 = 1;\n"\
+            "edges[i].v1 = 1;\n"\
 		"}\n"\
 
 		"for(i=0 ; i<scale ; ++i)\n"\
@@ -99,8 +99,8 @@ static const char* kernel_kronecker=
 			"for(edge=bornMin ; edge<bornMax ; ++edge)\n"\
 			"{\n"\
 					"ii_bit = mrg_get_double_orig(&seeds[id])>ab;\n"\
-					"edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-					"edges[edge].v0 +=  mul * ii_bit;\n"\
+                    "edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                    "edges[edge].v0 +=  mul * ii_bit;\n"\
 			"}\n"\
 		"}\n"\
 	"};\n"\

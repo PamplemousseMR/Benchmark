@@ -22,7 +22,7 @@ SHUFFLE(suffle_edges,packed_edge)
 
 #undef SHUFFLE
 
-static void random_node_permutation(int numb_node,int64_t edge_number, packed_edge* edges, mrg_state* seed)
+static void random_node_permutation(int numb_node,int64_t edge_count, packed_edge* edges, mrg_state* seed)
 {
 	int i;
 	int* vec = (int*)xmalloc(numb_node * sizeof(int));
@@ -34,7 +34,7 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 	suffle_int(vec,numb_node,seed);
 
     GRAPH_OMP(omp parallel for shared(edges,vec))
-    for(i=0 ; i<edge_number ; ++i)
+    for(i=0 ; i<edge_count ; ++i)
 	{
 		edges[i].v0 = vec[edges[i].v0-1];
 		edges[i].v1 = vec[edges[i].v1-1];
@@ -43,12 +43,12 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
 	xfree_large(vec);
 }
 
-static void random_edges_permutation(int64_t edge_number, packed_edge* edges, mrg_state* seed)
+static void random_edges_permutation(int64_t edge_count, packed_edge* edges, mrg_state* seed)
 {
-	suffle_edges(edges,edge_number, seed);
+    suffle_edges(edges,edge_count, seed);
 }
 
-void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, packed_edge* edges)
+void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, packed_edge* edges)
 {
 	/*	variable utiles	*/
 	int i;
@@ -66,7 +66,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
 	/*	initialisation	*/
     GRAPH_OMP(omp parallel for shared(edges))
-	for(edge=0 ; edge<edge_number ; ++edge)
+    for(edge=0 ; edge<edge_count ; ++edge)
 	{
 		edges[edge].v1 = 1;
 		edges[edge].v0 = 1;
@@ -85,7 +85,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 		mul = 1<<i;
 
         GRAPH_OMP(omp parallel for shared(edges, mul, ab, c_norm, a_norm, seeds) private(ii_bit))
-		for(edge=0 ; edge<edge_number ; ++edge)
+        for(edge=0 ; edge<edge_count ; ++edge)
 		{
 			ii_bit = ( mrg_get_double_orig(&seeds[omp_get_thread_num()])>ab );
 			edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[omp_get_thread_num()]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );
@@ -96,9 +96,9 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 	free(seeds);
 
 	/* permutation aleatoire des sommets	*/
-    random_node_permutation(1<<scale, edge_number, edges,seed);
+    random_node_permutation(1<<scale, edge_count, edges,seed);
 	/*	permutation ameatoire des aretes	*/
-    random_edges_permutation(edge_number, edges, seed);
+    random_edges_permutation(edge_count, edges, seed);
 }
 
 #endif /* GRAPH_GENERATOR_OCL */

@@ -27,7 +27,7 @@ SHUFFLE(suffle_edges,packed_edge)
 
 #undef SHUFFLE
 
-static void random_node_permutation(int numb_node,int64_t edge_number, packed_edge* edges, mrg_state* seed)
+static void random_node_permutation(int numb_node,int64_t edge_count, packed_edge* edges, mrg_state* seed)
 {
     int i;
     int* vec = (int*)xmalloc(numb_node * sizeof(int));
@@ -39,7 +39,7 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
     suffle_int(vec,numb_node,seed);
 
     GRAPH_OMP(omp parallel for shared(edges,vec))
-    for(i=0 ; i<edge_number ; ++i)
+    for(i=0 ; i<edge_count ; ++i)
     {
         edges[i].v0 = vec[edges[i].v0-1];
         edges[i].v1 = vec[edges[i].v1-1];
@@ -48,9 +48,9 @@ static void random_node_permutation(int numb_node,int64_t edge_number, packed_ed
     xfree_large(vec);
 }
 
-static void random_edges_permutation(int64_t edge_number, packed_edge* edges, mrg_state* seed)
+static void random_edges_permutation(int64_t edge_count, packed_edge* edges, mrg_state* seed)
 {
-    suffle_edges(edges,edge_number, seed);
+    suffle_edges(edges,edge_count, seed);
 }
 
 static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* platforms)
@@ -60,7 +60,6 @@ static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* p
     int valid;
     int tempBufferLength = 10;
     char tempPlatform[10];
-    const cl_platform_info attributeTypes[4] = { CL_PLATFORM_NAME, CL_PLATFORM_VENDOR, CL_PLATFORM_VERSION, CL_PLATFORM_PROFILE };
     size_t infoSize;
     char* info;
 
@@ -68,9 +67,9 @@ static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* p
 
     for(i=0 ; i<platformCount ; ++i)
     {
-        clGetPlatformInfo(platforms[i], attributeTypes[0], 0, NULL, &infoSize);
+        clGetPlatformInfo(platforms[i], CL_PLATFORM_NAME, 0, NULL, &infoSize);
         info = (char*)malloc(infoSize);
-        clGetPlatformInfo(platforms[i], attributeTypes[0], infoSize, info, NULL);
+        clGetPlatformInfo(platforms[i], CL_PLATFORM_NAME, infoSize, info, NULL);
         printf("\t%d -> %s\n", i, info);
         free(info);
     }
@@ -111,11 +110,6 @@ static void createContexts()
 
     /* recuperer les platformes */
     getPlatformIDs(0, NULL, &platformCount);
-    if(platformCount<=0)
-    {
-        fprintf(stderr,"[createContexts] no platforms found\n");
-        exit(EXIT_FAILURE);
-    }
     platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
     getPlatformIDs(platformCount, platforms, NULL);
 
@@ -123,16 +117,11 @@ static void createContexts()
     chosenPlatform = printAndGetPlatforms(platformCount, platforms);
 
     /* recuperer les peripheriques de la platforme */
-    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, 0, NULL, &deviceCount);
-    if(deviceCount<=0)
-    {
-        fprintf(stderr,"[createContexts] no devices found\n");
-        exit(EXIT_FAILURE);
-    }
+    getDeviceIDs(&platforms[chosenPlatform], KRONECKER_DEVICE_TYPE, 0, NULL, &deviceCount);
     devices = (cl_device_id*)xmalloc(sizeof(cl_device_id) * deviceCount);
-    getDeviceIDs(&platforms[chosenPlatform], CL_DEVICE_TYPE_ALL, deviceCount, devices, NULL);
+    getDeviceIDs(&platforms[chosenPlatform], KRONECKER_DEVICE_TYPE, deviceCount, devices, NULL);
 
-    /* alouer un espace pour un(e) contexte/commande par peripherique */
+    /* alouer un espace pour un contexte/commande par peripherique */
     contexts = (cl_context*)xmalloc(sizeof(cl_context) * deviceCount);
     commands = (cl_command_queue*)xmalloc(sizeof(cl_command_queue) * deviceCount);
 
@@ -165,7 +154,7 @@ static void destroyContexts()
     xfree_large(commands);
 }
 
-void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, packed_edge* edges)
+void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, packed_edge* edges)
 {
     /* variables utiles */
     cl_kernel kernel;
@@ -177,6 +166,13 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     unsigned int i;
     cl_device_id deviceId;
     mrg_state* seeds;
+    cl_ulong buffer_count;
+    unsigned int max_work_item;
+    size_t max_item_per_group;
+    cl_ulong max_mem_size;
+    char* value;
+    size_t valueSize;
+    cl_device_type type;
 
     /*creation des contextes */
     createContexts();
@@ -188,13 +184,27 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
         exit(EXIT_FAILURE);
     }
 
-    /* peripherique associer */
-    clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
+    /* recuperer le minimum du maximum des work group et des work item de chaque peripheriques */
+    /* recuperer le nombre minimum de buffer necessaire pour lancer le programme */
+    max_work_item = ULONG_MAX;
+    max_item_per_group = ULONG_MAX;
+    buffer_count = 0;
+    for(i=0 ; i<deviceCount ; ++i)
+    {
+        clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
+        if(getMaxWorkItem(&deviceId) < max_work_item)
+            max_work_item = getMaxWorkItem(&deviceId);
+        if(getMaxItemByGroup(&deviceId) < max_item_per_group)
+            max_item_per_group = getMaxItemByGroup(&deviceId);
+        clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE,sizeof(cl_ulong), &max_mem_size, NULL);
+        if(edge_count/max_mem_size + 1>buffer_count)
+            buffer_count = edge_count/max_mem_size + 1;
+    }
 
     /* calculs du nombre de groupe et d'item */
-    global = edge_number;
-    if(edge_number > getMaxWorkItem(&deviceId))
-        global = getMaxWorkItem(&deviceId);
+    global = edge_count;
+    if(edge_count > max_work_item)
+        global = max_work_item;
 
     if(global > ITEMS_BY_GROUP)
     {
@@ -209,6 +219,48 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     else
         local = 1;
 
+    /* informations */
+    if(VERBOSE)
+    {
+        printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
+
+        printf("Packed edge size : %u B\n",sizeof(packed_edge) * edge_count);
+        printf("Maximum items per device : %d\n",max_work_item);
+        printf("Buffer per device : %d\n",buffer_count);
+        printf("Edges count : %d\n",edge_count);
+        printf("Items count %u\n",global);
+        printf("Blocks count %u\n",local);
+        printf("Items per block : %d\n",global/local);
+        printf("Items iterations : %f\n",((double)(edge_count))/global);
+        printf("Run on : \n");
+        for (i=0; i<(signed)deviceCount; ++i)
+        {
+            clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
+            clGetDeviceInfo(deviceId, CL_DEVICE_NAME, 0, NULL, &valueSize);
+            value = (char*)malloc(valueSize);
+            clGetDeviceInfo(deviceId, CL_DEVICE_NAME, valueSize, value, NULL);
+            clGetDeviceInfo(deviceId, CL_DEVICE_TYPE, sizeof(cl_device_type), &type, NULL);
+            char* t;
+            switch (type)
+            {
+                case CL_DEVICE_TYPE_CPU:
+                    t = "CPU";
+                    break;
+                case CL_DEVICE_TYPE_GPU:
+                    t="GPU";
+                    break;
+                case CL_DEVICE_TYPE_ACCELERATOR:
+                    t="ACCELERATOR";
+                    break;
+                default:
+                    t="DEFAULT";
+                    break;
+            }
+            printf("\t%d - Device: %s, type: %s.\n", i+1, value,t);
+            free(value);
+        }
+    }
+
     /* une graine par thread */
     seeds = (mrg_state*)xmalloc(sizeof(mrg_state)*global);
     for(i=0 ; i<global ; ++i)
@@ -221,7 +273,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
     /* creer les buffers */
     createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed);
-    createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edge_number, NULL, &cl_edges);
+    createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edge_count, NULL, &cl_edges);
 
     /* affecter les donnees aux buffers */
     enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
@@ -232,36 +284,17 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     setKernelArg(&kernel, 2, sizeof(double), &C);
     setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed);
     setKernelArg(&kernel, 4, sizeof(int), &scale);
-    setKernelArg(&kernel, 5, sizeof(int64_t), &edge_number);
+    setKernelArg(&kernel, 5, sizeof(int64_t), &edge_count);
     setKernelArg(&kernel, 6, sizeof(cl_mem), &cl_edges);
-
-    printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
-
-    cl_ulong buf = 0;
-    clGetDeviceInfo(deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(cl_ulong), &buf, NULL);
-    printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE : %u\n",buf);
-
-    cl_ulong mem = 0;
-    clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE ,sizeof(cl_ulong), &mem, NULL);
-    printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE : %u\n",mem);
-
-    printf("Packed edge size : %u\n",sizeof(packed_edge) * edge_number);
-
-    printf("Item's maximum : %d\n",getMaxWorkItem(&deviceId));
-    printf("Edges number : %d\n",edge_number);
-    printf("Item per block : %d\n",global/local);
-    printf("Items's number %u\n",global);
-    printf("Blocks's number %u\n",local);
-    printf("Item's iterations : %f\n",((double)(edge_number))/global);
 
     /* lancer le programme */
     enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
     finish(&commands[0]);
 
     /* recuperer les donnees GPU dans le CPU */
-    clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_number, edges, 0, NULL, NULL);
+    clEnqueueReadBuffer(commands[0], cl_edges, CL_TRUE, 0, sizeof(packed_edge)*edge_count, edges, 0, NULL, NULL);
 
-                    /*for(i=0;i<edge_number; i++)
+                    /*for(i=0;i<edge_count; i++)
                     {
                         printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
                     }*/
@@ -269,9 +302,9 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
     printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
     /* permutation aleatoire des sommets	*/
-    random_node_permutation(1<<scale, edge_number, edges,seed);
+    random_node_permutation(1<<scale, edge_count, edges,seed);
     /*	permutation ameatoire des aretes	*/
-    random_edges_permutation(edge_number, edges, seed);
+    random_edges_permutation(edge_count, edges, seed);
 
     /* netoyage GPU */
     releaseMemObject(&cl_edges);
