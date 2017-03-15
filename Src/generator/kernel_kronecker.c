@@ -23,7 +23,6 @@ static const char* kernel_kronecker=
 		"const unsigned int r = 1727;\n"\
 		"unsigned long int result = (unsigned long int)(a) / q;\n"\
 		"result = 104480 * ((unsigned long int)(a) - result * q) - result * r;\n"\
-		"result += (result < 0 ? 0x7FFFFFFF : 0);\n"\
 		"return (unsigned long int)result;\n"\
 	"}\n"\
 
@@ -38,7 +37,6 @@ static const char* kernel_kronecker=
 		"unsigned long int r = 7;\n"\
 		"unsigned long int result = (unsigned long int)(a) / q;\n"\
 		"result = 107374182 * ((unsigned long int)(a) - result * q) - result * r;\n"\
-		"result += (result < 0 ? 0x7FFFFFFF : 0);\n"\
 		"return (unsigned long int)result;\n"\
 	"}\n"\
 
@@ -73,20 +71,21 @@ static const char* kernel_kronecker=
         "unsigned long v1;\n"\
 	"} packed_edge;\n"\
 
-	"__kernel void generate_kronecker(__global mrg_state* seeds,const int scale,const unsigned long int edge_number, __global packed_edge* edges)\n"\
+    "__kernel void generate_kronecker(const double A, const double B, const double C, __global mrg_state* seeds,const int scale,const unsigned long int edge_number, __global packed_edge* edges)\n"\
 	"{\n"\
 		"unsigned int i;\n"\
 		"unsigned int edge;\n"\
 		"size_t id = get_global_id(0);\n"\
+        "size_t size = get_global_size(0);\n"\
 
 		"int mul;\n"\
 		"int ii_bit;\n"\
-		"double ab = 0.57+0.19;\n"\
-		"double c_norm = 0.19/(1-ab);\n"\
-		"double a_norm = 0.57/ab;\n"\
+        "double ab = A+B;\n"\
+        "double c_norm = C/(1-ab);\n"\
+        "double a_norm = A/ab;\n"\
 
-		"unsigned long int bornMin = (edge_number*id)/get_global_size(0);\n"\
-		"unsigned long int bornMax = (edge_number*(id+1))/get_global_size(0);\n"\
+        "unsigned long int bornMin = (edge_number*id)/size;\n"\
+        "unsigned long int bornMax = (edge_number*(id+1))/size;\n"\
 
 		"for(int i=bornMin ; i<bornMax ; ++i)\n"\
 		"{\n"\

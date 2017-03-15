@@ -1,5 +1,4 @@
 #ifdef GRAPH_GENERATOR_OCL
-#ifndef GRAPH_GENERATOR_OMPI
 
 #include "kronecker_generator.h"
 #include "kernel_kronecker.c"
@@ -222,16 +221,19 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
     /* creer les buffers */
     createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed);
-    createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge) * edge_number, NULL, &cl_edges);
+    createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edge_number, NULL, &cl_edges);
 
     /* affecter les donnees aux buffers */
     enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
 
     /* affecter les arguments au programme */
-    setKernelArg(&kernel, 0, sizeof(cl_mem), &cl_seed);
-    setKernelArg(&kernel, 1, sizeof(int), &scale);
-    setKernelArg(&kernel, 2, sizeof(int64_t), &edge_number);
-    setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_edges);
+    setKernelArg(&kernel, 0, sizeof(double), &A);
+    setKernelArg(&kernel, 1, sizeof(double), &B);
+    setKernelArg(&kernel, 2, sizeof(double), &C);
+    setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed);
+    setKernelArg(&kernel, 4, sizeof(int), &scale);
+    setKernelArg(&kernel, 5, sizeof(int64_t), &edge_number);
+    setKernelArg(&kernel, 6, sizeof(cl_mem), &cl_edges);
 
     printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
@@ -286,5 +288,4 @@ void generate_kronecker_egdes(int scale, int64_t edge_number, mrg_state* seed, p
 
 /*	fin tests */
 
-#endif /* GRAPH_GENERATOR_OMPI */
 #endif /* GRAPH_GENERATOR_OCL */

@@ -400,11 +400,7 @@ static __inline int createContext(const cl_context_properties* properties, cl_ui
 static __inline int createCommandQueue(cl_context* context, cl_device_id* device,cl_command_queue_properties properties, cl_command_queue* command)
 {
     cl_int err;
-    #ifdef _WIN32
     *command = clCreateCommandQueue(*context, *device, properties, &err);
-    #else
-    *command = clCreateCommandQueueWithProperties(*context, *device, &properties, &err);
-    #endif
     if(err != CL_SUCCESS)
     {
         switch(err)
@@ -450,7 +446,7 @@ static __inline unsigned int getMaxWorkItem(cl_device_id* device)
     }
 
     size_t item[3];
-    err = clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES	,sizeof(size_t)*3, &item, NULL);
+    err = clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t)*3, &item, NULL);
     if(err != CL_SUCCESS)
     {
         switch(err)
