@@ -53,7 +53,7 @@
 #elif OPENCL_ACCELERATOR
     #define KRONECKER_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR
 #else
-    #define KRONECKER_DEVICE_TYPE CL_DEVICE_TYPE_DEFAULT
+	#define KRONECKER_DEVICE_TYPE CL_DEVICE_TYPE_ALL
 #endif
 
 /*	=============== Functions ===============	*/

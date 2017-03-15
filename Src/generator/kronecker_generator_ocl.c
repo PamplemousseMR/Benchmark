@@ -53,9 +53,9 @@ static void random_edges_permutation(int64_t edge_count, packed_edge* edges, mrg
     suffle_edges(edges,edge_count, seed);
 }
 
-static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* platforms)
+/*static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* platforms)
 {
-    /*unsigned int chosenPlatform;
+	unsigned int chosenPlatform;
     unsigned int i;
     int valid;
     int tempBufferLength = 10;
@@ -95,9 +95,8 @@ static unsigned int printAndGetPlatforms(cl_uint platformCount,cl_platform_id* p
         }
 
     } while (!valid);
-    return chosenPlatform;*/
-    return 0;
-}
+	return chosenPlatform;
+}*/
 
 static void createContexts()
 {
@@ -113,8 +112,11 @@ static void createContexts()
     platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
     getPlatformIDs(platformCount, platforms, NULL);
 
+	fprintf(stderr,"lol");
+
     /* choisir la platform */
-    chosenPlatform = printAndGetPlatforms(platformCount, platforms);
+	/*chosenPlatform = printAndGetPlatforms(platformCount, platforms);*/
+	chosenPlatform = 0;
 
     /* recuperer les peripheriques de la platforme */
     getDeviceIDs(&platforms[chosenPlatform], KRONECKER_DEVICE_TYPE, 0, NULL, &deviceCount);
@@ -186,7 +188,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
 
     /* recuperer le minimum du maximum des work group et des work item de chaque peripheriques */
     /* recuperer le nombre minimum de buffer necessaire pour lancer le programme */
-    max_work_item = ULONG_MAX;
+	max_work_item = UINT_MAX;
     max_item_per_group = ULONG_MAX;
     buffer_count = 0;
     for(i=0 ; i<deviceCount ; ++i)
@@ -224,16 +226,16 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     {
         printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
 
-        printf("Packed edge size : %u B\n",sizeof(packed_edge) * edge_count);
+		printf("Packed edge size : %lu B\n",sizeof(packed_edge) * edge_count);
         printf("Maximum items per device : %d\n",max_work_item);
-        printf("Buffer per device : %d\n",buffer_count);
-        printf("Edges count : %d\n",edge_count);
-        printf("Items count %u\n",global);
-        printf("Blocks count %u\n",local);
-        printf("Items per block : %d\n",global/local);
+		printf("Buffer per device : %lu\n",buffer_count);
+		printf("Edges count : %ld\n",edge_count);
+		printf("Items count %zu\n",global);
+		printf("Blocks count %zu\n",local);
+		printf("Items per block : %zu\n",global/local);
         printf("Items iterations : %f\n",((double)(edge_count))/global);
         printf("Run on : \n");
-        for (i=0; i<(signed)deviceCount; ++i)
+		for (i=0; i<deviceCount; ++i)
         {
             clGetContextInfo(contexts[0],CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
             clGetDeviceInfo(deviceId, CL_DEVICE_NAME, 0, NULL, &valueSize);
