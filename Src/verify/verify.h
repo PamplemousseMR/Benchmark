@@ -9,6 +9,23 @@
 #include "../edge_struct.h"		/*	packed_edge	*/
 #include "../xalloc.h"			/*	xmalloc	*/
 
+/*	=============== Defines ===============	*/
+
+#ifdef GRAPH_VERIFY_OMP
+	#ifdef _WIN32
+		#define VERIFY_OMP(x) __pragma(x)
+	#else
+		#define VERIFY_OMP(x) _Pragma(#x)
+	#endif
+
+	#include <omp.h>
+
+#else
+	#define	VERIFY_OMP(X)
+#endif
+
+/*	=============== Functions ===============	*/
+
 /*!
  * \fn int64_t verify_bfs_tree (int64_t*, int64_t ,int64_t , const packed_edge*, int64_t)
  * \brief Verifi qu'un parcours en largeur est correcte.

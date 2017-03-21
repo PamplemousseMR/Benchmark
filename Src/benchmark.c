@@ -240,11 +240,11 @@ void run_bfs (void)
         }
 
         if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
-        TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
+		TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
         if (VERBOSE) fprintf (stderr, "done\n");
         if (bfs_nedge[m] < 0)
         {
-            fprintf (stderr, "bfs %d from %" PRId64 " failed verification (%" PRId64 ")\n", m, bfs_root[m], bfs_nedge[m]);
+			fprintf (stderr, "bfs %d from %" PRId64 " failed verification (%" PRId64 ")\n", m, bfs_root[m], bfs_nedge[m]);
             abort ();
         }
 

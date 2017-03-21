@@ -20,16 +20,10 @@
 #ifdef GRAPH_GENERATOR_OCL
     #include <CL/cl.h>      /* OpenCL */
     #include <limits.h>     /* max */
+	#include <math.h>		/* ceil */
 #endif
 
 /*	=============== Defines ===============	*/
-
-/*tests pour les defines*/
-#ifdef GRAPH_GENERATOR_OCL
-    #ifdef GRAPH_GENERATOR_OMPI
-    #error OpenCL cannot run with OpenMPI
-    #endif
-#endif
 
 /* les defines utiles */
 

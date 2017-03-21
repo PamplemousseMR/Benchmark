@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = NVIDIA
+PLATFORM = AMD
 #----------------------------------
 
 #---------OpenMPI Settings---------
@@ -141,15 +141,20 @@ win32:{
 
 #--------------Define--------------
 #GRAPH_GENERATOR_OMP For activate edges generation with OpenMP
-#GRAPH_GENERATOR_OMPI For activate edges generation with Open MPI
+#GRAPH_GENERATOR_OCL For activate edges generation with OpenCL
+
+#GRAPH_VERIFY_OMP For activate graph verification with OpenMP
+
 #FAST_64BIT_ARITHMETIC Use 64-bit arithmetic when possible, else, 32 bits(more speed)
+
 #OPENCL_GPU only GPU for OpenCL
 #OPENCL_CPU only CPU for OpenCL
 #OPENCL_ACCELERATOR only accelerator for OpenCL
+
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-DEFINES += GRAPH_GENERATOR_OCL GRAPH_GENERATOR_OMP
+DEFINES += GRAPH_GENERATOR_OCL GRAPH_GENERATOR_OMP GRAPH_VERIFY_OMP
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -172,8 +177,7 @@ HEADERS += \
     Src/generator/edge_generator.h \
     Src/mman_win.h \
     Src/generator/kronecker_generator.h \
-    Src/opencl.h \
-    Src/generator/kernel_kronecker.h
+    Src/opencl.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
@@ -190,6 +194,5 @@ SOURCES += \
     Src/generator/edge_generator.c \
     Src/generator/kronecker_generator_seq.c \
     Src/generator/kronecker_generator_ocl.c \
-    Src/generator/kronecker_generator_ompi.c \
     Src/generator/kernel_kronecker.c \
     Src/mman_win.c
