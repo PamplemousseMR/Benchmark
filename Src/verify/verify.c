@@ -53,10 +53,12 @@ int64_t verify_bfs_tree (int64_t* bfs_tree, int64_t max_bfsvtx, int64_t root,con
 	do
 	{
 		end = 0;
+        VERIFY_OMP(omp parallel for shared(mask, level, slice, P, bfs_tree, root, end))
 		for(i = 0; i<nslice_value; ++i)
 		{
 			if(mask[i] == 1)
 			{
+                VERIFY_OMP(omp critical)
 				++level[slice[i]];
 				P[i] = bfs_tree[P[i]];
 				mask[i] = P[i] != root;
