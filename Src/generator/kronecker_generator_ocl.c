@@ -295,12 +295,12 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
 
     /* affecter les arguments au programme */
-    setKernelArg(&kernel, 0, sizeof(double), &A);
-    setKernelArg(&kernel, 1, sizeof(double), &B);
-    setKernelArg(&kernel, 2, sizeof(double), &C);
+    setKernelArg(&kernel, 0, sizeof(cl_double), (cl_double*)(&A));
+    setKernelArg(&kernel, 1, sizeof(cl_double), (cl_double*)(&B));
+    setKernelArg(&kernel, 2, sizeof(cl_double), (cl_double*)(&C));
     setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed);
-    setKernelArg(&kernel, 4, sizeof(int), &scale);
-    setKernelArg(&kernel, 5, sizeof(int64_t), &edge_count);
+    setKernelArg(&kernel, 4, sizeof(cl_int), (cl_int*)(&scale));
+    setKernelArg(&kernel, 5, sizeof(cl_long), (cl_long*)(&edge_count));
     setKernelArg(&kernel, 6, sizeof(cl_mem), &cl_edges);
 
     /* lancer le programme */

@@ -71,7 +71,7 @@ static const char* kernel_kronecker=
         "unsigned long v1;\n"\
 	"} packed_edge;\n"\
 
-    "__kernel void generate_kronecker(const double A, const double B, const double C, __global mrg_state* seeds,const int scale,const unsigned long int edge_number, __global packed_edge* edges)\n"\
+    "__kernel void generate_kronecker(const double A, const double B, const double C, __global mrg_state* seeds,const int scale,const long edge_number, __global packed_edge* edges)\n"\
 	"{\n"\
 		"unsigned int i;\n"\
 		"unsigned int edge;\n"\
