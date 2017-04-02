@@ -21,6 +21,7 @@
     #include <CL/cl.h>      /* OpenCL */
     #include <limits.h>     /* max */
 	#include <math.h>		/* ceil */
+    #include "kernel_kronecker.h"
 #endif
 
 /*	=============== Defines ===============	*/
