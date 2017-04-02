@@ -5,6 +5,8 @@ char* create_kernel_generator(unsigned int nbBuffers) {
 
     char numberTmp[10];
     unsigned int i;
+    char* res;
+    int newLength;
     int size = sizeof(char) * FUNCTION_MAX_SIZE;
     char* function = (char*)xmalloc(size);
 
@@ -23,7 +25,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     strcat_s(function, size,    "\tunsigned int i;\n"\
                                 "\tunsigned int indice;\n"\
                                 "\tunsigned int edge;\n"\
-                                "\tpacked_edge* currentEdges;\n"\
+                                "\t__global packed_edge* currentEdges;\n"\
                                 "\tsize_t id = get_global_id(0);\n"\
                                 "\tsize_t size = get_global_size(0);\n"\
                                 "\tint mul;\n"\
@@ -92,14 +94,13 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                                 "\t}\n"\
                                 "}\n");
 
-    int newLength = sizeof(char) * (strlen(kernel_kronecker) + strlen(function));
-    char* res = (char*)xmalloc(newLength);
+    newLength = sizeof(char) * (strlen(kernel_kronecker) + strlen(function));
+    res = (char*)xmalloc(newLength);
     strcpy_s(res, newLength, kernel_kronecker);
-    strcat_s(res, newLength, function);
+    strcat_s(&res[strlen(kernel_kronecker)], newLength, function);
     free(function);
 
     return res;
-
 }
 #else
 char* create_kernel_generator(unsigned int nbBuffers) {

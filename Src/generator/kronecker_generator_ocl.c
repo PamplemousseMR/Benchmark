@@ -262,6 +262,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     /* variables utiles */
     cl_kernel kernel;
     cl_program program;
+    char* program_sources;
     cl_mem cl_seed;
     cl_mem* cl_edges;
     uint64_t* edges_count;
@@ -272,9 +273,6 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     mrg_state* seeds;
     uint64_t bornMin;
     uint64_t bornMax;
-
-    char* test = create_kernel_generator(4);
-    printf("%s\n",test);
 
     /*creation des contextes */
     createContexts();
@@ -288,7 +286,11 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
         make_mrg_seed(mrg_get_uint_orig(seed),mrg_get_uint_orig(seed),(uint_fast32_t*)&seeds[i]);
 
     /* creer le programme */
-    createProgram(&contexts[0],1,kernel_kronecker, NULL, &program);
+    program_sources = create_kernel_generator((unsigned int)buffer_count);
+    printf("================================================================\n");
+    printf("%s\n",program_sources);
+    printf("================================================================\n");
+    createProgram(&contexts[0],1,program_sources, NULL, &program);
     buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
     createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
 
@@ -305,8 +307,8 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
         bornMax = (edge_count*(i+1))/buffer_count;
         edges_count[i] = bornMax-bornMin;
         createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edges_count[i], NULL, &cl_edges[i]);
-        setKernelArg(&kernel, 5+i*2, sizeof(cl_long), (cl_long*)(&edges_count[i]));
         setKernelArg(&kernel, 6+i*2, sizeof(cl_mem), &cl_edges[i]);
+        setKernelArg(&kernel, 7+i*2, sizeof(cl_long), (cl_long*)(&edges_count[i]));
     }
 
     /* affecter les arguments au programme */
@@ -315,6 +317,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     setKernelArg(&kernel, 2, sizeof(cl_double), (cl_double*)(&C));
     setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed);
     setKernelArg(&kernel, 4, sizeof(cl_int), (cl_int*)(&scale));
+    setKernelArg(&kernel, 5, sizeof(cl_long), (cl_long*)(&edge_count));
 
     /* lancer le programme */
     enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
@@ -348,6 +351,8 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
 
     /* supression des contextes */
     destroyContexts();
+
+    //while(1){}
 }
 
 #endif /* GRAPH_GENERATOR_OCL */
