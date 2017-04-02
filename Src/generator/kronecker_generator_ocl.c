@@ -273,6 +273,7 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     mrg_state* seeds;
     uint64_t bornMin;
     uint64_t bornMax;
+    unsigned int start;
 
     /*creation des contextes */
     createContexts();
@@ -290,13 +291,33 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     printf("================================================================\n");
     printf("%s\n",program_sources);
     printf("================================================================\n");
-    createProgram(&contexts[0],1,program_sources, NULL, &program);
-    buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL);
-    createKernel(&program, KERNEL_KRONECKER_NAME, &kernel);
+    if(!createProgram(&contexts[0],1,program_sources, NULL, &program))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when create program\n");
+        exit(EXIT_FAILURE);
+    }
+    if(!buildProgram(&program,&contexts[0], 0, NULL, NULL, NULL, NULL))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when build program\n");
+        exit(EXIT_FAILURE);
+    }
+    if(!createKernel(&program, KERNEL_KRONECKER_NAME, &kernel))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when create kernel\n");
+        exit(EXIT_FAILURE);
+    }
 
     /* creer le buffer de graine */
-    createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed);
-    enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL);
+    if(!createBuffer(&contexts[0], CL_MEM_READ_ONLY, sizeof(mrg_state)*global, NULL, &cl_seed))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when create seeds buffer\n");
+        exit(EXIT_FAILURE);
+    }
+    if(!enqueueWriteBuffer(&commands[0], &cl_seed, CL_TRUE, 0, sizeof(mrg_state)*global, seeds, 0, NULL, NULL))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when wrtie into seeds buffer\n");
+        exit(EXIT_FAILURE);
+    }
 
     /* les buffer d'arretes */
     cl_edges = (cl_mem*)xmalloc(sizeof(cl_mem)*buffer_count);
@@ -306,31 +327,74 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
         bornMin = (edge_count*i)/buffer_count;
         bornMax = (edge_count*(i+1))/buffer_count;
         edges_count[i] = bornMax-bornMin;
-        createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edges_count[i], NULL, &cl_edges[i]);
-        setKernelArg(&kernel, 6+i*2, sizeof(cl_mem), &cl_edges[i]);
-        setKernelArg(&kernel, 7+i*2, sizeof(cl_long), (cl_long*)(&edges_count[i]));
+        if(!createBuffer(&contexts[0], CL_MEM_READ_WRITE, sizeof(packed_edge)*edges_count[i], NULL, &cl_edges[i]))
+        {
+            fprintf(stderr,"[generate_kronecker_egdes] Error when create buffer %i\n",i);
+            exit(EXIT_FAILURE);
+        }
+        if(!setKernelArg(&kernel, 6+i*2, sizeof(cl_mem), &cl_edges[i]))
+        {
+            fprintf(stderr,"[generate_kronecker_egdes] Error when set arg %i\n",i);
+            exit(EXIT_FAILURE);
+        }
+        if(!setKernelArg(&kernel, 7+i*2, sizeof(cl_long), (cl_long*)(&edges_count[i])))
+        {
+            fprintf(stderr,"[generate_kronecker_egdes] Error when set arg %i\n",i);
+            exit(EXIT_FAILURE);
+        }
     }
 
     /* affecter les arguments au programme */
-    setKernelArg(&kernel, 0, sizeof(cl_double), (cl_double*)(&A));
-    setKernelArg(&kernel, 1, sizeof(cl_double), (cl_double*)(&B));
-    setKernelArg(&kernel, 2, sizeof(cl_double), (cl_double*)(&C));
-    setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed);
-    setKernelArg(&kernel, 4, sizeof(cl_int), (cl_int*)(&scale));
-    setKernelArg(&kernel, 5, sizeof(cl_long), (cl_long*)(&edge_count));
+    if(!setKernelArg(&kernel, 0, sizeof(cl_double), (cl_double*)(&A)))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg A\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!setKernelArg(&kernel, 1, sizeof(cl_double), (cl_double*)(&B)))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg B\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!setKernelArg(&kernel, 2, sizeof(cl_double), (cl_double*)(&C)))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg C\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg seed\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!setKernelArg(&kernel, 4, sizeof(cl_int), (cl_int*)(&scale)))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg scale\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!setKernelArg(&kernel, 5, sizeof(cl_long), (cl_long*)(&edge_count)))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg edge_count\n",i);
+        exit(EXIT_FAILURE);
+    }
 
     /* lancer le programme */
-    enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL);
-    finish(&commands[0]);
+    if(!enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when launch program\n",i);
+        exit(EXIT_FAILURE);
+    }
+    if(!finish(&commands[0]))
+    {
+        fprintf(stderr,"[generate_kronecker_egdes] Error when finish program\n",i);
+        exit(EXIT_FAILURE);
+    }
 
     /* recuperer les donnees GPU dans le CPU */
+    start = 0;
     for(i=0 ; i<buffer_count ; ++i)
-        clEnqueueReadBuffer(commands[0], cl_edges[i], CL_TRUE, 0, sizeof(packed_edge)*edges_count[i], &edges[edge_count - edges_count[i]], 0, NULL, NULL);
-
-    /*for(i=0;i<edge_count; i++)
     {
-        printf("%ld -> %ld\n",edges[i].v0, edges[i].v1);
-    }*/
+        clEnqueueReadBuffer(commands[0], cl_edges[i], CL_TRUE, 0, sizeof(packed_edge)*edges_count[i], &edges[start], 0, NULL, NULL);
+        start+=(unsigned int)edges_count[0];
+    }
 
     /* permutation aleatoire des sommets	*/
     random_node_permutation(1<<scale, edge_count, edges,seed);
@@ -348,11 +412,10 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     free(seeds);
     free(cl_edges);
     free(edges_count);
+    free(program_sources);
 
     /* supression des contextes */
     destroyContexts();
-
-    //while(1){}
 }
 
 #endif /* GRAPH_GENERATOR_OCL */
