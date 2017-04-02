@@ -92,7 +92,13 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                                 "\t}\n"\
                                 "}\n");
 
-    return function;
+    int newLength = sizeof(char) * (strlen(kernel_kronecker) + strlen(function));
+    char* res = (char*)xmalloc(newLength);
+    strcpy_s(res, newLength, kernel_kronecker);
+    strcat_s(res, newLength, function);
+    free(function);
+
+    return res;
 
 }
 #else
@@ -186,7 +192,12 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                         "\t}\n"\
                         "}\n");
 
-    return function;
+    char* res = (char*)xmalloc(sizeof(char) * (strlen(kernel_kronecker) + strlen(function)));
+    strcpy(res, kernel_kronecker);
+    strcat(res, function);
+    free(function);
+
+    return res;
 
 }
 #endif

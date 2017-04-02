@@ -7,7 +7,7 @@
 #include "../xalloc.h"
 
 #define KERNEL_KRONECKER_NAME "generate_kronecker"
-#define FUNCTION_MAX_SIZE 2000
+#define FUNCTION_MAX_SIZE 5000
 
 static const char kernel_kronecker[]=
     "/*  =================== random ===================  */\n"\
@@ -77,40 +77,6 @@ static const char kernel_kronecker[]=
         "unsigned long v0;\n"\
         "unsigned long v1;\n"\
     "} packed_edge;\n"\
-
-    "__kernel void "KERNEL_KRONECKER_NAME"(const double A, const double B, const double C, __global mrg_state* seeds,const int scale,const long edge_number, __global packed_edge* edges)\n"\
-    "{\n"\
-        "unsigned int i;\n"\
-        "unsigned int edge;\n"\
-        "size_t id = get_global_id(0);\n"\
-        "size_t size = get_global_size(0);\n"\
-
-        "int mul;\n"\
-        "int ii_bit;\n"\
-        "double ab = A+B;\n"\
-        "double c_norm = C/(1-ab);\n"\
-        "double a_norm = A/ab;\n"\
-
-        "unsigned long int bornMin = (edge_number*id)/size;\n"\
-        "unsigned long int bornMax = (edge_number*(id+1))/size;\n"\
-
-        "for(int i=bornMin ; i<bornMax ; ++i)\n"\
-        "{\n"\
-            "edges[i].v0 = 1;\n"\
-            "edges[i].v1 = 1;\n"\
-        "}\n"\
-
-        "for(i=0 ; i<scale ; ++i)\n"\
-        "{\n"\
-            "mul = 1<<i;\n"\
-            "for(edge=bornMin ; edge<bornMax ; ++edge)\n"\
-            "{\n"\
-                    "ii_bit = mrg_get_double_orig(&seeds[id])>ab;\n"\
-                    "edges[edge].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                    "edges[edge].v0 +=  mul * ii_bit;\n"\
-            "}\n"\
-        "}\n"\
-    "};\n"\
 ;
 
 char* create_kernel_generator(unsigned int);
