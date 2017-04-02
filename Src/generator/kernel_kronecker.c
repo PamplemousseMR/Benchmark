@@ -25,7 +25,6 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     strcat_s(function, size,    "\tunsigned int i;\n"\
                                 "\tunsigned int indice;\n"\
                                 "\tunsigned int edge;\n"\
-                                "\t__global packed_edge* currentEdges;\n"\
                                 "\tsize_t id = get_global_id(0);\n"\
                                 "\tsize_t size = get_global_size(0);\n"\
                                 "\tint mul;\n"\
@@ -37,8 +36,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                                 "\tunsigned long int bornMax = (edges_count_total * (id + 1))/size;\n\n"\
                                 "\tfor(int i=bornMin ; i<bornMax ; ++i)\n"\
                                 "\t{\n"\
-                                "\t\tindice = i;\n"\
-                                "\t\tcurrentEdges = edges0;\n");
+                                "\t\tindice = i;\n");
 
     for (i = 0; i < nbBuffers - 1; ++i)
     {
@@ -49,17 +47,23 @@ char* create_kernel_generator(unsigned int nbBuffers) {
         strcat_s(function, size, "\t\t\tindice -= edges_count");
         strcat_s(function, size, numberTmp);
         strcat_s(function, size, ";\n");
-        strcat_s(function, size, "\t\t\tcurrentEdges = edges");
-        sprintf_s(numberTmp, size, "%d", i+1);
+        strcat_s(function, size, "\t\t\tedges");
+        sprintf_s(numberTmp, size, "%d", i + 1);
         strcat_s(function, size, numberTmp);
+        strcat_s(function, size, "[indice].v0 = 1;\n");
+        strcat_s(function, size, "\t\t\tedges");
+        strcat_s(function, size, numberTmp);
+        strcat_s(function, size, "[indice].v1 = 1;\n");
         strcat_s(function, size, ";\n");
     }
     strcat_s(function, size, "\t\t");
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat_s(function, size, "}");
 
-    strcat_s(function, size,    "\t\tcurrentEdges[indice].v0 = 1;\n"\
-                                "\t\tcurrentEdges[indice].v1 = 1;\n"\
+    strcat_s(function, size,    "\n\t\telse {\n"\
+                                "\t\t\tedges0[indice].v0 = 1;\n"\
+                                "\t\t\tedges0[indice].v1 = 1;\n"\
+                                "\t\t}\n"\
                                 "\t}\n\n"\
                                 "\tfor(i=0 ; i<scale ; ++i)\n"\
                                 "\t{\n"\
@@ -67,8 +71,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                                 "\t\tfor(edge=bornMin ; edge<bornMax ; ++edge)\n"\
                                 "\t\t{\n"\
                                 "\t\t\tii_bit = mrg_get_double_orig(&seeds[id])>ab;\n"\
-                                "\t\t\tindice = edge;\n\n"\
-                                "\t\t\tcurrentEdges = edges0;\n");
+                                "\t\t\tindice = edge;\n\n");
 
     for (i = 0; i < nbBuffers - 1; ++i)
     {
@@ -79,17 +82,22 @@ char* create_kernel_generator(unsigned int nbBuffers) {
         strcat_s(function, size, "\t\t\t\tindice -= edges_count");
         strcat_s(function, size, numberTmp);
         strcat_s(function, size, ";\n");
-        strcat_s(function, size, "\t\t\t\tcurrentEdges = edges");
-        sprintf_s(numberTmp, size, "%d", i+1);
+        strcat_s(function, size, "\t\t\t\tedges");
+        sprintf_s(numberTmp, size, "%d", i + 1);
         strcat_s(function, size, numberTmp);
-        strcat_s(function, size, ";\n");
+        strcat_s(function, size, "[indice].v0 += mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n");
+        strcat_s(function, size, "\t\t\t\tedges");
+        strcat_s(function, size, numberTmp);
+        strcat_s(function, size, "[indice].v1 +=  mul * ii_bit;\n");
     }
     strcat_s(function, size, "\t\t\t");
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat_s(function, size, "}");
 
-    strcat_s(function, size,  "\n\n\t\t\tcurrentEdges[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                                "\t\t\tcurrentEdges[indice].v0 +=  mul * ii_bit;\n"\
+    strcat_s(function, size,    "\n\t\t\telse {\n"\
+                                "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                                "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n"\
+                                "\t\t\t}\n"\
                                 "\t\t}\n"\
                                 "\t}\n"\
                                 "}\n");
@@ -125,7 +133,6 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     strcat(function,    "\tunsigned int i;\n"\
                         "\tunsigned int indice;\n"\
                         "\tunsigned int edge;\n"\
-                        "\t__global packed_edge* currentEdges;\n"\
                         "\tsize_t id = get_global_id(0);\n"\
                         "\tsize_t size = get_global_size(0);\n"\
                         "\tint mul;\n"\
@@ -137,8 +144,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                         "\tunsigned long int bornMax = (edges_count_total * (id + 1))/size;\n\n"\
                         "\tfor(int i=bornMin ; i<bornMax ; ++i)\n"\
                         "\t{\n"\
-                        "\t\tindice = i;\n"\
-                        "\t\tcurrentEdges = edges0;\n");
+                        "\t\tindice = i;\n");
 
     for (i = 0; i < nbBuffers - 1; ++i)
     {
@@ -149,17 +155,23 @@ char* create_kernel_generator(unsigned int nbBuffers) {
         strcat(function, "\t\t\tindice -= edges_count");
         strcat(function, numberTmp);
         strcat(function, ";\n");
-        strcat(function, "\t\t\tcurrentEdges = edges");
+        strcat(function, "\t\t\tedges");
         sprintf(numberTmp, "%d", i + 1);
         strcat(function, numberTmp);
+        strcat(function, "[indice].v0 = 1;\n");
+        strcat(function, "\t\t\tedges");
+        strcat(function, numberTmp);
+        strcat(function, "[indice].v1 = 1;\n");
         strcat(function, ";\n");
     }
     strcat(function, "\t\t");
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat(function, "}");
 
-    strcat(function,    "\t\tcurrentEdges[indice].v0 = 1;\n"\
-                        "\t\tcurrentEdges[indice].v1 = 1;\n"\
+    strcat(function,    "\n\t\telse {\n"\
+                        "\t\t\tedges0[indice].v0 = 1;\n"\
+                        "\t\t\tedges0[indice].v1 = 1;\n"\
+                        "\t\t}\n"\
                         "\t}\n\n"\
                         "\tfor(i=0 ; i<scale ; ++i)\n"\
                         "\t{\n"\
@@ -167,8 +179,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                         "\t\tfor(edge=bornMin ; edge<bornMax ; ++edge)\n"\
                         "\t\t{\n"\
                         "\t\t\tii_bit = mrg_get_double_orig(&seeds[id])>ab;\n"\
-                        "\t\t\tindice = edge;\n\n"\
-                        "\t\t\tcurrentEdges = edges0;\n");
+                        "\t\t\tindice = edge;\n\n");
 
     for (i = 0; i < nbBuffers - 1; ++i)
     {
@@ -179,24 +190,31 @@ char* create_kernel_generator(unsigned int nbBuffers) {
         strcat(function, "\t\t\t\tindice -= edges_count");
         strcat(function, numberTmp);
         strcat(function, ";\n");
-        strcat(function, "\t\t\t\tcurrentEdges = edges");
+        strcat(function, "\t\t\t\tedges");
         sprintf(numberTmp, "%d", i + 1);
         strcat(function, numberTmp);
-        strcat(function, ";\n");
+        strcat(function, "[indice].v0 += mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n");
+        strcat(function, "\t\t\t\tedges");
+        strcat(function, numberTmp);
+        strcat(function, "[indice].v1 +=  mul * ii_bit;\n");
     }
+
     strcat(function, "\t\t\t");
+
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat(function, "}");
 
-    strcat(function,    "\n\n\t\t\tcurrentEdges[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                        "\t\t\tcurrentEdges[indice].v0 +=  mul * ii_bit;\n"\
+    strcat(function,    "\n\t\t\telse {\n"\
+                        "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                        "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n"\
+                        "\t\t\t}\n"\
                         "\t\t}\n"\
                         "\t}\n"\
                         "}\n");
 
     res = (char*)xmalloc(sizeof(char) * (strlen(kernel_kronecker) + strlen(function)));
-    strcpy_s(res, kernel_kronecker);
-    strcat_s(&res[strlen(kernel_kronecker)], function);
+    strcpy(res, kernel_kronecker);
+    strcat(&res[strlen(kernel_kronecker)], function);
     free(function);
 
     return res;
