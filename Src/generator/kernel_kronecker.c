@@ -6,7 +6,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     char numberTmp[10];
     unsigned int i;
     char* res;
-    int newLength;
+    size_t newLength;
     int size = sizeof(char) * FUNCTION_MAX_SIZE;
     char* function = (char*)xmalloc(size);
 
@@ -60,11 +60,18 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat_s(function, size, "}");
 
-    strcat_s(function, size,    "\n\t\telse {\n"\
-                                "\t\t\tedges0[indice].v0 = 1;\n"\
-                                "\t\t\tedges0[indice].v1 = 1;\n"\
-                                "\t\t}\n"\
-                                "\t}\n\n"\
+    strcat_s(function, size, "\n");
+
+    if (nbBuffers > 1)
+        strcat_s(function, size,    "\t\telse {\n");
+
+    strcat_s(function, size,    "\t\t\tedges0[indice].v0 = 1;\n"\
+                                "\t\t\tedges0[indice].v1 = 1;\n");
+
+    if (nbBuffers > 1)
+        strcat_s(function, size, "\t\t}\n");
+
+    strcat_s(function, size,    "\t}\n\n"\
                                 "\tfor(i=0 ; i<scale ; ++i)\n"\
                                 "\t{\n"\
                                 "\t\tmul = 1<<i;\n"\
@@ -94,11 +101,18 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat_s(function, size, "}");
 
-    strcat_s(function, size,    "\n\t\t\telse {\n"\
-                                "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                                "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n"\
-                                "\t\t\t}\n"\
-                                "\t\t}\n"\
+    strcat_s(function, size, "\n");
+
+    if (nbBuffers > 1)
+        strcat_s(function, size, "\t\t\telse {\n");
+
+    strcat_s(function, size,      "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                                "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n");
+
+    if (nbBuffers > 1)
+        strcat_s(function, size, "\t\t\t}\n");
+
+    strcat_s(function, size,    "\t\t}\n"\
                                 "\t}\n"\
                                 "}\n");
 
@@ -168,11 +182,18 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat(function, "}");
 
-    strcat(function,    "\n\t\telse {\n"\
-                        "\t\t\tedges0[indice].v0 = 1;\n"\
-                        "\t\t\tedges0[indice].v1 = 1;\n"\
-                        "\t\t}\n"\
-                        "\t}\n\n"\
+    strcat(function, "\n");
+
+    if (nbBuffers > 1)
+        strcat(function,    "\t\telse {\n");
+
+    strcat(function, "\t\t\tedges0[indice].v0 = 1;\n"\
+                     "\t\t\tedges0[indice].v1 = 1;\n");
+
+    if (nbBuffers > 1)
+        strcat(function, "\t\t}\n");
+
+    strcat(function,    "\t}\n\n"\
                         "\tfor(i=0 ; i<scale ; ++i)\n"\
                         "\t{\n"\
                         "\t\tmul = 1<<i;\n"\
@@ -204,11 +225,18 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     for (i = 0; i < nbBuffers - 1; ++i)
         strcat(function, "}");
 
-    strcat(function,    "\n\t\t\telse {\n"\
-                        "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
-                        "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n"\
-                        "\t\t\t}\n"\
-                        "\t\t}\n"\
+    strcat(function, "\n");
+
+    if (nbBuffers > 1)
+        strcat(function, "\t\t\telse {\n");
+
+    strcat(function,    "\t\t\t\tedges0[indice].v1 +=  mul * ( mrg_get_double_orig(&seeds[id]) > (c_norm*ii_bit + a_norm*(!ii_bit)) );\n"\
+                        "\t\t\t\tedges0[indice].v0 +=  mul * ii_bit;\n");
+
+    if (nbBuffers > 1)
+        strcat(function, "\t\t\t}\n");
+
+    strcat(function,    "\t\t}\n"\
                         "\t}\n"\
                         "}\n");
 
