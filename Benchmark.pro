@@ -177,7 +177,8 @@ HEADERS += \
     Src/generator/edge_generator.h \
     Src/mman_win.h \
     Src/generator/kronecker_generator.h \
-    Src/opencl.h
+    Src/opencl.h \
+    Src/generator/kernel_kronecker.h
 
 SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
