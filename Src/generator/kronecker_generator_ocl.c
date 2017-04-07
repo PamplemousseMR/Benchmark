@@ -288,9 +288,6 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
 
     /* creer le programme */
     program_sources = create_kernel_generator((unsigned int)buffer_count);
-    printf("================================================================\n");
-    printf("%s\n",program_sources);
-    printf("================================================================\n");
     if(!createProgram(&contexts[0],1,program_sources, NULL, &program))
     {
         fprintf(stderr,"[generate_kronecker_egdes] Error when create program\n");
