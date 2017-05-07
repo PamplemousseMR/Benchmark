@@ -8,8 +8,17 @@
 
 #include "../edge_struct.h"		/*	packed_edge	*/
 #include "../xalloc.h"			/*	xmalloc	*/
+#include "../options.h"			/* VERBOSE */
 
 /*	=============== Defines ===============	*/
+
+#ifdef GRAPH_VERIFY_OCL
+#include <CL/cl.h>				/*	openCL */
+#include "../opencl.h"
+
+#define OPTIMAL_VERIFY_MOD 32
+#define VERIFY_ITEMS_BY_GROUP 32
+#endif
 
 #ifdef GRAPH_VERIFY_OMP
 	#ifdef _WIN32
@@ -22,6 +31,24 @@
 
 #else
 	#define	VERIFY_OMP(X)
+#endif
+
+#ifdef OPENCL_GPU
+	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_GPU
+#elif OPENCL_CPU
+	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_CPU
+#elif OPENCL_ACCELERATOR
+	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR
+#else
+	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_ALL
+#endif
+
+/*	=============== Includes ===============	*/
+
+#ifdef GRAPH_VERIFY_OCL
+	#include <CL/cl.h>      /* OpenCL */
+	#include <limits.h>     /* max */
+	#include <math.h>		/* ceil */
 #endif
 
 /*	=============== Functions ===============	*/

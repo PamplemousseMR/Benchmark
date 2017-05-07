@@ -108,6 +108,11 @@ static void createContexts()
 
     /* recuperer les platformes */
     getPlatformIDs(0, NULL, &platformCount);
+	if(platformCount==0)
+	{
+		fprintf(stderr,"[createContext] platformCount = 0, check qmake and NVIDIA/AMD platform !!!\n");
+		exit(EXIT_FAILURE);
+	}
     platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
     getPlatformIDs(platformCount, platforms, NULL);
 
@@ -166,9 +171,9 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
     unsigned int i;
 
     /* verifier le define */
-    if(ITEMS_BY_GROUP % OPTIMAL_MOD != 0)
+	if(GENERATOR_ITEMS_BY_GROUP % OPTIMAL_GENERATOR_MOD != 0)
     {
-        fprintf(stderr,"[generate_kronecker_egdes] items by group %d is not mod %d",ITEMS_BY_GROUP,OPTIMAL_MOD);
+		fprintf(stderr,"[generate_kronecker_egdes] items by group %d is not mod %d",GENERATOR_ITEMS_BY_GROUP,OPTIMAL_GENERATOR_MOD);
         exit(EXIT_FAILURE);
     }
 
@@ -194,14 +199,14 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
     if(edge_count > max_work_item)
         *global = max_work_item;
 
-    if(*global > ITEMS_BY_GROUP)
+	if(*global > GENERATOR_ITEMS_BY_GROUP)
     {
-        *global -= (*global)%ITEMS_BY_GROUP;
-        *local = (*global)/ITEMS_BY_GROUP;
+		*global -= (*global)%GENERATOR_ITEMS_BY_GROUP;
+		*local = (*global)/GENERATOR_ITEMS_BY_GROUP;
         if(*local > getMaxItemByGroup(&deviceId))
         {
             *local = getMaxItemByGroup(&deviceId);
-            *global = (*local)*ITEMS_BY_GROUP;
+			*global = (*local)*GENERATOR_ITEMS_BY_GROUP;
         }
     }
     else
@@ -210,7 +215,7 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
     /* informations */
     if(VERBOSE)
     {
-        printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
+		printf ("\n===============GPU GENERATE PARAMETERS===============\n\n");
 
         printf("Packed edge size : %lu B\n",sizeof(packed_edge) * edge_count);
         printf("Buffer used per device : %lu\n",*buffer_count);
@@ -253,7 +258,7 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
             printf("\t%d - Device: %s, type: %s.\n", i+1, value,t);
             xfree_large(value);
         }
-        printf ("\n===============GPU COMPUTE PARAMETERS===============\n\n");
+		printf ("\n===============GPU GENERATE PARAMETERS===============\n\n");
     }
 }
 
@@ -342,46 +347,46 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     }
 
     /* affecter les arguments au programme */
-    if(!setKernelArg(&kernel, 0, sizeof(cl_double), (cl_double*)(&A)))
+	if(!setKernelArg(&kernel, 0, sizeof(cl_double), (cl_double*)(&A)))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg A\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg A\n");
         exit(EXIT_FAILURE);
     }
     if(!setKernelArg(&kernel, 1, sizeof(cl_double), (cl_double*)(&B)))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg B\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg B\n");
         exit(EXIT_FAILURE);
     }
     if(!setKernelArg(&kernel, 2, sizeof(cl_double), (cl_double*)(&C)))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg C\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg C\n");
         exit(EXIT_FAILURE);
     }
     if(!setKernelArg(&kernel, 3, sizeof(cl_mem), &cl_seed))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg seed\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg seed\n");
         exit(EXIT_FAILURE);
     }
     if(!setKernelArg(&kernel, 4, sizeof(cl_int), (cl_int*)(&scale)))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg scale\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg scale\n");
         exit(EXIT_FAILURE);
     }
     if(!setKernelArg(&kernel, 5, sizeof(cl_long), (cl_long*)(&edge_count)))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when set arg edge_count\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when set arg edge_count\n");
         exit(EXIT_FAILURE);
     }
 
     /* lancer le programme */
     if(!enqueueNDRangeKernel(&commands[0], &kernel, 1, NULL, &global, &local, 0, NULL, NULL))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when launch program\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when launch program\n");
         exit(EXIT_FAILURE);
     }
     if(!finish(&commands[0]))
     {
-        fprintf(stderr,"[generate_kronecker_egdes] Error when finish program\n",i);
+		fprintf(stderr,"[generate_kronecker_egdes] Error when finish program\n");
         exit(EXIT_FAILURE);
     }
 

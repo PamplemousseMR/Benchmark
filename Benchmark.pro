@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = NVIDIA
+PLATFORM = AMD
 #----------------------------------
 
 #---------OpenMPI Settings---------
@@ -154,7 +154,7 @@ win32:{
 #USE_MMAP_LARGE
 #USE_MMAP_LARGE_EXT     A FAIRE FONCTIONNE
 
-DEFINES += GRAPH_GENERATOR_OCL GRAPH_GENERATOR_OMP GRAPH_VERIFY_OMP
+DEFINES += GRAPH_GENERATOR_OCL GRAPH_GENERATOR_OMP GRAPH_VERIFY_OMP GRAPH_VERIFY_OCL
 #----------------------------------
 
 message("-------QMAKE END--------")
@@ -184,7 +184,6 @@ SOURCES += \
     Src/bfs/omp-csr/omp-csr.c \
     Src/bfs/seq-csr/seq-csr.c \
     Src/bfs/seq-list/seq-list.c \
-    Src/verify/verify.c \
     Src/getopt.c \
     Src/mrg_transitions.c \
     Src/options.c \
@@ -196,4 +195,7 @@ SOURCES += \
     Src/generator/kronecker_generator_seq.c \
     Src/generator/kronecker_generator_ocl.c \
     Src/generator/kernel_kronecker.c \
-    Src/mman_win.c
+    Src/mman_win.c \
+    Src/verify/verify_ocl.c \
+    Src/verify/verify_seq.c \
+    Src/opencl.c

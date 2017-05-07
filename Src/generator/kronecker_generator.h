@@ -11,8 +11,8 @@
 #include <CL/cl.h>				/*	openCL */
 #include "../opencl.h"
 
-#define OPTIMAL_MOD 32
-#define ITEMS_BY_GROUP 32
+#define OPTIMAL_GENERATOR_MOD 32
+#define GENERATOR_ITEMS_BY_GROUP 32
 #endif
 
 /*	=============== Includes ===============	*/
