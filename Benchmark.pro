@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-PLATFORM = AMD
+PLATFORM = NVIDIA
 #----------------------------------
 
 #---------OpenMPI Settings---------
