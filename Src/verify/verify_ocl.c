@@ -370,6 +370,7 @@ int64_t verify_bfs_tree (int64_t* bfs_tree, int64_t max_bfsvtx, int64_t root,con
 
         if (*perr == -4 || *perr == -5) {
 
+            err = *perr;
             printf("il y a eu une erreur %d\n", *perr);
             break;
 
