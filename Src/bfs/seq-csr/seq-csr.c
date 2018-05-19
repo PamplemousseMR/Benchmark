@@ -7,10 +7,10 @@
 
 #include <assert.h>
 
-#include "../../compat.h"
-#include "../bfs.h"
-#include "../../xalloc.h"
-#include "../../edge_struct.h"
+#include "compat.h"
+#include "bfs/bfs.h"
+#include "xalloc.h"
+#include "edge_struct.h"
 
 #define MINVECT_SIZE 2
 

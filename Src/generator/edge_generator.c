@@ -1,4 +1,4 @@
-#include "edge_generator.h"
+#include "generator/edge_generator.h"
 
 void make_graph(int log_numverts, int64_t desired_edge, uint64_t userseed1, uint64_t userseed2, int64_t* nedges_ptr_in, packed_edge** result_ptr_in)
 {

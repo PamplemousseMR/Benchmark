@@ -1,4 +1,4 @@
-#include "kernel_kronecker.h"
+#include "generator/kernel_kronecker.h"
 
 #ifdef _WIN32
 char* create_kernel_generator(unsigned int nbBuffers) {

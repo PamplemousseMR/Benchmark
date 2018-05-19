@@ -1,7 +1,5 @@
 #include "splittable_mrg.h"
 
-#include "mrg_transitions.c"
-
 static uint_fast32_t prng_seed[5];
 static mrg_state prng_state_store;
 
