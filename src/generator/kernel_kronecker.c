@@ -14,7 +14,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     strcpy_s(function, size, "__kernel void "KERNEL_KRONECKER_NAME"(const double A, const double B, const double C, __global mrg_state* seeds,const int scale, const unsigned long int edges_count_total");
     for (i = 0; i < nbBuffers; ++i)
     {
-        sprintf_s(numberTmp, size, "%d", i);
+		sprintf_s(numberTmp, 10, "%d", i);
         strcat_s(function, size, ", __global packed_edge* edges");
         strcat_s(function, size, numberTmp);
         strcat_s(function, size, " ,const unsigned long int edges_count");
