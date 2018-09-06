@@ -1,5 +1,4 @@
-#ifndef __KERNELKRONECKER_H__
-#define __KERNELKRONECKER_H__
+#pragma once
 
 #include <string.h>
 #include <stdio.h>
@@ -80,5 +79,3 @@ static const char kernel_kronecker[]=
 ;
 
 char* create_kernel_generator(unsigned int);
-
-#endif

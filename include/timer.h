@@ -1,15 +1,4 @@
-#ifndef __TIMER__
-#define __TIMER__
-
-/*!
- * \file timer.h
- * \param Fichier contenent une macro qui permet de conaitre le temps d'execution d'une fonction.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -36,5 +25,3 @@ double toc(void);
 /*	=============== Defines ===============	*/
 
 #define TIME(timevar, what) do { tic (); what; timevar = toc(); } while (0)
-
-#endif

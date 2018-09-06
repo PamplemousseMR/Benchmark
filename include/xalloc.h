@@ -1,15 +1,4 @@
-#ifndef __XALLOC__
-#define __XALLOC__
-
-/*!
- * \file xalloc.h
- * \param Fichier contenent des fonction permetant de faire des allocations dynamiques.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -28,5 +17,3 @@ void* xmalloc(size_t);
 void* xmalloc_large(size_t);
 void* xmalloc_large_ext(size_t);
 void xfree_large(void*);
-
-#endif

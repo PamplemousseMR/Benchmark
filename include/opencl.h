@@ -1,5 +1,4 @@
-#ifndef __OPENCL_
-#define __OPENCL__
+#pragma once
 /*!
  * \file opencl.h
  * \param Fichier surchargeant les fonctions de OpenCL permettant d'englober la gestion des erreurs.
@@ -36,5 +35,3 @@ unsigned int getMaxWorkItem(cl_device_id* );
 size_t getMaxItemByGroup(cl_device_id*);
 int releaseCommandQueue(cl_command_queue*);
 int releaseContext(cl_context*);
-
-#endif

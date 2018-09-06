@@ -1,15 +1,4 @@
-#ifndef __SPLITTABLE_MRG__
-#define __SPLITTABLE_MRG__
-
-/*!
- * \file splittable_mrg.h
- * \param Fichier qui contient un generateur de valeur aleatoire.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -87,6 +76,4 @@ void init_random();
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

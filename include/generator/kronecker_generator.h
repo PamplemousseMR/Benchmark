@@ -1,5 +1,4 @@
-#ifndef __KRONECKER_GENERATOR__
-#define __KRONECKER_GENERATOR__
+#pragma once
 
 #include "../edge_struct.h"		/*	packed_edge	*/
 #include "../splittable_mrg.h"	/*	mrg_state	*/
@@ -41,6 +40,3 @@
 /*	=============== Functions ===============	*/
 
 void generate_kronecker_egdes(int, size_t, mrg_state*, packed_edge*);
-
-#endif
-

@@ -1,5 +1,4 @@
-#ifndef __VERIFY__
-#define __VERIFY__
+#pragma once
 
 #include <CL/cl.h>				/* openCL */
 #include <stdio.h>				/* sprintf */
@@ -50,5 +49,3 @@
  * \return
  */
 int64_t verify_bfs_tree (int64_t*, int64_t ,int64_t , const packed_edge*, int64_t);
-
-#endif

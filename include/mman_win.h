@@ -5,8 +5,7 @@
  * mman-win32
  */
 
-#ifndef _SYS_MMAN_H_
-#define _SYS_MMAN_H_
+#pragma once
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
 #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
@@ -64,5 +63,3 @@ int     munlock(const void *addr, size_t len);
 
 #endif /*  _SYS_MMAN_H_ */
 
-
-#endif

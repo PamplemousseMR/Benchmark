@@ -1,15 +1,4 @@
-#ifndef __MOD_ARITH_64__
-#define __MOD_ARITH_64__
-
-/*!
- * \file mod_arith_32bits.h
- * \param Fichier qui permet de faire des calcules sur des int de 64 bits modulo 2147483646.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -100,6 +89,4 @@ static __inline uint_fast32_t mod_mac_y(uint_fast32_t sum, uint_fast32_t a) {
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

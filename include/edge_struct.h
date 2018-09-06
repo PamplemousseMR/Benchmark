@@ -1,15 +1,4 @@
-#ifndef __EDGE_STRUCT__
-#define __EDGE_STRUCT__
-
-/*!
- * \file edge_struct.h
- * \param Fichier qui englobe le systeme de representation des aretes
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -72,6 +61,4 @@ static __inline void write_edge(packed_edge* p, int64_t v0, int64_t v1) {
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

@@ -1,15 +1,4 @@
-#ifndef __OPTIONS__
-#define __OPTIONS__
-
-/*!
- * \file options.h
- * \param Fichier qui permet de traiter et stocker les arguments du programme.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 /*	=============== Includes ===============	*/
 
@@ -121,5 +110,3 @@ extern int64_t edgefactor;
  * \param char** : le tableau de caracteres
  */
 void get_options(int, char**);
-
-#endif

@@ -1,14 +1,4 @@
-#ifndef __EDGE_GENERATOR__
-#define __EDGE_GENERATOR__
-/*!
- * \file edge_generator.h
- * \param Fichier contenent la fonction qui permet de generer une liste d'arete avec la methode de kronecker.
- * \author Appert Kevin
- * \author Hun Tony
- * \author Lataix Maxime
- * \author Manciaux Romain
- * \author Peccard Remi
- */
+#pragma once
 
 #include <stdint.h>					/*	int64_t	*/
 #include "../edge_struct.h"			/*	packed_edge	*/
@@ -27,5 +17,3 @@
  * \param packed_edge** : Les aretes genere.
  */
 void make_graph(int, int64_t, uint64_t, uint64_t, int64_t*, packed_edge**);
-
-#endif
