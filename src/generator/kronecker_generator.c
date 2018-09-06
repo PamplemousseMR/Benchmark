@@ -217,7 +217,7 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, size_t e
 
         printf("Packed edge size : %zd B\n",sizeof(packed_edge) * edge_count);
         printf("Buffer used per device : %llu\n",*buffer_count);
-        printf("Edges count : %llu\n",edge_count);
+        printf("Edges count : %zd\n",edge_count);
         printf("Maximum items per device : %d\n",max_work_item);
 #ifdef _WIN32
         printf("Items count %zd\n",*global);
