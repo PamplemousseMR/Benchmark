@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <omp.h>
 
 static int64_t int64_fetch_add (int64_t* p, int64_t incr);
 static int64_t int64_casval(int64_t* p, int64_t oldval, int64_t newval);

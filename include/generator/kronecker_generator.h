@@ -10,7 +10,6 @@
 #include <limits.h>     /* max */
 #include <math.h>		/* ceil */
 #include <inttypes.h>	/* int64_t */
-#include <omp.h>
 
 #define OPTIMAL_GENERATOR_MOD 64
 #define GENERATOR_ITEMS_BY_GROUP 64

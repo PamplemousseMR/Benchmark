@@ -6,9 +6,6 @@
     #else
 	#define OMP(x) _Pragma(#x)
     #endif
-
-    #include <omp.h>
-
 #else
 #define OMP(x)
 #endif

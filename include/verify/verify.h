@@ -3,7 +3,6 @@
 #include <stdio.h>				/* sprintf */
 #include <stdint.h>				/* int64_t */
 #include <assert.h>				/* assert */
-#include <omp.h>                /* omp */
 #include <limits.h>             /* max */
 #include <math.h>               /* ceil */
 
