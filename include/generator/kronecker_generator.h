@@ -13,8 +13,8 @@
 #include <inttypes.h>	/* int64_t */
 #include <omp.h>
 
-#define OPTIMAL_GENERATOR_MOD 32
-#define GENERATOR_ITEMS_BY_GROUP 32
+#define OPTIMAL_GENERATOR_MOD 64
+#define GENERATOR_ITEMS_BY_GROUP 64
 
 
 /*	=============== Defines ===============	*/
