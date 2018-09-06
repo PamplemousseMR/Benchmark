@@ -64,7 +64,7 @@ int buildProgram(cl_program* program, cl_context* context, cl_uint numDevices, c
 		cl_device_id deviceId;
 		clGetContextInfo(*context,CL_CONTEXT_DEVICES,sizeof(cl_device_id), &deviceId, NULL);
 		clGetProgramBuildInfo(*program, deviceId, CL_PROGRAM_BUILD_LOG, 0, NULL, &len);
-		char *buffer = calloc(len, sizeof(char));
+        char* buffer = (char*)calloc(len, sizeof(char));
 		clGetProgramBuildInfo(*program, deviceId, CL_PROGRAM_BUILD_LOG, len, buffer, NULL);
 		printf("%s",buffer);
 		free(buffer);
@@ -404,7 +404,7 @@ unsigned int getMaxWorkItem(cl_device_id* device)
 		case CL_INVALID_VALUE :
 			fprintf(stderr,"[getMaxWorkItem] invalid value\n");
 			break;        }
-		return -1;
+        return (unsigned)-1;
 	}
 
 	size_t item[3];
@@ -419,7 +419,7 @@ unsigned int getMaxWorkItem(cl_device_id* device)
 		case CL_INVALID_VALUE :
 			fprintf(stderr,"[getMaxWorkItem] invalid value\n");
 			break;        }
-		return -1;
+        return (unsigned)-1;
 	}
 
 	for(i=1 ; i<dim ; ++i)
@@ -443,7 +443,7 @@ size_t getMaxItemByGroup(cl_device_id* device)
 		case CL_INVALID_VALUE :
 			fprintf(stderr,"[getMaxItemByGroup] invalid value\n");
 			break;        }
-		return -1;
+        return (unsigned)-1;
 	}
 	return si;
 }

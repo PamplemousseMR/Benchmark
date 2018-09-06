@@ -3,10 +3,10 @@
 
 void _vwarnx(const char *fmt,va_list ap)
 {
-    (void)fprintf(stderr,"%s: ",__progname);
+    (void)fprintf(stdout,"%s: ",__progname);
     if (fmt != NULL)
         (void)vfprintf(stderr,fmt,ap);
-    (void)fprintf(stderr,"\n");
+    (void)fprintf(stdout,"\n");
 }
 
 void warnx(const char *fmt,...)
@@ -36,7 +36,7 @@ int parse_long_options(char * const *nargv, const char *options,const struct opt
 
     if ((has_equal = strchr(current_argv, '=')) != NULL) {
         /* argument found (--option=arg) */
-        current_argv_len = has_equal - current_argv;
+        current_argv_len = (unsigned long long)(has_equal - current_argv);
         has_equal++;
     } else
         current_argv_len = strlen(current_argv);

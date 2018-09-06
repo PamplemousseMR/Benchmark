@@ -78,9 +78,9 @@ int main (int argc, char **argv)
     if (!dumpname)
     {
         /* creation */
-        if (VERBOSE) fprintf (stderr, "Generating edge list...\n");
+        if (VERBOSE) fprintf (stdout, "Generating edge list...\n");
         TIME(generation_time, make_graph ((int)SCALE, desired_nedge, userseed, userseed, &nedge, (packed_edge**)(&IJ)));
-        if (VERBOSE) fprintf (stderr, "Generating edge list done.\n");
+        if (VERBOSE) fprintf (stdout, "Generating edge list done.\n");
         printf ("generation_time: %lf\n", generation_time);
         fflush(stdout);
     } else {
@@ -137,9 +137,9 @@ void run_bfs (void)
     int m, err;
     int64_t k, t;
 
-    if (VERBOSE) fprintf (stderr, "Creating graph...");
+    if (VERBOSE) fprintf (stdout, "Creating graph...");
     TIME(construction_time, err = create_graph_from_edgelist (IJ, nedge));
-    if (VERBOSE) fprintf (stderr, "done.\n");
+    if (VERBOSE) fprintf (stdout, "done.\n");
     if (err)
     {
         fprintf (stderr, "Failure creating graph.\n");
@@ -229,9 +229,9 @@ void run_bfs (void)
         bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
         assert (bfs_root[m] < numb_node);
 
-        if (VERBOSE) fprintf (stderr, "Running bfs %d...", m);
+        if (VERBOSE) fprintf (stdout, "Running bfs %d...", m);
         TIME(bfs_time[m], err = make_bfs_tree (bfs_tree, &max_bfsvtx, bfs_root[m]));
-        if (VERBOSE) fprintf (stderr, "done\n");
+        if (VERBOSE) fprintf (stdout, "done\n");
 
         if (err)
         {
@@ -239,9 +239,9 @@ void run_bfs (void)
             abort ();
         }
 
-        if (VERBOSE) fprintf (stderr, "Verifying bfs %d...", m);
+        if (VERBOSE) fprintf (stdout, "Verifying bfs %d...", m);
 		TIME(bfs_verify[m], bfs_nedge[m] = verify_bfs_tree (bfs_tree, max_bfsvtx, bfs_root[m], IJ, nedge));
-        if (VERBOSE) fprintf (stderr, "done\n");
+        if (VERBOSE) fprintf (stdout, "done\n");
         if (bfs_nedge[m] < 0)
         {
 			fprintf (stderr, "bfs %d from %" PRId64 " failed verification (%" PRId64 ")\n", m, bfs_root[m], bfs_nedge[m]);

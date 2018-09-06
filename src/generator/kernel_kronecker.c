@@ -7,7 +7,7 @@ char* create_kernel_generator(unsigned int nbBuffers) {
     unsigned int i;
     char* res;
     size_t newLength;
-    int size = sizeof(char) * FUNCTION_MAX_SIZE;
+    size_t size = sizeof(char) * FUNCTION_MAX_SIZE;
     char* function = (char*)xmalloc(size);
 
     /* Construction du prototype */

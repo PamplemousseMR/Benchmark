@@ -12,7 +12,7 @@ static void make_seed(uint64_t userseed, uint_fast32_t* seed)
 	seed[1] = ((userseed >> 30) & 0x3FFFFFFF) + 1;
 	seed[2] = (userseed & 0x3FFFFFFF) + 1;
 	seed[3] = ((userseed >> 30) & 0x3FFFFFFF) + 1;
-	seed[4] = ((userseed >> 60) << 4) + (userseed >> 60) + 1;
+    seed[4] = (uint_fast32_t)(((userseed >> 60) << 4) + (userseed >> 60) + 1);
 }
 
 static void mrg_orig_step(mrg_state* state)
@@ -42,7 +42,7 @@ uint_fast32_t mrg_get_uint_orig(mrg_state* state)
 
 double mrg_get_double_orig(mrg_state* state)
 {
-    return (double)mrg_get_uint_orig(state) * .000000000465661287524579692 + (double)mrg_get_uint_orig(state) * .0000000000000000002168404346990492787;
+    return (double)(mrg_get_uint_orig(state) * .000000000465661287524579692 + mrg_get_uint_orig(state) * .0000000000000000002168404346990492787);
 }
 
 void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t seed[5])
@@ -51,7 +51,7 @@ void make_mrg_seed(uint64_t userseed1, uint64_t userseed2, uint_fast32_t seed[5]
 	seed[1] = ((userseed1 >> 30) & 0x3FFFFFFF) + 1;
 	seed[2] = (userseed2 & 0x3FFFFFFF) + 1;
 	seed[3] = ((userseed2 >> 30) & 0x3FFFFFFF) + 1;
-	seed[4] = ((userseed2 >> 60) << 4) + (userseed1 >> 60) + 1;
+    seed[4] = (unsigned)((userseed2 >> 60) << 4) + (userseed1 >> 60) + 1;
 }
 
 void init_random (void)
@@ -77,8 +77,8 @@ void init_random (void)
     }
 
     if (seed < 0)
-        seed = 0xDECAFBAD;
-    userseed = seed;
-    make_seed (seed, prng_seed);
+        seed = (long)0xDECAFBAD;
+    userseed = (unsigned long long)seed;
+    make_seed ((uint64_t)seed, prng_seed);
     mrg_seed(&prng_state_store, prng_seed);
 }

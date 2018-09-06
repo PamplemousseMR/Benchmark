@@ -40,7 +40,7 @@
 
 /*	=============== Functions ===============	*/
 
-void generate_kronecker_egdes(int, int64_t, mrg_state*, packed_edge*);
+void generate_kronecker_egdes(int, size_t, mrg_state*, packed_edge*);
 
 #endif
 

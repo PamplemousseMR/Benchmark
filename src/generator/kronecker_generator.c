@@ -24,7 +24,7 @@ SHUFFLE(suffle_edges,packed_edge)
 
 #undef SHUFFLE
 
-static void random_node_permutation(int numb_node,int64_t edge_count, packed_edge* edges, mrg_state* seed)
+static void random_node_permutation(unsigned long long numb_node,int64_t edge_count, packed_edge* edges, mrg_state* seed)
 {
     int i;
     int* vec = (int*)xmalloc(numb_node * sizeof(int));
@@ -108,7 +108,7 @@ static void createContexts()
     getPlatformIDs(0, NULL, &platformCount);
 	if(platformCount==0)
 	{
-		fprintf(stderr,"[createContext] platformCount = 0, check qmake and NVIDIA/AMD platform !!!\n");
+        fprintf(stdout,"[createContext] platformCount = 0, check qmake and NVIDIA/AMD platform !!!\n");
 		exit(EXIT_FAILURE);
 	}
     platforms = (cl_platform_id*)xmalloc(sizeof(cl_platform_id) * platformCount);
@@ -156,7 +156,7 @@ static void destroyContexts()
     xfree_large(commands);
 }
 
-static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t edge_count)
+static void init(size_t* local, size_t* global, cl_ulong* buffer_count, size_t edge_count)
 {
     /* variable utils */
     cl_device_id deviceId;
@@ -215,14 +215,14 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
     {
 		printf ("\n===============GPU GENERATE PARAMETERS===============\n\n");
 
-        printf("Packed edge size : %lu B\n",sizeof(packed_edge) * edge_count);
-        printf("Buffer used per device : %lu\n",*buffer_count);
-        printf("Edges count : %ld\n",edge_count);
+        printf("Packed edge size : %zd B\n",sizeof(packed_edge) * edge_count);
+        printf("Buffer used per device : %llu\n",*buffer_count);
+        printf("Edges count : %llu\n",edge_count);
         printf("Maximum items per device : %d\n",max_work_item);
 #ifdef _WIN32
-        printf("Items count %u\n",*global);
-        printf("Blocks count %u\n",*local);
-        printf("Items per block : %u\n",*global / *local);
+        printf("Items count %zd\n",*global);
+        printf("Blocks count %llu\n",*local);
+        printf("Items per block : %llu\n",*global / *local);
 #else
         printf("Items count %zu\n",*global);
         printf("Blocks count %zu\n",*local);
@@ -260,7 +260,7 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, int64_t 
     }
 }
 
-void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, packed_edge* edges)
+void generate_kronecker_egdes(int scale, size_t edge_count, mrg_state* seed, packed_edge* edges)
 {
     /* variables utiles */
     cl_kernel kernel;
@@ -397,9 +397,9 @@ void generate_kronecker_egdes(int scale, int64_t edge_count, mrg_state* seed, pa
     }
 
     /* permutation aleatoire des sommets	*/
-    random_node_permutation(1<<scale, edge_count, edges,seed);
+    random_node_permutation(1<<scale, (long long)edge_count, edges,seed);
     /*	permutation ameatoire des aretes	*/
-    random_edges_permutation(edge_count, edges, seed);
+    random_edges_permutation((long long)edge_count, edges, seed);
 
     /* netoyage GPU */
     for(i=0 ; i<buffer_count ; ++i)
