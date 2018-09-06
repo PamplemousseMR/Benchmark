@@ -116,10 +116,10 @@ char* create_kernel_generator(unsigned int nbBuffers) {
                                 "\t}\n"\
                                 "}\n");
 
-    newLength = sizeof(char) * (strlen(kernel_kronecker) + strlen(function));
+    newLength = sizeof(char) * (strlen(kernel_kronecker) + strlen(function) + 1);
     res = (char*)xmalloc(newLength);
     strcpy_s(res, newLength, kernel_kronecker);
-    strcat_s(&res[strlen(kernel_kronecker)], newLength, function);
+    strcat_s(res, newLength, function);
     free(function);
 
     return res;
