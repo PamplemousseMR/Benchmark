@@ -2,6 +2,10 @@
 
 OpenCL and OpenMP version of [graph500](https://graph500.org/)
 
+## Travis
+
+[![Build Status](https://travis-ci.com/PamplemousseMR/Benchmark.svg?branch=master)](https://travis-ci.com/PamplemousseMR/Benchmark)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
