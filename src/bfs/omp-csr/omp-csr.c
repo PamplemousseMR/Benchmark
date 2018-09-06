@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <assert.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <omp.h>
 
 static int64_t int64_fetch_add (int64_t* p, int64_t incr);
@@ -125,10 +125,10 @@ static int setup_deg_off (const struct packed_edge * __restrict  IJ, int64_t ned
         }
 		OMP(omp single)
         {
-            buf = alloca (omp_get_num_threads () * sizeof (*buf));
+            buf = (int64_t*)malloc(omp_get_num_threads () * sizeof (*buf));
             if (!buf)
             {
-                perror ("alloca for prefix-sum hosed");
+                perror ("malloc for prefix-sum hosed");
                 abort ();
             }
         }

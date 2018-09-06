@@ -1,7 +1,7 @@
 #include "compat.h"
 #include <stdio.h>		/*	printf	*/
 #include <math.h>		/*	sqrt	*/
-#include <malloc.h>     /*  alloca  */
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <BaseTsd.h>
@@ -349,8 +349,8 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     double *tm;
     double *stats;
 
-    tm = alloca (NBFS * sizeof (*tm));
-    stats = alloca (NSTAT * sizeof (*stats));
+    tm = (double*)malloc(NBFS * sizeof (*tm));
+    stats = (double*)malloc(NSTAT * sizeof (*stats));
     if (!tm || !stats)
     {
         perror ("Error allocating within final statistics calculation.");
