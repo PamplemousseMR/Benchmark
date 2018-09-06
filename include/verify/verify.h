@@ -1,6 +1,5 @@
 #pragma once
 
-#include <CL/cl.h>				/* openCL */
 #include <stdio.h>				/* sprintf */
 #include <stdint.h>				/* int64_t */
 #include <assert.h>				/* assert */

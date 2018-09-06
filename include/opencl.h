@@ -12,7 +12,11 @@
 /*	=============== Includes ===============	*/
 
 #include <stdio.h>
-#include "CL/cl.h"	/*	openCL	*/
+#ifndef __APPLE__
+#include <CL/cl.h>
+#else
+#include <OpenCL/cl.h>
+#endif
 
 /*	=============== Functions ===============	*/
 

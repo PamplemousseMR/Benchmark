@@ -7,7 +7,6 @@
 #include "../opencl.h"
 #include "kernel_kronecker.h"
 
-#include <CL/cl.h>      /* OpenCL */
 #include <limits.h>     /* max */
 #include <math.h>		/* ceil */
 #include <inttypes.h>	/* int64_t */
