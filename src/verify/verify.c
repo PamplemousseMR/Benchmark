@@ -1,5 +1,7 @@
 #include "verify/verify.h"
 
+#include <math.h>
+
 static cl_context* contexts;
 static cl_command_queue* commands;
 static cl_uint deviceCount;

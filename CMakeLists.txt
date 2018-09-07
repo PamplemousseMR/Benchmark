@@ -12,6 +12,9 @@ SET(benchmark_project_name "benchmark")
 FILE(GLOB_RECURSE benchmark_src_files ${benchmark_src_dir}/*)
 FILE(GLOB_RECURSE benchmark_header_files ${benchmark_header_dir}/*)
 
+#------------ cmake variables ------------
+SET(CMAKE_C_STANDARD 99)
+
 #------------ create project ------------
 INCLUDE_DIRECTORIES(${benchmark_header_dir})
 ADD_EXECUTABLE(${benchmark_project_name} ${benchmark_src_files} ${benchmark_header_files})
@@ -35,3 +38,8 @@ IF(${OPENMP_FOUND})
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 ENDIF()
+
+#------ find math.h ------
+IF(UNIX)
+  TARGET_LINK_LIBRARIES(${benchmark_project_name} m)
+ENDIF(UNIX)
