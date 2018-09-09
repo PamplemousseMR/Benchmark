@@ -12,9 +12,6 @@
 #include "../options.h"			/* VERBOSE */
 #include "../opencl.h"
 
-/*	=============== Defines ===============	*/
-
-
 #define OPTIMAL_VERIFY_MOD 32
 #define VERIFY_ITEMS_BY_GROUP 32
 
@@ -24,15 +21,7 @@
     #define VERIFY_OMP(x) _Pragma(#x)
 #endif
 
-#ifdef OPENCL_GPU
-	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_GPU
-#elif OPENCL_CPU
-	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_CPU
-#elif OPENCL_ACCELERATOR
-	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR
-#else
-	#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_ALL
-#endif
+#define VERIFY_DEVICE_TYPE CL_DEVICE_TYPE_ALL
 
 /*	=============== Functions ===============	*/
 

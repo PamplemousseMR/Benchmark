@@ -35,14 +35,6 @@ static __inline int64_t get_v0_from_edge(const packed_edge*);
  * \return int64 : la second valeur de l'arete.
  */
 static __inline int64_t get_v1_from_edge(const packed_edge*);
-/*!
- * \fn static __inline void write_edge(packed_edge* p, int64_t v0, int64_t v1) {
- * \brief Remplie l'arete avec les valeurs fournie.
- * \param packed_edge* : l'arete.
- * \param int64_t : la premiere valeur.
- * \param int64_t : la second valeur.
- */
-static __inline void write_edge(packed_edge*, int64_t, int64_t);
 
 /*	=============== Inline definitions ===============	*/
 
@@ -52,11 +44,6 @@ static __inline int64_t get_v0_from_edge(const packed_edge* p) {
 
 static __inline int64_t get_v1_from_edge(const packed_edge* p) {
   return p->v1;
-}
-
-static __inline void write_edge(packed_edge* p, int64_t v0, int64_t v1) {
-  p->v0 = v0;
-  p->v1 = v1;
 }
 
 #ifdef __cplusplus

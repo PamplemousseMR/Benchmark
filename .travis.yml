@@ -483,6 +483,3 @@ before_script:
 
 script:
   - make
-
-after_script:
-  - ./Benchmark -V

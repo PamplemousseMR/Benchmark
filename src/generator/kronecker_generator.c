@@ -30,13 +30,13 @@ static void random_node_permutation(unsigned long long numb_node,int64_t edge_co
     int* vec = (int*)xmalloc(numb_node * sizeof(int));
 
     GRAPH_OMP(omp parallel for shared(vec))
-            for(i=0 ; i<numb_node;++i)
-            vec[i] = i;
+    for(i=0 ; i<(int)numb_node;++i)
+        vec[i] = i;
 
-    suffle_int(vec,numb_node,seed);
+    suffle_int(vec,(int64_t)numb_node,seed);
 
     GRAPH_OMP(omp parallel for shared(edges,vec))
-            for(i=0 ; i<edge_count ; ++i)
+    for(i=0 ; i<edge_count ; ++i)
     {
         edges[i].v0 = vec[edges[i].v0-1];
         edges[i].v1 = vec[edges[i].v1-1];
@@ -189,7 +189,10 @@ static void init(size_t* local, size_t* global, cl_ulong* buffer_count, size_t e
             max_item_per_group = getMaxItemByGroup(&deviceId);
         clGetDeviceInfo(deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE,sizeof(cl_ulong), &max_mem_size, NULL);
         if(ceil((sizeof(packed_edge)*edge_count)/(double)max_mem_size) > *buffer_count)
-            *buffer_count = (cl_ulong)ceil((sizeof(packed_edge)*edge_count)/(double)max_mem_size);
+        {
+            double val = (sizeof(packed_edge)*edge_count)/(double)max_mem_size;
+            *buffer_count = (cl_ulong)ceil(val);
+        }
     }
 
     /* calculs du nombre de groupe et d'item */

@@ -1,10 +1,13 @@
 #pragma once
 
 #include <stdint.h>					/*	int64_t	*/
+
 #include "../edge_struct.h"			/*	packed_edge	*/
 #include "kronecker_generator.h"	/*	generate_kronecker_egdes	*/
 #include "../splittable_mrg.h"		/*	mrg_state	*/
 #include "../xalloc.h"				/*	xmalloc	*/
+
+/*	=============== Functions ===============	*/
 
 /*!
  * \fn void make_graph(int, int64_t, uint64_t, uint64_t, int64_t*, packed_edge**)

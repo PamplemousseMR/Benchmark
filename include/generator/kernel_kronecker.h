@@ -3,7 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "../xalloc.h"
+
+/*	=============== Defines ===============	*/
 
 #define KERNEL_KRONECKER_NAME "generate_kronecker"
 #define FUNCTION_MAX_SIZE 5000
@@ -77,5 +80,7 @@ static const char kernel_kronecker[]=
         "unsigned long v1;\n"\
     "} packed_edge;\n"\
 ;
+
+/*	=============== Functions ===============	*/
 
 char* create_kernel_generator(unsigned int);

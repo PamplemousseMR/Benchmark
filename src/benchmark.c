@@ -102,9 +102,9 @@ int main (int argc, char **argv)
             perror ("Cannot open input graph file");
             return EXIT_FAILURE;
         }
-        sz = nedge * sizeof (*IJ);
+        sz = (long long)((unsigned long long)nedge * sizeof (*IJ));
         #ifdef _WIN32
-        if (sz != fread (IJ,1,sz,fd))
+        if (sz != (long long)(fread (IJ,1,(size_t)sz,fd)))
         #else
         if (sz != read (fd, IJ, sz))
         #endif
@@ -148,7 +148,7 @@ void run_bfs (void)
 
     if (!rootname)
     {
-        has_adj = xmalloc_large (numb_node * sizeof (*has_adj));
+        has_adj = xmalloc_large ((unsigned long long)numb_node * sizeof (*has_adj));
 		OMP(omp parallel)
         {
 			OMP(omp for)
@@ -203,9 +203,9 @@ void run_bfs (void)
             perror ("Cannot open input BFS root file");
             exit (EXIT_FAILURE);
         }
-        sz = NBFS * sizeof (*bfs_root);
+        sz = (long long)((unsigned long long)NBFS * sizeof (*bfs_root));
         #ifdef _WIN32
-        if (sz != fread (bfs_root,1,sz,fd))
+        if (sz != (long long)fread (bfs_root,1,(size_t)sz,fd))
         #else
         if (sz != read (fd, bfs_root, sz))
         #endif
@@ -226,7 +226,7 @@ void run_bfs (void)
         /*	max_bfsvtx : sommet maximum present dans la liste	*/
         int64_t *bfs_tree, max_bfsvtx;
 
-        bfs_tree = xmalloc_large (numb_node * sizeof (*bfs_tree));
+        bfs_tree = xmalloc_large ((unsigned long long)numb_node * sizeof (*bfs_tree));
         assert (bfs_root[m] < numb_node);
 
         if (VERBOSE) fprintf (stdout, "Running bfs %d...", m);
@@ -260,10 +260,9 @@ static int dcmp (const void *a, const void *b)
     const double db = *(const double*)b;
     if (da > db) return 1;
     if (db > da) return -1;
-    if (da == db) return 0;
+    if (fabs(da - db) <= 0) return 0;
     fprintf (stderr, "No NaNs permitted in output.\n");
     abort ();
-    return 0;
 }
 
 void statistics (double *out, double *data, int64_t n)
@@ -272,57 +271,57 @@ void statistics (double *out, double *data, int64_t n)
     double t;
     int k;
 
-    qsort (data, n, sizeof (*data), dcmp);
+    qsort (data, (size_t)n, sizeof (*data), dcmp);
     out[0] = data[0];
     t = (n+1) / 4.0;
     k = (int) t;
-    if (t == k)
+    if (fabs(t - k) <= 0)
         out[1] = data[k];
     else
         out[1] = 3*(data[k]/4.0) + data[k+1]/4.0;
     t = (n+1) / 2.0;
     k = (int) t;
-    if (t == k)
+    if (fabs(t - k) <= 0)
         out[2] = data[k];
     else
         out[2] = data[k]/2.0 + data[k+1]/2.0;
     t = 3*((n+1) / 4.0);
     k = (int) t;
-    if (t == k)
+    if (fabs(t - k) <= 0)
         out[3] = data[k];
     else
         out[3] = data[k]/4.0 + 3*(data[k+1]/4.0);
     out[4] = data[n-1];
 
-    s = data[n-1];
+    s = (long double)data[n-1];
     for (k = (int)(n-1); k > 0; --k)
-        s += data[k-1];
+        s += (long double)data[k-1];
     mean = s/n;
-    out[5] = mean;
-    s = data[n-1] - mean;
+    out[5] = (double)mean;
+    s = (long double)data[n-1] - mean;
     s *= s;
     for(k = (int)(n-1); k > 0; --k)
     {
-        long double tmp = data[k-1] - mean;
+        long double tmp = (long double)data[k-1] - mean;
         s += tmp * tmp;
     }
-    out[6] = sqrt (s/(n-1));
+    out[6] = (double)sqrt((double)s/(n-1));
 
-    s = (data[0]? 1.0L/data[0] : 0);
+    s = (data[0]? 1.0L/(long double)data[0] : 0);
     for (k = 1; k < n; ++k)
-        s += (data[k]? 1.0L/data[k] : 0);
-    out[7] = n/s;
+        s += (data[k]? 1.0L/(long double)data[k] : 0);
+    out[7] = n/(double)s;
     mean = s/n;
 
-    s = (data[0]? 1.0L/data[0] : 0) - mean;
+    s = (data[0]? 1.0L/(long double)data[0] : 0) - mean;
     s *= s;
     for (k = 1; k < n; ++k)
     {
-        long double tmp = (data[k]? 1.0L/data[k] : 0) - mean;
+        long double tmp = (data[k]? 1.0L/(long double)data[k] : 0) - mean;
         s += tmp * tmp;
     }
-    s = (sqrt (s)/(n-1)) * out[7] * out[7];
-    out[8] = s;
+    s = (long double)(sqrt((double)s)/(n-1)) * (long double)out[7] * (long double)out[7];
+    out[8] = (double)s;
 }
 
 #define NSTAT 9
@@ -349,7 +348,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
     double *tm;
     double *stats;
 
-    tm = (double*)malloc(NBFS * sizeof (*tm));
+    tm = (double*)malloc((unsigned long long)NBFS * sizeof (*tm));
     stats = (double*)malloc(NSTAT * sizeof (*stats));
     if (!tm || !stats)
     {
@@ -357,7 +356,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
         abort ();
     }
 
-    sz = (int64_t)(1L << SCALE) * edgefactor * 2 * sizeof(int64_t);
+    sz = (int64_t)(1L << SCALE) * edgefactor * 2 * (int64_t)sizeof(int64_t);
 
     printf ("\n===============GENERATION STATISTICS===============\n\n");
 
@@ -369,7 +368,7 @@ void output_results (const int64_t SCALE, int64_t nvtx_scale, int64_t edgefactor
 
     printf ("\n===============TIME STATISTICS===============\n\n");
 
-    memcpy (tm, bfs_time, NBFS*sizeof(tm[0]));
+    memcpy (tm, bfs_time, (unsigned long long)NBFS*sizeof(tm[0]));
     statistics (stats, tm, NBFS);
     PRINT_STATS("time", 0);
 
