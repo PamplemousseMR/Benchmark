@@ -160,6 +160,17 @@ matrix:
       compiler: g++
       env: CXX=g++ CC=gcc BUILD_TYPE=Debug
 
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - ocl-icd-opencl-dev
+      compiler: g++
+      env: CXX=g++ CC=gcc BUILD_TYPE=Debug
+
     #==============================
     #
     #     linux clang++ 
@@ -234,6 +245,18 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
+            - ocl-icd-opencl-dev
+      compiler: clang++
+      env: CXX=clang++ CC=clang BUILD_TYPE=Debug
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
             - ocl-icd-opencl-dev
       compiler: clang++
       env: CXX=clang++ CC=clang BUILD_TYPE=Debug
@@ -395,6 +418,17 @@ matrix:
       compiler: g++
       env: CXX=g++ CC=gcc BUILD_TYPE=Release
 
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - ocl-icd-opencl-dev
+      compiler: g++
+      env: CXX=g++ CC=gcc BUILD_TYPE=Release
+
     #==============================
     #
     #     linux clang++ 
@@ -469,6 +503,18 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
+            - ocl-icd-opencl-dev
+      compiler: clang++
+      env: CXX=clang++ CC=clang BUILD_TYPE=Release
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
             - ocl-icd-opencl-dev
       compiler: clang++
       env: CXX=clang++ CC=clang BUILD_TYPE=Release
