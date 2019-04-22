@@ -53,12 +53,14 @@ TARGET_LINK_LIBRARIES(${benchmark_project_name} ${OpenCL_LIBRARY})
 #========================================
 FIND_PACKAGE("OpenMP")
 
-IF(${OPENMP_FOUND})
-    IF(UNIX)
-        TARGET_LINK_LIBRARIES(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
-    ENDIF(UNIX)
-    TARGET_COMPILE_OPTIONS(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
+IF(NOT ${OPENMP_FOUND})
+    MESSAGE(FATAL_ERROR "Can't find OpenMP")
 ENDIF()
+
+IF(UNIX)
+    TARGET_LINK_LIBRARIES(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
+ENDIF(UNIX)
+TARGET_COMPILE_OPTIONS(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
 
 #========================================
 #	find math
