@@ -2,9 +2,9 @@
 
 OpenCL and OpenMP version of [graph500](https://graph500.org/)
 
-## Travis
+## CI
 
-[![Build Status](https://travis-ci.com/PamplemousseMR/Benchmark.svg?branch=master)](https://travis-ci.com/PamplemousseMR/Benchmark)
+![Build Status](https://github.com/PamplemousseMR/Benchmark/actions/workflows/build.yml/badge.svg)
 
 ## Getting Started
 
