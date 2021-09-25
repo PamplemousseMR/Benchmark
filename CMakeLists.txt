@@ -1,70 +1,62 @@
-#========================================
-#	project
-#========================================
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-PROJECT("Benchmark" C)
+#=======================================
+#                PROJECT
+#=======================================
 
-#================================================================================
-#		init
-#================================================================================
+cmake_minimum_required(VERSION 3.0)
+project("Benchmark")
 
-#========================================
-#	variables
-#========================================
-SET(benchmark_src_dir "src")
-SET(benchmark_header_dir "include")
-SET(benchmark_project_name "benchmark")
+#=======================================
+#               LIBRARIES
+#=======================================
 
-#========================================
-#	compiler specifications
-#========================================
-SET(CMAKE_C_STANDARD 99)
+find_package("OpenCL" REQUIRED)
+find_package("OpenMP" REQUIRED)
 
-#========================================
-#	find files
-#========================================
-FILE(GLOB_RECURSE benchmark_src_files ${benchmark_src_dir}/*)
-FILE(GLOB_RECURSE benchmark_header_files ${benchmark_header_dir}/*)
+#=======================================
+#              EXECUTABLE
+#=======================================
 
-#================================================================================
-#		create
-#================================================================================
+set(benchmark_src
+    benchmark/benchmark.c
+    benchmark/bfs/omp-csr/omp-csr.c
+    benchmark/bfs/seq-csr/seq-csr.c
+    benchmark/bfs/seq-list/seq-list.c
+    benchmark/generator/edge_generator.c
+    benchmark/generator/kernel_kronecker.c
+    benchmark/generator/kronecker_generator.c
+    benchmark/getopt.c
+    benchmark/mman_win.c
+    benchmark/opencl.c
+    benchmark/options.c
+    benchmark/splittable_mrg.c
+    benchmark/timer.c
+    benchmark/verify/verify.c
+    benchmark/xalloc.c)
 
-#========================================
-#	create project
-#========================================
-ADD_EXECUTABLE(${benchmark_project_name} ${benchmark_src_files} ${benchmark_header_files})
-INCLUDE_DIRECTORIES(${benchmark_header_dir})
+set(benchmark_header
+    benchmark/bfs/bfs.h
+    benchmark/compat.h
+    benchmark/edge_struct.h
+    benchmark/generator/edge_generator.h
+    benchmark/generator/kernel_kronecker.h
+    benchmark/generator/kronecker_generator.h
+    benchmark/getopt.h
+    benchmark/mman_win.h
+    benchmark/mod_arith.h
+    benchmark/mod_arith_32bit.h
+    benchmark/mod_arith_64bit.h
+    benchmark/opencl.h
+    benchmark/options.h
+    benchmark/splittable_mrg.h
+    benchmark/timer.h
+    benchmark/verify/verify.h
+    benchmark/xalloc.h)
 
-#========================================
-#	find OpenCL
-#========================================
-FIND_PACKAGE("OpenCL")
+add_executable(benchmark ${benchmark_src} ${benchmark_header})
+target_include_directories(benchmark PRIVATE "benchmark")
+set_target_properties(benchmark PROPERTIES C_STANDARD 99)
+target_link_libraries(benchmark PRIVATE OpenCL::OpenCL OpenMP::OpenMP_CXX)
 
-IF(NOT ${OpenCL_FOUND})
-    MESSAGE(FATAL_ERROR "Can't find OpenCL")
-ENDIF()
-
-INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIR})
-TARGET_LINK_LIBRARIES(${benchmark_project_name} ${OpenCL_LIBRARY})
-
-#========================================
-#	find OpenMP
-#========================================
-FIND_PACKAGE("OpenMP")
-
-IF(NOT ${OPENMP_FOUND})
-    MESSAGE(FATAL_ERROR "Can't find OpenMP")
-ENDIF()
-
-IF(UNIX)
-    TARGET_LINK_LIBRARIES(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
-ENDIF(UNIX)
-TARGET_COMPILE_OPTIONS(${benchmark_project_name} PRIVATE ${OpenMP_C_FLAGS})
-
-#========================================
-#	find math
-#========================================
-IF(UNIX)
-  TARGET_LINK_LIBRARIES(${benchmark_project_name} m)
-ENDIF(UNIX)
+if(UNIX)
+  target_link_libraries(benchmark PRIVATE m)
+endif(UNIX)
