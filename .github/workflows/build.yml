@@ -58,6 +58,7 @@ jobs:
               sudo apt-get update
               sudo apt-get --assume-yes install ocl-icd-opencl-dev
               sudo apt-get --assume-yes install ${{ matrix.COMPILER }}
+              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${{ matrix.COMPILER }} 50
           else
               echo "$RUNNER_OS not supported"
               exit 1
